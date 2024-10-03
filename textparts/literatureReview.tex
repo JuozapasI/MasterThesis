@@ -1,0 +1,100 @@
+In this chapter I will provide general review of single cell transcriptomics and related challenges.
+
+\section{Introduction to single cell transcriptomics}
+
+Cells are the fundamental units of life, forming the basis of all living organisms.
+One of the major goals of biology is to understand cellular systems and the processes occurring within cells.
+Since the discovery of the DNA structure in 1953 and the development of the conceptual framework for genetic information
+transfer, scientists have made significant efforts to sequence the genomes of various organisms.
+This led to the development of the first sequencing methods, such as Sanger sequencing in 1975,
+which laid the foundation for next-generation sequencing technologies in use today,
+including the widely used Illumina platform (\cite{Heather2016}).
+Current sequencing methods allow us to obtain the complete genetic sequence of any organism.
+However, the genome alone cannot explain the full diversity of cells in multicellular organisms,
+as all cells share the same genome but exhibit significant variation in shape, size, and function.
+
+RNA sequencing (RNAseq), on the other hand, enables the measurement of gene expression within cells,
+providing valuable insights into cellular processes.
+RNAseq methods largely follow DNA sequencing protocols,
+with the addition of a step where complementary DNA (cDNA) is synthesized from RNA (\cite{Heumos2023}).
+The first RNAseq methods were developed for bulk sequencing, where RNA from entire cell populations is sequenced,
+providing an average gene expression profile across the population.
+Although bulk RNAseq provided valuable insights into the dynamics of cellular processes
+(such as changes in disease states in response to therapeutics, detection of gene isoforms, gene fusions,
+and various other properties of target cells (\cite{Heumos2023})),
+this approach masks non-dominant processes and cell-to-cell variability through averaging.
+This limitation was addressed by the introduction of single-cell RNA sequencing (scRNAseq) methods,
+which allow the generation of transcriptomic profiles from individual cells,
+providing high-resolution insights into cellular systems.
+
+Current scRNAseq methods enable the generation of transcriptomic profiles from thousands of cells
+at unprecedented resolution in a single experiment.
+These data can be used for constructing cellular atlases (\cite{Rozenblatt2017}),
+understanding disease mechanisms (\cite{Zhang2024}),
+exploring cell differentiation and developmental processes (\cite{Skinner2024}), and many other applications.
+
+\section{Key methods and technologies in scRNAseq}
+
+\subsection{Key methods}
+
+All scRNAseq protocols share these main three steps:
+isolation of single cells, library preparation and sequencing (\cite{Andrews2018}).
+
+The first step is mainly done in two ways:
+either by placing cells in separate droplets (microfluidics approach),
+or by separating cells into different wells (plate-based approach).
+
+The next generation sequencing (NGS) usually requires nanograms or more of DNA,
+and the RNA content in single cells is far from this amount (\cite{Wu2017}).
+Consequently, before sequencing, reverse transcription and amplification is needed.
+
+Finally, the prepared library is sequenced using NGS methods.
+The most popular is ........
+
+\subsection{Current scRNAseq Platforms}
+
+As mentioned before, scRNAseq methods mainly can be grouped in two groups: droplet-based and plate-based.
+
+Droplet-based methods (inDrops (\cite{Klein2015}), Drop-seq (\cite{Macosko2015}),
+Chromium by 10X Genomics (\cite{Zheng2017}))
+separate cells by placing them into different droplets, containing hidrogel primers and lysis mix.
+Primers usually share common structure, including barcode sequenes, unique molecular identifiers (UMIs),
+PCR handlers and poly-T (\cite{Zhang2019}).
+Cell barcodes are sequences used for determining the cell from which particular read sequenced
+(in sequencing step, content from all droplets is mixed and sequenced at once).
+UMIs are used to quantify real amount of RNA in cells
+(after amplification, more than one copy of each captured RNA is present).
+PCR handlers are used for the amplification, while poly-T are used for capturing RNAs.
+Example of primer design can be seen in figure \ref{fig:primer}).
+Once cells are in the droplets, cell lysis takes place, RNAs escapes cells and are captured by primers.
+Depending on method,
+reverse transcription either takes place directly in the droplets (inDrops, 10X) or after demulsification (Drop-seq).
+Next steps usually include RNA fragmentation and PCR amplification, followed by NGS.
+
+Droplet-based methods are high-throughput
+(current microfluidic devices are able to generate thousands of above described droplets per second (\cite{Prakadan2017})),
+cost-effective, but have low detection rates compared to other methods and
+captures only 3' (or 5') ends of transcripts (\cite{Heumos2023}).
+Capturing only 3' ends of transcripts might be not a problem when trying to identify cell populations,
+however, it masks such processes as splicing variants, thus should be considered carefully while planning experiments.
+
+Plate-based methods (CEL-Seq2 (\cite{Hashimshony2016}), Smart-seq2 (\cite{Picelli2013})) 
+
+
+
+\section{Data quality and challenges in scRNAseq}
+
+\subsection{Noise}
+
+The noise present in the scRNAseq data can be either biological or technical.
+
+\section{Computational tools and analytical approaches}
+
+\subsection{Raw data processing}
+
+\section{Enhancing scRNAseq data}
+
+\section{Deriving useful information from scRNAseq data}
+
+\section{Current limitations and future perspectives}
+
