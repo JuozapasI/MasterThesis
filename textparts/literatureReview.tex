@@ -105,6 +105,8 @@ The quality of scRNAseq data
 
 \subsection{Noise}
 
+dropout, sparsity, batch effects, doublets, ambient RNA,
+
 The noise present in the scRNAseq data can be either biological or technical.
 
 \subsection{Dimentionality}
@@ -191,9 +193,9 @@ t-SNE (\cite{Hinton2002}), UMAP (\cite{McInnes2018}) and principal component ana
 While the use of these algorithms are supported by some benchmarking studies
 (in the study of \cite{Xiang2021}, t-SNE was showed best performance, while UMAP showed the highest stability),
 other benchmarking studies show different results.
-The study of \cite{Koch2021} suggested that such overlooked methods as
+The study of \textcite{Koch2021} suggested that such overlooked methods as
 latent Dirichlet alloacation (LDA) and PHATE show best performance,
-while \cite{Sun2019} provided guidelines for choosing dimensionality reduction method
+while \textcite{Sun2019} provided guidelines for choosing dimensionality reduction method
 depending on downstream analysis tasks, and in their results UMAP and tSNE were not the first choises.
 Hence, even though UMAP and t-SNE remain the most popular in the field, one should consider using other methods as well.
 
@@ -215,7 +217,29 @@ inferring gene regulatory networks (GRNs) and other.
 
 \section{Enhancing scRNAseq data}
 
+Given the challenges of scRNAseq data, there are some attempts to improve quality of such data.
+In this section I will overview two methods: data imputation and enhancing transcriptomic reference.
+
 \subsection{Data imputation}
+
+One of the challenges present in scRNAseq data is large number of dropout values.
+This problem can mask the important relationship between genes and complicate downstream analysis (\cite{Wang2022}).
+In order to impute dropout values, many tools were suggested.
+The methods can be divided into four categories:
+model-based methods (bayNorm (\cite{Tang2019}), BISCUIT (\cite{Azizi2017}), SAVER (\cite{Huang2018}) etc.),
+low-ranked matrix-based (ALRA (\cite{Linderman2022}), ENHANCE (\cite{Wagner2019}), scRMD (\cite{Chen2020}) etc.),
+data smoothing methods (e.g. KNN-smoothing (\cite{Wagner2017}), MAGIC (\cite{Dijk2018}) etc.) and
+deep learning methods (e.g. DCA (\cite{Eraslan2019}), DeepImpute (\cite{Arisdakessian2019}) etc.) (\cite{Wang2022}).
+The study of \textcite{Dai2022} has showed that imputation methods are advantageos for recovering gene expression,
+and among the imputation methods, deep learning-based ones,
+such as DCA, DeepImpute, scIGANs (\cite{Xu2020}) show best performance.
+However, it was also showed that imputation methods introduce false positives.
+In the study of \textcite{Andrews2019} it was shown that data smoothing methods (e.g. MAGIC, KNN-smoothing)
+generate many false positives, but other methods can generate relatively large number of false positives as well,
+depending on the dataset.
+Data imputation doesn't necessarilly improve downstream analysis
+(it was shown that imputation doesn't improve inference of gene regulatory networks (\cite{McCalla2023})),
+therefore one should carefully choose whether to impute data and which method to use.
 
 \subsection{Enhancing transcriptomic reference}
 
