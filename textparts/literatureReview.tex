@@ -117,17 +117,17 @@ The noise present in the scRNAseq data can be either biological or technical.
 \subsection{Raw data processing}
 
 The output of the typical scRNAseq experiment is FASTQ files, containing recorded sequences,
-as well as (depending on method) barcode and UMI sequences and quality scores.
-The subsequent processing steps include quality control of FASTQ file (is done based on quality scores),
-filtering dublicate reads (using UMIs), mapping reads to the genome sequence and assigning the reads to the genes,
-and, finally, counting gene expression per cell (barcode) (\cite{Heumos2023}) (see figure \ref{fig:rawData}).
-Usually, all these steps are done with single piece of dedicated software,
-such as STARsolo (\cite{Kaminow2021}), CellRanger (\cite{Zheng2017}) or other.
-It should be noted, that there are variations in the above described pipeline,
-depending on many experiment-related (e.g., if there is known genome sequence or transcriptone of the study organism),
-or method-related (e.g., if UMIs are used in the protocol) factors.
-The typical result of such processing is cell-gene matrix (i.e. a matrix with cells as rows, genes as columns,
-and the entries being the number of captured RNAs in the particular cell coresponding to particular gene).
+as well as (depending on method) barcode and UMI sequences, and quality scores.
+The subsequent processing steps include quality control of FASTQ file (based on quality scores),
+filtering dublicate reads (using UMIs), mapping reads to the genome sequence, assigning the reads to the genes,
+and finally, counting gene expression per cell (barcode) (\cite{Heumos2023}) (see figure \ref{fig:rawData}).
+Usually, all these steps are performed with a single piece of dedicated software,
+such as STARsolo (\cite{Kaminow2021}), CellRanger (\cite{Zheng2017}) or others.
+It should be noted, that there are variations in the pipeline described above,
+depending on many experiment-related (e.g., whether the genome sequence or transcriptone of the study organism is known),
+or method-related (e.g., whether UMIs are used in the protocol) factors.
+The typical result of such processing is cell-gene matrix (i.e., a matrix where rows represent cells,
+columns represent genes, and each entry indicates the number of captured RNAs for a given gene in a specific cell).
 
 \begin{figure}
   \centering
