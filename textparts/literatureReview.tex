@@ -243,6 +243,37 @@ therefore one should carefully choose whether to impute data and which method to
 
 \subsection{Enhancing transcriptomic reference}
 
+One of the problems that scRNAseq is facing is the complexity of the genome.
+The "raw" human transcriptomic reference (file containing information about genes)
+contains over 60000 genes (\cite{Frankish2022}).
+Not all of them are expected to be captured by scRNAseq data, hence simple approach
+to have an improved version of transcriptomic reference is to filter out the genes
+that are not expected to appear in scRNAseq data.
+This approach is used by the publicly available 10X transcriptomic references (\cite{Zheng2017}).
+Even though it improves mapping performance, it doesn't address all the problems of transcriptomc reference.
+
+\textcite{Pool2023} has suggested three steps to enhance transcriptomic reference:
+to include reads mapped to intronic sequence to the analysis, to extend 3' ends of some genes and
+to resolve some overlapping genes.
+The first suggestion is nothing new in the field of scRNAseq.
+There are concepts such as RNA velocity based on spliced an unspiced RNA ratio (\cite{Manno2018}),
+and most of the mapping tools (e.g. STARsolo, CellRanger) contains options whether
+to use only exonic parts or full genes for the allignment of reads.
+Second one is based on the observation, that in the scRNAseq data, there are pikes of reads just before the 3' end.
+Exact biological reasons for this are not clear, however,
+it makes sense to assosiate these reads with the genes their are very close to.
+Finally, the third suggestion focus on genes that are overlapping.
+The reads from such regions would not be assigned to any gene, but in some cases,
+it is much more likely that it comes from one gene than from another.
+The overllaping gene resolution aims to resolve such overlaps
+(by deleting or shortening some of the genes in the transcriptomic reference).
+Even though \textcite{Pool2023} proposed the tool for such tasks, the tool is not perfect:
+some aspects of it are debatable (such as thresholds used), some looks not necessarily
+(e.g. dealing with exon and intron sequences when there are options in most of the tools for this)
+and it leaves plenty of the manual work.
+Hence there is still a need for the tool for enhancing the transcriptomic references,
+and this problem will be adressed in this thesis.
+
 \section{Getting insights from scRNAseq data}
 
 \subsection{Pseudotime and RNA velocity}
