@@ -185,21 +185,23 @@ Additionally, genes that are outside the scope of the specific study can also be
 
 \subsection{Dimensionality reduction}
 
-Even after filtering and selecting only highly variable genes, there are usually left several thousand genes.
-It is not possible to visualize (and hard to interpret in general) data of such high dimentionality, therefore,
+Even after filtering and selecting only highly variable genes, several thousand genes usually remain.
+It is not feasible to visualize (and hard to interpret in general) data of such high dimentionality, therefore,
 dimensionality reduction is essential step of subsequent analysis.
 The idea of dimentionality reduction is simple:
-to reduce the dimentions of the data loosing as less information as possible.
-There are number of such methods based on different mathematical concepts, but the most widely used today include
+to reduce the dimentions of the data loosing as little information as possible.
+There are number dimensionality reduction methods based on different mathematical concepts,
+but the most widely used today include
 t-SNE (\cite{Hinton2002}), UMAP (\cite{McInnes2018}) and principal component analysis (PCA).
-While the use of these algorithms are supported by some benchmarking studies
-(in the study of \cite{Xiang2021}, t-SNE was showed best performance, while UMAP showed the highest stability),
-other benchmarking studies show different results.
+Although the use of these algorithms are supported by some benchmarking studies
+(in the study of \textcite{Xiang2021}, t-SNE was showed best performance, while UMAP showed the highest stability),
+other benchmarking studies report different findings.
 The study of \textcite{Koch2021} suggested that such overlooked methods as
-latent Dirichlet alloacation (LDA) and PHATE show best performance,
-while \textcite{Sun2019} provided guidelines for choosing dimensionality reduction method
-depending on downstream analysis tasks, and in their results UMAP and tSNE were not the first choises.
-Hence, even though UMAP and t-SNE remain the most popular in the field, one should consider using other methods as well.
+latent Dirichlet alloacation (LDA) and PHATE show best performance.
+Meanwhile \textcite{Sun2019} provided guidelines for choosing dimensionality reduction method
+depending on downstream analysis tasks, and in their results UMAP and tSNE were not on the top choices.
+Thus, while UMAP and t-SNE remain the most popular methods in the field,
+it is worth considering alternative methods as well.
 
 \subsection{Clustering and other analyses}
 
