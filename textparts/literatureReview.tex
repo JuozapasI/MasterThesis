@@ -138,49 +138,50 @@ columns represent genes, and each entry indicates the number of captured RNAs fo
 
 \subsection{Preprocessing of count matrices}
 
-Preprocessing of count matrices usually involves such steps:
+Preprocessing of count matrices usually involves these steps:
 quality control, normalization and feature selection.
 
-Quality of indidual cells can be evaluated based on several factors, such as mitochondrial gene contents
-(apoptotic cells tend to have high proportion of mitochondrial genes (\cite{Heumos2023})) or
+The quality of indidual cells can be evaluated based on several factors, such as mitochondrial gene content
+(apoptotic cells tend to have a higher proportion of mitochondrial genes (\cite{Heumos2023})) or
 total number of captured genes (very low numbers can be produced by empty droplets).
-Also, in some cases, two cells can end up in one droplet,
-resulting count matrix entry corresponding to genes from  both cells.
+In some cases, two cells can end up in one droplet,
+resulting in count matrix row corresponding to genes from  both cells.
 Such matrix entries (doublets) can be filtered by using specialized software
 such Scrublet (\cite{Wolock2019}) or scDblFinder (\cite{Germain2022}).
-Ambient RNA is another aspect, increasing noise in the scRNAseq data.
-It is the RNA that escapes individual droplets and spreads in the medium and other droplets,
-causing some background noise.
-Even though the amount of such RNA is not high (give some numbers and citation),
-cleaning count matrices from such RNAs can increase quality of the data.
-This can be done by finding out background noise profile from the empty droplets and correcting count matrix accordingly.
+Another source of noise in scRNAseq data is ambient RNA,
+which consists of RNA that escapes individual droplets and spreads into the medium or other droplets,
+leading to background noise.
+Even though the amount of such RNA is not high (in good quality datasets it can be around 2\% (\cite{Young2020})),
+removing these RNAs from the count matrix can improve data quality.
+This can be achieved by identifying the background noise profile from empty droplets and
+adjusting the count matrix accordingly.
 There are dedicated softwares,
 such as SoupX (\cite{Young2020}), decontX (\cite{Yang2020}), CellBender (\cite{Fleming2023}) and others.
 
 The next step in preprocessing pipeline is normalization.
-The aim of it is to transform the data such that variantion in gene expression levels is similar,
-so that subsequent analysis would be more efficient (\cite{Ahlmann2023}).
-Also, it might help to remove some biases,
-such as sequencing depth in the case of combining data from several samples (\cite{Lingen2024}).
-There are plenty of methods for normalization, based on various approaches
-(e.g. delta-method-based, residual-based, latent gene expression-based, count-based (\cite{Ahlmann2023})).
-Therefore, one should carefully choose the normalization method, based on the individual experiment design.
-General recomendations for normalization suggest comparing several methods and if the results are similar,
-to use the simpler method (\cite{Lingen2024}).
-Sophisticated methods doesn't necessarily show better results, and recent benchmarking study (\cite{Ahlmann2023})
-has showed that such simple method (particularly the logarithm normalization,
+The goal of normalization is to transform the data so that the variation in gene expression levels is comparable,
+making subsequent analysis more efficient (\cite{Ahlmann2023}).
+Normalization can also help eliminate biases,
+such as differences in sequencing depth when combining data from multiple samples (\cite{Lingen2024}).
+There are numerous normalization methods, based on different approaches
+(e.g., delta-method-based, residual-based, latent gene expression-based, count-based (\cite{Ahlmann2023})).
+Thus, selecting a normalization method should be done carefully, depending on the experimental design.
+General recommendations for normalization suggest comparing several methods,
+and if the results are similar, opting for the simpler method (\cite{Lingen2024}).
+Sophisticated methods do not necessarily show better results, and a recent benchmarking study by \textcite{Ahlmann2023}
+has shown that simpler method (particularly the logarithm normalization,
 where each element $y$ of count matrix is transformed by formula $y_{trnasformed} = log(y+1)$)
 performs as well or better than more advanced methods.
 
-When the data is normalized and cleaned, one can get rid of not informative genes.
-Initially, count matrices contain all the genes that were present in the transcriptome.
+Once the data is normalized and cleaned, one can filter out non-informative genes.
+Initially, count matrices contain all the genes that are present in the transcriptome.
 However, not all of them are expressed in the sequenced data, or are expressed in negligable numbers (\cite{Heumos2023}).
-Therefore, it is common practice to filter such genes (e.g., genes that are expressed in less than 3 cells).
+Therefore, it is common practice to filter such genes (e.g., genes that are expressed in less than three cells).
 Moreover, some genes might be expressed in all the cells more or less evenly (housekeeping genes),
-and thus don't provide information that could be usefull in, for instance, grouping cells or determining cell types.
+which do not provide useful information that could be usefull in, for instance, grouping cells or determining cell types.
 Therefore, in many applications, it is beneficial to leave only those genes, that are highly variable between cells.
 In such way, the dimensionality of the count matrix is greatly reduced without loosing significant information.
-Additionally, one can filter out those genes that are out of scope of indicidual study.
+Additionally, genes that are outside the scope of the specific study can also be filtered out.
 
 \subsection{Dimensionality reduction}
 
