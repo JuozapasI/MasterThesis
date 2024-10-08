@@ -208,7 +208,7 @@ it is worth considering alternative methods as well.
 One of the most popular tasks of scRNAseq data analysis is to identify and classify cell populations (\cite{Andrews2018}).
 This task requires to assign cells to different groups (clusters),
 such that cells in the same clusters are similar and distinct from cells in other clusters.
-There is a great variaty of clustering algorithms available,
+There is a great variety of clustering algorithms available,
 including k-means, hierarchical and consensus clustering (\cite{Peng2020}).
 Benchmarking studies suggest that "no individual scRNA-seq clustering algorithm can capture true clusters and achieve
 optimal performance in all situations" (\cite{Peng2020}).
@@ -222,62 +222,68 @@ inferring gene regulatory networks (GRNs), and more.
 
 \section{Enhancing scRNAseq data}
 
-Given the challenges of scRNAseq data, there are some attempts to improve quality of such data.
-In this section I will overview two methods: data imputation and enhancing transcriptomic reference.
+Given the challenges associated with scRNAseq data, there have been attempts to improve the quality of such data.
+In this section, I will provide an overview of two methods: data imputation and enhancing the transcriptomic reference.
 
 \subsection{Data imputation}
 
-One of the challenges present in scRNAseq data is large number of dropout values.
-This problem can mask the important relationship between genes and complicate downstream analysis (\cite{Wang2022}).
-In order to impute dropout values, many tools were suggested.
-The methods can be divided into four categories:
+One of the challenges present in scRNAseq data is the large number of dropout values.
+Dropout values refer to instances where gene expression is present in a cell but is missed in the scRNAseq data.
+This problem can mask important relationships between genes and complicate downstream analysis (\cite{Wang2022}).
+To impute dropout values, many tools have been suggested.
+These methods can be divided into four categories:
 model-based methods (bayNorm (\cite{Tang2019}), BISCUIT (\cite{Azizi2017}), SAVER (\cite{Huang2018}) etc.),
 low-ranked matrix-based (ALRA (\cite{Linderman2022}), ENHANCE (\cite{Wagner2019}), scRMD (\cite{Chen2020}) etc.),
 data smoothing methods (e.g. KNN-smoothing (\cite{Wagner2017}), MAGIC (\cite{Dijk2018}) etc.) and
 deep learning methods (e.g. DCA (\cite{Eraslan2019}), DeepImpute (\cite{Arisdakessian2019}) etc.) (\cite{Wang2022}).
-The study of \textcite{Dai2022} has showed that imputation methods are advantageos for recovering gene expression,
-and among the imputation methods, deep learning-based ones,
-such as DCA, DeepImpute, scIGANs (\cite{Xu2020}) show best performance.
-However, it was also showed that imputation methods introduce false positives.
-In the study of \textcite{Andrews2019} it was shown that data smoothing methods (e.g. MAGIC, KNN-smoothing)
-generate many false positives, but other methods can generate relatively large number of false positives as well,
-depending on the dataset.
-Data imputation doesn't necessarilly improve downstream analysis
-(it was shown that imputation doesn't improve inference of gene regulatory networks (\cite{McCalla2023})),
+
+The study by \textcite{Dai2022} has shown that imputation methods are advantageous for recovering gene expression,
+and among these methods, deep learning-based ones,
+such as DCA, DeepImpute, scIGANs (\cite{Xu2020}) show the best performance.
+However, it was also shown that imputation methods can introduce false positives.
+In the study by \textcite{Andrews2019}, it was shown that data smoothing methods (e.g. MAGIC, KNN-smoothing)
+generate most false positives among the different types of methods,
+but other methods can generate relatively large number of false positives as well, depending on the dataset.
+Data imputation does not necessarily improve downstream analysis
+(e.g, it was shown that imputation doesn't improve inference of gene regulatory networks (\cite{McCalla2023})),
 therefore one should carefully choose whether to impute data and which method to use.
 
 \subsection{Enhancing transcriptomic reference}
 
 One of the problems that scRNAseq is facing is the complexity of the genome.
-The "raw" human transcriptomic reference (file containing information about genes)
+The "raw" human transcriptomic reference (a file containing information about genes)
 contains over 60000 genes (\cite{Frankish2022}).
-Not all of them are expected to be captured by scRNAseq data, hence simple approach
-to have an improved version of transcriptomic reference is to filter out the genes
+Not all of these genes are expected to be captured by scRNAseq data
+Thus, a simple approach to improving the transcriptomic reference is to filter out the genes
 that are not expected to appear in scRNAseq data.
-This approach is used by the publicly available 10X transcriptomic references (\cite{Zheng2017}).
-Even though it improves mapping performance, it doesn't address all the problems of transcriptomc reference.
+In this way, events where two genes overlap in the genome, but one is not expected to appear in the scRNAseq data,
+are resolved, allowing alignment tools to more easily assign reads from these regions to the correct genes.
+This approach is used in publicly available 10X transcriptomic references (\cite{Zheng2017}).
+Even though it improves mapping performance, it does not address all the issues with the transcriptomc reference.
 
 \textcite{Pool2023} has suggested three steps to enhance transcriptomic reference:
-to include reads mapped to intronic sequence to the analysis, to extend 3' ends of some genes and
-to resolve some overlapping genes.
-The first suggestion is nothing new in the field of scRNAseq.
+including reads mapped to intronic sequence to the analysis, extending 3' ends of some genes and
+resolving overlaps between certain genes.
+The first suggestion is not new in the field of scRNAseq.
 There are concepts such as RNA velocity based on spliced an unspiced RNA ratio (\cite{Manno2018}),
-and most of the mapping tools (e.g. STARsolo, CellRanger) contains options whether
-to use only exonic parts or full genes for the allignment of reads.
-Second one is based on the observation, that in the scRNAseq data, there are pikes of reads just before the 3' end.
-Exact biological reasons for this are not clear, however,
-it makes sense to assosiate these reads with the genes their are very close to.
-Finally, the third suggestion focus on genes that are overlapping.
-The reads from such regions would not be assigned to any gene, but in some cases,
-it is much more likely that it comes from one gene than from another.
-The overllaping gene resolution aims to resolve such overlaps
-(by deleting or shortening some of the genes in the transcriptomic reference).
-Even though \textcite{Pool2023} proposed the tool for such tasks, the tool is not perfect:
-some aspects of it are debatable (such as thresholds used), some looks not necessarily
-(e.g. dealing with exon and intron sequences when there are options in most of the tools for this)
-and it leaves plenty of the manual work.
-Hence there is still a need for the tool for enhancing the transcriptomic references,
-and this problem will be adressed in this thesis.
+showing that such including intronic reads in the analysis can provide valuable information.
+Moreover, most mapping tools (e.g. STARsolo, CellRanger) contains options
+to use either only exonic parts or full genes for read alignment.
+The second suggestion is based on the observation,
+that scRNAseq data often contains peaks of reads just after the 3' end of genes. 
+While the exact biological reasons for this are unclear,
+it makes sense to associate these reads with the genes they are closest to. 
+The third suggestion focuses on resolving overlaps between genes.
+Reads from such overlapping regions are often unassigned to any gene,
+but in some cases, it is more likely that they originate from one gene rather than another.
+Overlapping gene resolution aims to address this by deleting or shortening some genes in the transcriptomic reference.
+
+Although \textcite{Pool2023} proposed the tool for such tasks, the tool is not without limitations:
+some aspects of it are debatable (such as thresholds used), some seem unnecessarily
+(e.g. handling exon and intron sequences when most alligning tools provide option for this),
+and the process still requires a significant amount of manual work.
+Thus, there remains a need for a more comprehensive tool for enhancing transcriptomic references,
+which will be addressed in this thesis.
 
 \section{Getting insights from scRNAseq data}
 
