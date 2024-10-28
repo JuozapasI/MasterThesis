@@ -289,7 +289,22 @@ which will be addressed in this thesis.
 
 \section{Getting insights from scRNAseq data}
 
-\subsection{Pseudotime and RNA velocity}
+\subsection{Trajectory inference}
+
+The scRNAseq data is static snapshot due to a destructive nature of sequencing methods,
+which give raise to the challenges that could be only overcome with modelling approaches.
+Trajectory inference methods aim to reconstruct the dynamics of cellular processes of interest,
+such as development, differentiation or immune response (\cite{Deconinck2021}).
+These inference methods assign a numerical value referred as pseudotime for each cell, and based on it,
+cells can be organized along the pseudotemporal axis and may recapitulate biological dynamical processes (\cite{Wang2021}).
+Inference of pseudotime usually firstly reduces dimentionality of the data, and then applies either clustering or graph approaches
+for placing cells into the trajectory structures (\cite{Deconinck2021}).
+The scRNAseq data contains both spliced and unspliced RNA transcrips, which provide additional temporal information.
+Based on it, there were proposed RNA velocity models, that aim to find the vectors predicting future state of individual cells (\cite{Manno2018}).
+
+There are plenty of methods both for pseudotime ordering and RNA velocity, and before using them,
+one should take into account the assumptions and limitations of individual models.
+Such assumtions often include the type of trajectories (e.g. branching, linear etc.), systems state (e.g. steady state, dynamical) and others.
 
 \subsection{Inferring gene regulatory networks}
 
