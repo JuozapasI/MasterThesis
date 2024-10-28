@@ -293,6 +293,23 @@ which will be addressed in this thesis.
 
 \subsection{Inferring gene regulatory networks}
 
+Understannding regulatory relationships between genes is one of the main problems in system biology and medicine (\cite{Lamoline2024}).
+High resolution scRNAseq data offers a chance to do this via inference of gene regulatory networks (GRNs).
+GRN is a graph representing relationships between transcription factors and genes they control,
+i.e. it is a graph where genes are represented by nodes and their relationships (activating or inhibiting) are represented by edges.
+Various mathematical concepts are used in GRN inference algorithms, including
+correlation, mutual information, regression, Baysean networks, boolean networks, differential equations and others (\cite{Akers2021}).
+
+Even though there are plenty of inference models, there are no single methods that would be best in all situations.
+Moreover, performance of such algorithms often shows poor results, on global metrics similar to randomly creating GRNs.
+This was shown in the benchmarking study by \textcite{McCalla2023}.
+In the study 13 inference algorithms were compared, and none of them were best on different datasets and gold standards used.
+However, while not showing great performances on global metrics, methods were able to extract some useful local information
+(e.g. on some specific transcription factors that are major regulators in some cell lineages).
+
+All in all, while there are plenty of inference algorithms, none of them are perfect,
+but can be used to extract some information about cellular systems.
+
 \subsection{Integrative approaches}
 
 \section{Current limitations and future perspectives}
