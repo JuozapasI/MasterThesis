@@ -327,5 +327,16 @@ but can be used to extract some information about cellular systems.
 
 \subsection{Integrative approaches}
 
+The scRNAseq data alone does not capture all the relevant information of cellular system,
+therefore good inprovement of analysis is to incorporate other modalities of single cell data (\cite{Heumos2023}).
+For example, CITE-seq allows to simultaneously measure gene expression and surface protein abundance (\cite{Mercatelli2021}).
+Also, it is possible to capture both transcriptomic and epigenomic features of single cells
+(e.g. scM&T-seq (\cite{Angermueller2016}) allows measure transcriptome together with DNA methylation).
+While such approaches supplies additional information about the cellular systems,
+they also give rise to additional chalenges when trying to integrate such data.
+Such challenges comes from high degrees of missing data, noise, and the scale of datasets,
+which can potentially span millions of cells (\cite{Argelaguet2020}).
+There are plenty of tools designed for such data integration, including MOFA+, totalVI, WNN and multiVI (\cite{Heumos2023}).
+
 \section{Current limitations and future perspectives}
 
