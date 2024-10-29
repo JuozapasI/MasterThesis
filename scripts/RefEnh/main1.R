@@ -14,6 +14,7 @@ end_dist = args[8]
 seq_depth = args[9]
 extensionThreshold = args[10]
 cpmThreshold = args[11]
+barc_umi_length = args[12]
 
 gtf_file = "unique_names.gtf"
 

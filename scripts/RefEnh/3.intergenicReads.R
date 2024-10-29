@@ -8,7 +8,7 @@ seq_data = data.frame(seq_data)
 
 # Keep only unique reads with valid barcodes:
 seq_data$barcodes = paste(seq_data$CB, seq_data$UB, sep="_")
-a = nchar(seq_data$barcodes)==28 # logical vector for selecting reads with non-corrupt barcodes
+a = nchar(seq_data$barcodes)==(barc_umi_length+1) # logical vector for selecting reads with non-corrupt barcodes
 seq_data = seq_data[a,] # exclude all reads that don't have an intact full cellular and molecular barcodes
 seq_data = seq_data[!duplicated(seq_data$barcodes),] # exclude all duplicated intergenic reads
 
@@ -32,4 +32,4 @@ system("rm intergenic_reads.bed")
 
 rm(seq_data)
 
-print(Done.)
+print("Done.")
