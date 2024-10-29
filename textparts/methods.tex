@@ -1,0 +1,69 @@
+\section{Data}
+
+In this thesis following publically available datasets from scRNAseq experiments were used.
+
+\subsection{PBMC}
+
+This dataset is publically available in 10X Genomics website.
+In this experiment, human peripheral blood mononuclear cells (PBMCs) were extracted from fresh whole peripheral blood samples obtained from StemExpress. PBMCs were isolated using SepMate density centrifugation methods.
+The library was generated from around 8000 cells (5140 cells recovered) using the Chromium Single Cell 3' v3.1 Reagent Kit,
+and sequenced on Illumina NovaSeq 6000 to a read depth of approximately 35000 mean reads per cell.
+The transcript reads have length of 90bp.
+All this information (and more) is available at
+\href{https://www.10xgenomics.com/datasets/5k-human-pbmcs-3-v3-1-chromium-controller-3-1-standard}{10X Genomics website}.
+
+\section{Enhancing transcriptomic reference}
+
+The code for enhancing reference was written in R, additionally using some command line tools (the full script is available in appendices).
+The code was run on the linux environment in high performance cluster.
+Here is provided general description of the code pipeline.
+
+\begin{enumerate}
+  \item \textbf{Generating gene location bed file}
+  
+  In this step, bed file is generated from the initial gtf file.
+  The gtf file contains detailed description of every gene, including all exons of genes, hence it contains several lines per gene.
+  The resulting bed file is much simpler, having only one line per gene, containing information about its location (chromosome, coordinates, strand).
+
+  \item \textbf{Isolating intergenic reads}
+  
+  In this step, intergenic reads are isolated from the bam file.
+  Extraction is based on three criterions:
+  the reads must be unassigned to any gene (i.e. have "GN:Z:-" tag),
+  reads must not intersect with any gene location (for this task we use previously generated bed file),
+  and reads must have intact cell barcodes and UMIs (checked by their length).
+  
+  \item \textbf{Creating gene extension candidate list}
+  
+  It this step, it is checked which genes could be potentially be extended to include reads close to their 3' ends.
+  The list is generated which contains numbers of reads present within the threshold distance near the 3' end of each gene.
+  This list will later be used for choosing which genes to extend.
+  
+  \item \textbf{Clustering intergenic reads}
+  
+  In this step, intergenic reads are clustered, as single reads are more likely artifacts, while clusters of reads may be biologically relevant.
+  
+  \item \textbf{Identifying overlapping genes}
+  
+  The overlapping genes (genes that have overlaps with at least one other gene) are identified.
+  
+  \item \textbf{Resolving overlaps}
+  
+  In this step, the list that specifies which genes to delete or shorten, is created.
+  The overlapping genes resolution startegy is as follows:
+  
+  \begin{enumerate}
+    \item If the distance between 3' ends is larger than threshold set, shorten downstream gene.
+    \item If the distance is shorter, shorten or delete the one that has lower priority score.
+    \item Otherwise leave for the manual inspection.
+  \end{enumerate}
+  
+  The priority scores are debatable, here I have preferred protein-coding genes versus other types.
+  After this step, manual curation of the lists can be done.
+  
+  \item \textbf{Final reference assembly}
+  
+  The final transcriptomic reference is assembled.
+  It takes into account gene 3' end extension, gene overlaps and includes intergenic reagions that have large clusters of reads.
+
+\end{enumerate}
