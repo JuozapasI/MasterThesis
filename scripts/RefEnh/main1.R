@@ -10,11 +10,11 @@ index_file = args[4]
 fasta_file = args[5]
 genome_index = args[6]
 chr_lengths = args[7]
-end_dist = args[8]
-seq_depth = args[9]
-extensionThreshold = args[10]
-cpmThreshold = args[11]
-barc_umi_length = args[12]
+end_dist = as.integer(args[8])
+seq_depth = as.integer(args[9])
+extensionThreshold = as.integer(args[10])
+cpmThreshold = as.integer(args[11])
+barc_umi_length = as.integer(args[12])
 
 gtf_file = "unique_names.gtf"
 
