@@ -74,7 +74,7 @@ extension_candidates <- extension_candidates[extension_candidates$cpm > cpmThres
 chr <- read.csv(chr_lengths, sep = '\t', header = FALSE)
 
 for (i in 1:nrow(extension_candidates)) {
-  gene = extension_candidates$gene[i]
+  gene = extension_candidates$closest_gene[i]
   if(!(gene %in% genome_annotation$gene_name)) next
   if(is.na(gene) | gene == "") next
   chrm = genome_annotation$seqnames[genome_annotation$gene_name == gene][1]
