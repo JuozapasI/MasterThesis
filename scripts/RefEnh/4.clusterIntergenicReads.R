@@ -1,4 +1,4 @@
-print("5. Clustering intergenic reads.")
+print("4. Clustering intergenic reads.")
 
 # Get clusters of intergenic reads:
 system("bedtools merge -s -c 6 -o distinct,count < intergenic_reads_sorted.bed > intergenic_reads_clusters.bed")
@@ -11,28 +11,30 @@ system(paste("bedtools closest -a intergenic_reads_clusters_sorted.bed -b gene_r
 
 clusters_data <- read.table("clusters_results.txt", sep = "\t")
 
-unassigned_clusters <- clusters_data[clusters_data$V17 == '.', ]
 clusters_data <- clusters_data[clusters_data$V17 != '.', ]
 
 # Sort by cluster sizes:
-unassigned_clusters <- unassigned_clusters[order(unassigned_clusters$V7, decreasing = TRUE), ]
 clusters_data <- clusters_data[order(clusters_data$V7, decreasing = TRUE), ]
 
+# Leave only informative columns:
+clusters_data <- clusters_data[, c(1,2,3,6,7,17,18)]
+
+# Rename columns:
+colnasmes(clusters_data) <- c("chr","start","end","strand","count","closest_gene","distance")
+
 rownames(clusters_data) <- seq(1, nrow(clusters_data))
-rownames(unassigned_clusters) <- seq(1, nrow(unassigned_clusters))
 
 print("Largest intergenic clusters:")
-print(head(clusters_data[,c("V1", "V2", "V3", "V6", "V7", "V17")]))
+print(head(clusters_data))
 
 # Plot histogram of clusters (of size bigger than 10)
-distances <- clusters_data$V18[clusters_data$V7 > 10] * -1
+distances <- clusters_data$distance[clusters_data$count > 10] * -1
 distances <- sort(distances)
 hist(distances[distances < 100000], main = "Intergenic Read Clusters",
      xlab = "Distance from 3' ends", ylab = "Count of clusters")
 
 # Save lists:
 write.csv(clusters_data, "intergenic_clusters.csv")
-write.csv(unassigned_clusters, "unassigned_clusters.csv")
 
 # Clean up:
 system("rm clusters_results.txt")

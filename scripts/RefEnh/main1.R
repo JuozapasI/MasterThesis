@@ -16,18 +16,19 @@ extensionThreshold = as.integer(args[10])
 cpmThreshold = as.integer(args[11])
 barc_umi_length = as.integer(args[12])
 
+script_location = "/tmp/Mazutislab-out/Juozapas/Thesis/scripts/RefEnh/"
 gtf_file = "unique_names.gtf"
 
 setwd(workingDirectory)
 options(scipen = 999)
 
-source("0.supplementaryFunctions.R")
-source("1.uniqueNames.R")
-source("2.geneLocationBED.R")
-source("3.intergenicReads.R")
-source("4.extensionCandidates.R")
-source("5.clusterIntergenicReads.R")
-source("6.identifyOverlappingGenes.R")
-source("7.resolveOverlaps.R")
+source(paste0(script_location, "0.supplementaryFunctions.R"))
+source(paste0(script_location, "1.uniqueNames.R"))
+source(paste0(script_location, "2.geneLocationBED.R"))
+source(paste0(script_location, "3.intergenicReads.R"))
+source(paste0(script_location, "4.extensionCandidates.R"))
+source(paste0(script_location, "5.clusterIntergenicReads.R"))
+source(paste0(script_location, "6.identifyOverlappingGenes.R"))
+source(paste0(script_location, "7.resolveOverlaps.R"))
 
 print("Please do manual curration and then run main2.R")
