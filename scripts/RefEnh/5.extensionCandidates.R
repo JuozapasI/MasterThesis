@@ -6,8 +6,10 @@ intergenic_clusters <- read.csv("intergenic_clusters.csv", row.names = 1)
 # Find extension candidates based on found intergenic clusters:
 extension_candidates = intergenic_clusters[intergenic_clusters$gene != ".",]
 
+extension_candidates$distance = -1*extension_candidates$distance
+
 # Leave only gene with clusters sufficiently close:
-extension_candidates = extension_candidates[-1*extension_candidates$distance < extensionThreshold, ]
+extension_candidates = extension_candidates[extension_candidates$distance < extensionThreshold, ]
 
 # Compute counts per millions score
 extension_candidates$cpm = extension_candidates$count/seq_depth*1000000

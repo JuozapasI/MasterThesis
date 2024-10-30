@@ -63,9 +63,9 @@ genome_annotation <- genome_annotation[order(genome_annotation$seqnames, genome_
 
 rtracklayer::export(genome_annotation, "resolved_overlaps.gtf", format = "gtf")
 
-new_genes <- read.csv("new_genes.csv", header=FALSE)
+new_genes <- read.csv("new_gene_candidates.csv")
 
-for(i in 1:nrow(new_genes)) genome_annotation <- new_gene(new_genes$V1[i], new_genes$V2[i], new_genes$V3[i], new_genes$V4[i], new_genes$V5[i], i)
+for(i in 1:nrow(new_genes)) genome_annotation <- new_gene(new_genes$chr[i], new_genes$start[i], new_genes$end[i], new_genes$strand[i], "auto", i)
 
 # Extend genes in extension candidates list:
 extension_candidates <- read.csv("extension_candidates.csv", row.names = 1)
