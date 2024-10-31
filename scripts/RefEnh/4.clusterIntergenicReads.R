@@ -20,7 +20,7 @@ clusters_data <- clusters_data[order(clusters_data$V7, decreasing = TRUE), ]
 clusters_data <- clusters_data[, c(1,2,3,6,7,17,18)]
 
 # Rename columns:
-colnasmes(clusters_data) <- c("chr","start","end","strand","count","closest_gene","distance")
+colnames(clusters_data) <- c("chr","start","end","strand","count","closest_gene","distance")
 
 rownames(clusters_data) <- seq(1, nrow(clusters_data))
 

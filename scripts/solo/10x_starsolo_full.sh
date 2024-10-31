@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -J solo_J
-#SBATCH -o /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/slurm_full.log
+#SBATCH -o /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/solo_output_full_reference/slurm.log
 #SBATCH --partition Cluster-public
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=14
@@ -20,7 +20,7 @@ STAR \
     --readFilesIn  "${fastq_dir}Chromium_3p_GEX_Human_PBMC_S1_L001_R2_001.fastq.gz" "${fastq_dir}Chromium_3p_GEX_Human_PBMC_S1_L001_R1_001.fastq.gz" \
     --soloCBwhitelist /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/3M-february-2018.txt \
     --runThreadN 14 \
-    --outFileNamePrefix /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/solo_output_full/ \
+    --outFileNamePrefix /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/solo_output_full_reference/ \
     --readFilesCommand zcat \
     --runDirPerm All_RWX \
     --outSAMtype BAM SortedByCoordinate \
