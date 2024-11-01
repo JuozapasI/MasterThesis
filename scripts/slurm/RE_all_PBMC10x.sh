@@ -10,7 +10,7 @@
 
 # activate conda-env, if the version from env needed
 source activate /home/MazutisLab/software/pkg/miniconda3/envs/RefEnh
-export PATH="/home/MazutisLab/software/pkg/miniconda3/envs/star-J/bin:$PATH"
+export PATH="/home/MazutisLab/software/pkg/miniconda3/envs/RefEnh/bin:$PATH"
     
 Rscript /tmp/Mazutislab-out/Juozapas/Thesis/scripts/RefEnh/main1.R \
   /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/RefEnh/ \
