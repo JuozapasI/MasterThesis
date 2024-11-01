@@ -23,7 +23,8 @@ Rscript /tmp/Mazutislab-out/Juozapas/Thesis/scripts/RefEnh/main1.R \
   10000 \
   182330834 \
   1000 \
-  5
+  5 \
+  28
 
 Rscript /tmp/Mazutislab-out/Juozapas/Thesis/scripts/RefEnh/main2.R \
   /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/RefEnh_full_reference/ \

@@ -11,8 +11,9 @@ extension_candidates$distance = -1*extension_candidates$distance
 # Leave only gene with clusters sufficiently close:
 extension_candidates = extension_candidates[extension_candidates$distance < extensionThreshold, ]
 
-# Compute counts per millions score
+# Compute counts per millions score and filter based on it
 extension_candidates$cpm = extension_candidates$count/seq_depth*1000000
+extension_candidates <- extension_candidates[extension_candidates$cpm > cpmThreshold, ]
 
 # Filter based on cpm:
 # extension_candidates = extension_candidates[extension_candidates$cpm > cpmThreshold, ]
@@ -30,6 +31,7 @@ write.csv(extension_candidates, "extension_candidates.csv")
 # Additionally let's create a list of new gene candidates:
 new_genes <- intergenic_clusters[-1*intergenic_clusters$distance > extensionThreshold, ]
 new_genes$cpm = new_genes$count/seq_depth*1000000
+new_genes <- new_genes[new_genes$cpm > cpmThreshold, ]
 
 # Make nice numbering
 rownames(new_genes) <- 1:nrow(new_genes)
