@@ -3,6 +3,10 @@ library(stringr)
 
 args <- commandArgs(trailingOnly = TRUE)
 
+if (length(args) != 12) {
+    stop(paste("Error: Expected 12 arguments, but got", length(args)))
+}
+
 workingDirectory = args[1]
 original_gtf_file = args[2]
 bam_file = args[3]

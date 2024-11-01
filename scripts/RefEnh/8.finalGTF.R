@@ -22,9 +22,15 @@ genes_shorten <- overlappers[(overlappers$delete_start != "") & ((overlappers$ma
                              c("gene", "delete_start", "delete_end")]
 genes_shorten <- genes_shorten[genes_shorten$gene %in% genome_annotation$gene_name, ]
 rownames(genes_shorten) <- genes_shorten$gene
+
+j = 0
+print("Resolving overlapping genes")
+
 for(gene in genes_shorten$gene){
+  j = j + 1
+  if (j %% 100 == 0) {print(paste(j, " genes resolved."))}
+  
   if(is.na(gene) | gene == "") next
-  print(gene)
   start_del <- as.integer(strsplit(genes_shorten[gene, "delete_start"], " ")[[1]])
   start_del <- start_del[complete.cases(start_del)]
   end_del <- as.integer(strsplit(genes_shorten[gene, "delete_end"], " ")[[1]])
@@ -61,27 +67,44 @@ genome_annotation <- genome_annotation[genome_annotation$start <= genome_annotat
 genome_annotation <- genome_annotation[genome_annotation$start <= genome_annotation$end, ]
 genome_annotation <- genome_annotation[order(genome_annotation$seqnames, genome_annotation$start), ]
 
-rtracklayer::export(genome_annotation, "resolved_overlaps.gtf", format = "gtf")
+# rtracklayer::export(genome_annotation, "resolved_overlaps.gtf", format = "gtf")
 
+print("Overlapping genes resolved.")
+
+print("Adding new genes")
 new_genes <- read.csv("new_gene_candidates.csv")
 
 for(i in 1:nrow(new_genes)) genome_annotation <- new_gene(new_genes$chr[i], new_genes$start[i], new_genes$end[i], new_genes$strand[i], "auto", i)
+print("New genes added.")
 
 # Extend genes in extension candidates list:
+print("Extending genes in extension list.")
+
 extension_candidates <- read.csv("extension_candidates.csv", row.names = 1)
 rownames(extension_candidates) <- 1:nrow(extension_candidates)
 extension_candidates <- extension_candidates[extension_candidates$cpm > cpmThreshold, ]
 chr <- read.csv(chr_lengths, sep = '\t', header = FALSE)
 
+j = 0
 for (i in 1:nrow(extension_candidates)) {
-  gene = extension_candidates$closest_gene[i]
+  j = j + 1
+  if (j %% 100 == 0) {print(paste(j, " genes extended."))}
+  
+  gene = extension_candidates$gene[i]
   if(!(gene %in% genome_annotation$gene_name)) next
   if(is.na(gene) | gene == "") next
   chrm = genome_annotation$seqnames[genome_annotation$gene_name == gene][1]
   chr_length = chr$V2[chr$V1 == chrm][1]
-  dist = min(10000, extension_candidates$distance[i]-1)
   strd = genome_annotation$strand[genome_annotation$gene_name == gene][1]
   
+  # Extend to include the cluster, but not longer than by 10kb
+  if(strd == '+') {
+    dist = min(10000, extension_candidates$end[i] - genome_annotation$end[tail(which(genome_annotation$gene_name == gene & genome_annotation$type == "gene"), 1)])
+    } else if(strd == '-') {
+    dist = min(10000, genome_annotation$start[tail(which(genome_annotation$gene_name == gene & genome_annotation$type == "gene"), 1)] - extension_candidates$start[i])
+    } else {next}
+  
+  # Extend gene and exon (last or first) entries, doesn't extending outside the chromosome
   if(strd == '+') {
     genome_annotation$end[tail(which(genome_annotation$gene_name == gene & genome_annotation$type == "exon"), 1)] <-
       min(genome_annotation$end[tail(which(genome_annotation$gene_name == gene & genome_annotation$type == "gene"), 1)] +
@@ -100,12 +123,12 @@ for (i in 1:nrow(extension_candidates)) {
   }
 }
 
-
+print("Extension done.")
 
 genome_annotation <- genome_annotation[genome_annotation$start <= genome_annotation$end, ]
 genome_annotation <- genome_annotation[order(genome_annotation$seqnames, genome_annotation$start), ]
 
 genome_annotation <- GenomicRanges::makeGRangesFromDataFrame(genome_annotation, keep.extra.columns=TRUE, na.rm=TRUE)
-rtracklayer::export(genome_annotation, "rev3_simple.gtf", format = "gtf")
+rtracklayer::export(genome_annotation, "RE.gtf", format = "gtf")
 
 print("Done.")
