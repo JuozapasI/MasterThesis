@@ -28,5 +28,6 @@ Rscript /tmp/Mazutislab-out/Juozapas/Thesis/scripts/RefEnh/main1.R \
 
 Rscript /tmp/Mazutislab-out/Juozapas/Thesis/scripts/RefEnh/main2.R \
   /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/RefEnh/ \
-  /tmp/Mazutislab-out/Juozapas/Thesis/data/chr_lenghts.tsv 
+  /tmp/Mazutislab-out/Juozapas/Thesis/data/chr_lenghts.tsv \
+  5 
 
