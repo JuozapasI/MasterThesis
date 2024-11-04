@@ -33,15 +33,16 @@ Here is provided general description of the code pipeline.
   reads must not intersect with any gene location (for this task we use previously generated bed file),
   and reads must have intact cell barcodes and UMIs (checked by their length).
   
-  \item \textbf{Creating gene extension candidate list}
-  
-  It this step, it is checked which genes could be potentially be extended to include reads close to their 3' ends.
-  The list is generated which contains numbers of reads present within the threshold distance near the 3' end of each gene.
-  This list will later be used for choosing which genes to extend.
-  
   \item \textbf{Clustering intergenic reads}
   
   In this step, intergenic reads are clustered, as single reads are more likely artifacts, while clusters of reads may be biologically relevant.
+  
+  
+  \item \textbf{Creating gene extension candidate list}
+  
+  It this step, it is checked which genes could be potentially be extended to include reads close to their 3' ends.
+  The genes with sufficiently large clusters of intergenic reads close to their 3' ends are included.
+  Additionally, large intergenic clusters that are away from genes are identified as new gene candidates.
   
   \item \textbf{Identifying overlapping genes}
   
