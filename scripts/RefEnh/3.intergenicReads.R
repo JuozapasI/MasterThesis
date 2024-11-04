@@ -1,35 +1,32 @@
 print("3. Isolating intergenic reads.")
 
-## Firstly, let's take those reads that were not assigned to any genes (i.e. has "GN:Z:-" tag):
-seq_data = GenomicAlignments::readGAlignments(bam_file, index=index_file,
-                                              param = Rsamtools::ScanBamParam(flag = Rsamtools::scanBamFlag(isDuplicate = FALSE, isSecondaryAlignment = FALSE),
-                                                                              tag = c("GN", "CB", "UB"), what = "flag", tagFilter = list("GN"="-")))
-seq_data = data.frame(seq_data)
+# Firstly, let's take those reads that were not assigned to any genes (i.e. has "GN:Z:-" tag).
+# Additionally, let's filter those that have corrupted barcodes or UMIs.
+# Finally, filter duplicates based on barcode and UMI combination
+# -F 256 and -F 1024 filter duplicate and secondary allignment reads
+system(paste("( samtools view -H ", bam_file, " && samtools view -F 256 -F 1024 ", bam_file,
+    " | grep \"GN:Z:-\" | grep -E \"UB:Z:[A-Z]{", umi_length, "}\" | grep -E \"CB:Z:[A-Z]{", barc_length,
+    "}\" | awk 'BEGIN { FS=\"\t\"; OFS=\"\t\" } { ", 
+    "if ($0 ~ /CB:Z:/ && $0 ~ /UB:Z:/) { ",
+    "split($0, a, \"CB:Z:\"); split(a[2], b, \" \"); cb = b[1]; ",
+    "split($0, a, \"UB:Z:\"); split(a[2], b, \" \"); ub = b[1]; ",
+    "if (!seen[cb\":\"ub]++) { print; } } }' ; ) | samtools view -h -b - > unassigned_reads.bam",
+    sep = ""))
 
-# Keep only unique reads with valid barcodes:
-seq_data$barcodes = paste(seq_data$CB, seq_data$UB, sep="_")
-a = nchar(seq_data$barcodes)==(barc_umi_length+1) # logical vector for selecting reads with non-corrupt barcodes
-seq_data = seq_data[a,] # exclude all reads that don't have an intact full cellular and molecular barcodes
-seq_data = seq_data[!duplicated(seq_data$barcodes),] # exclude all duplicated intergenic reads
-
-# Save extracted intergenic reads as a separate file
-seq_data = GenomicRanges::makeGRangesFromDataFrame(seq_data)
-seq_data = as(seq_data, "GAlignments")
-seq_data = rtracklayer::asBED(seq_data)
-rtracklayer::export.bed(seq_data, con = "intergenic_reads1.bed")
-
-# Sort:
-system("sort -k1,1 -k2,2n intergenic_reads1.bed > intergenic_reads_sorted1.bed")
-system("rm intergenic_reads1.bed")
-
-# Additionally we check and take only those reads that don't intersect with gene bed file,
-# as there might be some unassigned reads that actually come from the gene regions.
-system("bedtools intersect -v -a intergenic_reads_sorted1.bed -b gene_ranges_sorted.bed > intergenic_reads.bed")
-
+# Convert to bed
+system("bedtools bamtobed -i unassigned_reads.bam > unassigned_reads.bed")
+# Sort
+system("sort -k1,1 -k2,2n unassigned_reads.bed > unassigned_reads_sorted.bed")
+# Take only intergenic (not intersecting with genes) reads
+system("bedtools intersect -v -a unassigned_reads.sorted.bed -b gene_ranges_sorted.bed > intergenic_reads.bed")
+# Sort
 system("sort -k1,1 -k2,2n intergenic_reads.bed > intergenic_reads_sorted.bed")
-system("rm intergenic_reads_sorted1.bed")
-system("rm intergenic_reads.bed")
+# Save also the unassigned reads that interesct with genes:
+system("bedtools intersect -a unassigned_reads.sorted.bed -b gene_ranges_sorted.bed > intersecting_reads.bed")
+# Sort
+system("sort -k1,1 -k2,2n intersecting_reads.bed > intersecting_reads_sorted.bed")
 
-rm(seq_data)
+# Clean-up
+system("rm intersecting_reads.bed intergenic_reads.bed unassigned_reads.bed unassigned_reads_sorted.bed")
 
 print("Done.")

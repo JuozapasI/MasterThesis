@@ -18,7 +18,8 @@ ends_dist = as.integer(args[8])
 seq_depth = as.integer(args[9])
 extensionThreshold = as.integer(args[10])
 cpmThreshold = as.integer(args[11])
-barc_umi_length = as.integer(args[12])
+barc_length = as.integer(args[12])
+umi_length = as.integer(args[13])
 
 script_location = "/tmp/Mazutislab-out/Juozapas/Thesis/scripts/RefEnh/"
 gtf_file = "unique_names.gtf"
