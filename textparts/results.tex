@@ -1,0 +1,39 @@
+\section{Enhancing transcriptomic reference}
+
+The enhanced transcriptomic reference allows to include those reads into downstream analysis that otherwise would be discarded.
+
+\subsection{Differences on reads captured}
+
+\begin{table}
+  \centering
+  \begin{tabular}{|l|ccc|}
+  \hline
+   & \textbf{10x} & \textbf{10x\_RE} & \textbf{full\_RE} \\
+  \hline
+Number of Reads & 182330834 & 182330834 & 182330834 \\
+Reads With Valid Barcodes & 0.970822 & 0.970816 & 0.970779 \\
+Sequencing Saturation & 0.594799 & 0.590714 & 0.587815 \\
+Q30 Bases in CB+UMI & 0.96518 & 0.96518 & 0.96518 \\
+Q30 Bases in RNA read & 0.945087 & 0.945087 & 0.945087 \\
+Reads Mapped to Genome: Unique+Multiple & 0.952892 & 0.95287 & 0.952863 \\
+Reads Mapped to Genome: Unique & 0.853796 & 0.853739 & 0.853663 \\
+Reads Mapped to GeneFull: Unique+Multiple GeneFull & 0.762962 & 0.773996 & 0.787647 \\
+Reads Mapped to GeneFull: Unique GeneFull & 0.701566 & 0.704337 & 0.676018 \\
+Estimated Number of Cells & 4782 & 4786 & 4792 \\
+Unique Reads in Cells Mapped to GeneFull & 119213570 & 119635423 & 114922980 \\
+Fraction of Unique Reads in Cells & 0.931959 & 0.931579 & 0.932371 \\
+Mean Reads per Cell & 24929 & 24996 & 23982 \\
+Median Reads per Cell & 22194 & 22194 & 21220 \\
+UMIs in Cells & 47772372 & 48413736 & 46830604 \\
+Mean UMI per Cell & 9990 & 10115 & 9772 \\
+Median UMI per Cell & 8834 & 8949 & 8648 \\
+Mean GeneFull per Cell & 3017 & 3080 & 3050 \\
+Median GeneFull per Cell & 2975 & 3039 & 3015 \\
+Total GeneFull Detected & 29012 & 29247 & 41638 \\
+\hline
+  \end{tabular}
+  \caption{Combined Table of Sequencing Statistics}
+  \label{tab:PBMCstats}
+\end{table}
+
+\subsection{Differences in downstream analysis}
