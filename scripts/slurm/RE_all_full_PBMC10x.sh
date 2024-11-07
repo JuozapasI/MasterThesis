@@ -25,10 +25,10 @@ Rscript /tmp/Mazutislab-out/Juozapas/Thesis/scripts/RefEnh/main1.R \
   1000 \
   5 \
   16 \
-  12
+  12 \
+  10000
 
 Rscript /tmp/Mazutislab-out/Juozapas/Thesis/scripts/RefEnh/main2.R \
   /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/RefEnh_full_reference/ \
-  /tmp/Mazutislab-out/Juozapas/Thesis/data/chr_lenghts.tsv \
-  5 
+  /tmp/Mazutislab-out/Juozapas/Thesis/data/chr_lenghts.tsv 
 

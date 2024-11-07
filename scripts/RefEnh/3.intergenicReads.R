@@ -6,7 +6,7 @@ print("3. Isolating intergenic reads.")
 # -F 256 and -F 1024 filter duplicate and secondary allignment reads
 system(paste("( samtools view -H ", bam_file, " && samtools view -F 256 -F 1024 ", bam_file,
     " | grep \"GN:Z:-\" | grep -E \"UB:Z:[A-Z]{", umi_length, "}\" | grep -E \"CB:Z:[A-Z]{", barc_length,
-    "}\" | awk 'BEGIN { FS=\"\t\"; OFS=\"\t\" } { ", 
+    "}\" | grep \"NH:i:1\" | awk 'BEGIN { FS=\"\t\"; OFS=\"\t\" } { ", 
     "if ($0 ~ /CB:Z:/ && $0 ~ /UB:Z:/) { ",
     "split($0, a, \"CB:Z:\"); split(a[2], b, \" \"); cb = b[1]; ",
     "split($0, a, \"UB:Z:\"); split(a[2], b, \" \"); ub = b[1]; ",
@@ -18,15 +18,13 @@ system("bedtools bamtobed -i unassigned_reads.bam > unassigned_reads.bed")
 # Sort
 system("sort -k1,1 -k2,2n unassigned_reads.bed > unassigned_reads_sorted.bed")
 # Take only intergenic (not intersecting with genes) reads
-system("bedtools intersect -v -a unassigned_reads.sorted.bed -b gene_ranges_sorted.bed > intergenic_reads.bed")
+system("bedtools intersect -v -a unassigned_reads_sorted.bed -b gene_ranges_sorted.bed > intergenic_reads.bed")
+# Remove entries that are very long. Such entries could potentially merge different clusters of reads.
+system(paste("awk -F'\t' '{if ($3 - $2 < ", max_read_length, ") print $0}' intergenic_reads.bed > intergenic_reads_short.bed", sep =""))
 # Sort
-system("sort -k1,1 -k2,2n intergenic_reads.bed > intergenic_reads_sorted.bed")
-# Save also the unassigned reads that interesct with genes:
-system("bedtools intersect -a unassigned_reads.sorted.bed -b gene_ranges_sorted.bed > intersecting_reads.bed")
-# Sort
-system("sort -k1,1 -k2,2n intersecting_reads.bed > intersecting_reads_sorted.bed")
+system("sort -k1,1 -k2,2n intergenic_reads_short.bed > intergenic_reads_sorted.bed")
 
 # Clean-up
-system("rm intersecting_reads.bed intergenic_reads.bed unassigned_reads.bed unassigned_reads_sorted.bed")
+system("rm unassigned_reads.bed unassigned_reads_sorted.bed intergenic_reads_short.bed intergenic_reads.bed")
 
 print("Done.")

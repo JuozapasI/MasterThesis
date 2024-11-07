@@ -20,6 +20,7 @@ extensionThreshold = as.integer(args[10])
 cpmThreshold = as.integer(args[11])
 barc_length = as.integer(args[12])
 umi_length = as.integer(args[13])
+max_read_length = as.integer(args[14])
 
 script_location = "/tmp/Mazutislab-out/Juozapas/Thesis/scripts/RefEnh/"
 gtf_file = "unique_names.gtf"

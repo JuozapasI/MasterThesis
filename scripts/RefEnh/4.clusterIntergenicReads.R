@@ -2,7 +2,7 @@ print("4. Clustering intergenic reads.")
 
 # Get clusters of intergenic reads:
 system("bedtools merge -s -c 6 -o distinct,count < intergenic_reads_sorted.bed > intergenic_reads_clusters.bed")
-# Add empty columns to make it compatible with bedtools:
+# Add empty columns to make it compatible with bedtools closest:
 system("awk 'BEGIN{OFS=\"\t\"}
        {print $1, $2, $3, \".\", \".\", $4, $5}' intergenic_reads_clusters.bed > intergenic_clusters.bed")
 system("sort -k1,1 -k2,2n intergenic_clusters.bed > intergenic_reads_clusters_sorted.bed")

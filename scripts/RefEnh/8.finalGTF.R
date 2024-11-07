@@ -82,7 +82,6 @@ print("Extending genes in extension list.")
 
 extension_candidates <- read.csv("extension_candidates.csv", row.names = 1)
 rownames(extension_candidates) <- 1:nrow(extension_candidates)
-extension_candidates <- extension_candidates[extension_candidates$cpm > cpmThreshold, ]
 chr <- read.csv(chr_lengths, sep = '\t', header = FALSE)
 
 j = 0

@@ -8,7 +8,6 @@ if (length(args) != 3) {
 
 workingDirectory = args[1]
 chr_lengths = args[2]
-cpmThreshold = as.integer(args[3])
 
 
 gtf_file = "unique_names.gtf"
