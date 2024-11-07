@@ -247,6 +247,7 @@ Given the challenges associated with scRNAseq data, there have been attempts to 
 In this section, I will provide an overview of two methods: data imputation and enhancing the transcriptomic reference.
 
 \subsection{Data imputation}
+\label{sec:imputation}
 
 One of the challenges present in scRNAseq data is the large number of dropout values.
 Dropout values refer to instances where gene expression is present in a cell but is missed in the scRNAseq data.
@@ -358,5 +359,32 @@ which can potentially span millions of cells (\cite{Argelaguet2020}).
 There are plenty of tools designed for such data integration, including MOFA+, totalVI, WNN and multiVI (\cite{Heumos2023}).
 
 \section{Current limitations and future perspectives}
+
+While scRNAseq data has attracted significant interest within the scientific community,
+and numerous tools and methods have been developed for its analysis, substantial challenges remain.
+\textcite{Lahnemann2020} identified four major challenges in the field of scRNAseq data science:
+addressing data sparsity, defining flexible statistical frameworks for identifying complex differential patterns in gene expression,
+mapping single cells to reference atlases, and advancing trajectory inference.
+
+The issue of data sparsity, briefly discussed in section \ref{sec:imputation}, arises when algorithms rely solely on internal data,
+which can amplify signals artificially.
+This highlights the need for tools that integrate external information, such as reference atlases.
+Regarding differential analysis, although scRNAseq datasets capture more detailed information than bulk datasets,
+methods specifically tailored for single-cell data often do not outperform bulk methods (\cite{Soneson2017}),
+indicating room for significant improvement.
+
+The construction of atlases and reference mapping can reduce considerable manual work, and with the continuous growth in available data,
+the demand for such tools is increasing (\cite{Heumos2023}).
+While some automatic annotation tools are available (\cite{Dom2022}), most focus on healthy samples,
+underscoring the need for reference atlases covering a wider range of states, diseases, and organisms (\cite{Heumos2023}).
+
+Most current trajectory inference methods are limited to scRNAseq data alone.
+Incorporating additional data modalities, such as epigenetics or proteomics,
+would enhance our understanding of dynamic cellular processes at a systems level (\cite{Lahnemann2020}).
+
+Two other critical topics in scRNAseq data science are the development of end-to-end pipelines and regular benchmarking (\cite{Heumos2023}).
+The former is essential due to the rapid expansion of scRNAseq data, while the latter would facilitate
+the selection of appropriate tools—especially as there are now over 1,700 tools for scRNAseq data analysis (\cite{scrnatools}).
+
 
 
