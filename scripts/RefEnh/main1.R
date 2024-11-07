@@ -3,8 +3,8 @@ library(stringr)
 
 args <- commandArgs(trailingOnly = TRUE)
 
-if (length(args) != 12) {
-    stop(paste("Error: Expected 12 arguments, but got", length(args)))
+if (length(args) != 14) {
+    stop(paste("Error: Expected 14 arguments, but got", length(args)))
 }
 
 workingDirectory = args[1]

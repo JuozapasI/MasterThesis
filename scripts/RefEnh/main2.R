@@ -2,7 +2,7 @@ library(rtracklayer)
 
 args <- commandArgs(trailingOnly = TRUE)
 
-if (length(args) != 3) {
+if (length(args) != 2) {
     stop(paste("Error: Expected 2 arguments, but got", length(args)))
 }
 
