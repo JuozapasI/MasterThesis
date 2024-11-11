@@ -72,7 +72,7 @@ genome_annotation <- genome_annotation[order(genome_annotation$seqnames, genome_
 print("Overlapping genes resolved.")
 
 print("Adding new genes")
-new_genes <- read.csv("new_gene_candidates.csv")
+new_genes <- read.csv("new_gene_candidates.csv", row.names = 1)
 
 for(i in 1:nrow(new_genes)) genome_annotation <- new_gene(new_genes$chr[i], new_genes$start[i], new_genes$end[i], new_genes$strand[i], "auto", i)
 print("New genes added.")

@@ -13,10 +13,9 @@ extension_candidates = extension_candidates[extension_candidates$distance < exte
 
 # Compute counts per millions score and filter based on it
 extension_candidates$cpm = extension_candidates$count/seq_depth*1000000
-extension_candidates <- extension_candidates[extension_candidates$cpm > cpmThreshold, ]
 
 # Filter based on cpm:
-extension_candidates = extension_candidates[extension_candidates$cpm > cpmThreshold, ]
+extension_candidates <- extension_candidates[extension_candidates$cpm > cpmThreshold, ]
 
 # Make sure that we have unique entries, in the case there are 2 clusters for one gene, leave only the bigger one).
 extension_candidates = extension_candidates[!duplicated(extension_candidates$closest_gene), ]
