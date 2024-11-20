@@ -27,7 +27,7 @@ STAR \
     --outSAMattributes NH HI nM AS CR UR CB UB sS sQ sM GX GN \
     --outSAMunmapped Within \
     --soloMultiMappers PropUnique \
-    --soloFeatures GeneFull Gene\
+    --soloFeatures GeneFull \
     --soloType CB_UMI_Simple \
     --soloCBmatchWLtype 1MM \
     --soloUMIdedup Exact \
