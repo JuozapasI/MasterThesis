@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J RE
+#SBATCH -J make-j
 #SBATCH -o /tmp/Mazutislab-out/Juozapas/Thesis/slurm_make.log
 #SBATCH --partition Cluster-public
 #SBATCH --nodes=1
