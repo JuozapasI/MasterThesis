@@ -22,7 +22,7 @@ data/gene_ranges_sorted.bed: $(reference)
 	sort -k1,1 -k2,2n > $@
 	
 	
-data/%/unassigned_reads/unassigned.bam: data/%/solo_output/Aligned.sortedByCoord.out.bam
+data/%/unassigned_reads/unassigned.bam: data/%/solo_output/Aligned.sortedByCoord.out.bam | data/%/unassigned_reads
 	( samtools view -H $^  && samtools view -F 1024 -F 256 $^ | \
 	grep "GN:Z:-" | \
 	grep -P "\bNH:i:1\b" | \
@@ -33,6 +33,9 @@ data/%/unassigned_reads/unassigned.bam: data/%/solo_output/Aligned.sortedByCoord
 #		split($$0, a, "UB:Z:"); split(a[2], b, " "); ub = b[1]; \
 #		if (!seen[cb":"ub]++) {print $$0} }' ; ) | \
 	samtools view -h -b - > $@
+	
+data/%/unassigned_reads:
+	mkdir -p $@
 	
 data/%/unassigned_reads/intergenic.bam: data/%/unassigned_reads/unassigned.bam data/gene_ranges_sorted.bed
 	bedtools intersect -s -v -abam $< -b data/gene_ranges_sorted.bed > $@
