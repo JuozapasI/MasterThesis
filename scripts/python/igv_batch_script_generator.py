@@ -26,6 +26,8 @@ with open(bed_file, "r") as bed, open(batch_script, "w") as script:
     script.write(f"load {annotation_file}\n")  # Load the transcriptomic annotation file
     script.write(f"snapshotDirectory {output_folder}\n\n")
     
+    script.write(f"colorBy STRAND\n\n")
+    
     # Write commands for each region in the BED file
     for line in bed:
         chrom, start, end = line.strip().split()[:3]
