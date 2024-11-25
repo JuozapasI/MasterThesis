@@ -1,47 +1,46 @@
 umi = 12
 barcode = 16
 clusterThreshold = 100
-reference = data/gencode.chr12.gtf
 fasta = data/12.fa
 ATrichThreshold = 70
 
-all: thesis.pdf data/chr12/unassigned_reads/intergenic.clusters.GCcontent.tsv
+order = 10x 10x.gencode 10x.gencode.ncbi 10x.gencode.ncbi.lnc
+
+.SECONDARY:
+
+all: thesis.pdf data/PBMC_10x/unassigned_reads/stats.txt
 
 %.pdf: %.tex
 	latexmk -pdf -silent -deps-out=.depend $*
-	
+
 %.bam.bai: %.bam
 	samtools index $<
-	
-data/gene_ranges_sorted.bed: $(reference)
+
+# Extracting unassigned reads
+$(foreach f, $(order), $(eval \
+data/%/unassigned_reads/$(f).unassigned.bam: data/%/solo_output_$(f)/Aligned.sortedByCoord.out.bam | data/%/unassigned_reads; \
+bash scripts/bash/take_unassigned.sh $$< $$@ $(barcode) $(umi)))
+
+# Generating gene location bed file from gtf
+data/%.gene_ranges_sorted.bed: data/%.gtf
 	awk 'BEGIN {FS = "\t"; OFS = FS} { \
-		if ($$3 == "gene") { \
 		if ($$0 ~ /transcript_id/) {print $$0} \
-		else {print $$0" transcript_id \"\""} } }' $(reference) | \
+		else {print $$0" transcript_id \"\""} }' $< | \
 	gtf2bed | \
 	sort -k1,1 -k2,2n > $@
 	
-	
-data/%/unassigned_reads/unassigned.bam: data/%/solo_output/Aligned.sortedByCoord.out.bam | data/%/unassigned_reads
-	( samtools view -H $^  && samtools view -F 1024 -F 256 $^ | \
-	grep "GN:Z:-" | \
-	grep -P "\bNH:i:1\b" | \
-	grep -E "CB:Z:[A-Z]{$(barcode)}" | \
-	grep -E "UB:Z:[A-Z]{$(umi)}" ) | \
-#	awk 'BEGIN {FS = "\t"; OFS=FS} { \
-#		split($$0, a, "CB:Z:"); split(a[2], b, " "); cb = b[1]; \
-#		split($$0, a, "UB:Z:"); split(a[2], b, " "); ub = b[1]; \
-#		if (!seen[cb":"ub]++) {print $$0} }' ; ) | \
-	samtools view -h -b - > $@
-	
 data/%/unassigned_reads:
 	mkdir -p $@
+
+# Extracting intergenic reads
+$(foreach f, $(order), $(eval \
+data/%/unassigned_reads/$(f).intergenic.bam: data/%/unassigned_reads/$(f).unassigned.bam; \
+bedtools intersect -s -v -abam $$< -b data/$(f).gene_ranges_sorted.bed > $$@))
 	
-data/%/unassigned_reads/intergenic.bam: data/%/unassigned_reads/unassigned.bam data/gene_ranges_sorted.bed
-	bedtools intersect -s -v -abam $< -b data/gene_ranges_sorted.bed > $@
-	
-data/%/unassigned_reads/intersecting.bam: data/%/unassigned_reads/unassigned.bam data/gene_ranges_sorted.bed
-	bedtools intersect -s -u -wa -abam $< -b data/gene_ranges_sorted.bed > $@
+# Extracting intersecting reads
+$(foreach f, $(order), $(eval \
+data/%/unassigned_reads/$(f).intergenic.bam: data/%/unassigned_reads/$(f).unassigned.bam; \
+bedtools intersect -s -u -wa -abam $$< -b data/$(f).gene_ranges_sorted.bed > $$@))
 	
 %.clusters.bed: %.bam
 	bedtools bamtobed -i $< | \
@@ -89,13 +88,23 @@ data/%/unassigned_reads/intergenic.clusters.GCcontent.tsv: data/%/unassigned_rea
 	awk '{l=length($0); gc=gsub(/[GCgc]/,""); print (gc/l)*100}' $< > $@
 	
 data/%/solo_intergenic_gencode/Aligned.sortedByCoord.out.bam: data/%/unassigned_reads/intergenic.bam data/index_gencode
-	bash scripts/solo/starsolo_from_bam.sh data/$*/unassigned_reads/intergenic.bam data/index_gencode/ $@
+	bash scripts/solo/starsolo_from_bam.sh data/$*/unassigned_reads/intergenic.bam data/index_gencode/ data/$*/solo_intergenic_gencode
 
-data/%/solo_intergenic_gencode_ncbi/Aligned.sortedByCoord.out.bam: data/%/unassigned_reads/intergenic.bam data/index_gencode
-	bash scripts/solo/starsolo_from_bam.sh data/$*/unassigned_reads/intergenic.bam data/index_gencode/ $@
+# data/%/solo_intergenic_gencode_ncbi/Aligned.sortedByCoord.out.bam: data/%/unassigned_reads/gencode_intergenic.bam data/index_ncbi
+#	bash scripts/solo/starsolo_from_bam.sh data/$*/unassigned_reads/gencode_intergenic.bam data/index_ncbi/ data/$*/solo_intergenic_gencode
 	
 
 
+
+
+
+
+
+
+
+
+
+# Summary
 data/%/unassigned_reads/stats.txt: data/%/unassigned_reads/unassigned.bam \
 					data/%/unassigned_reads/intersecting.bam \
 					data/%/unassigned_reads/intergenic.bam \
