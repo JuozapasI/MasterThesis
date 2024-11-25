@@ -7,6 +7,7 @@ outdir=$3
 STAR \
     --genomeDir $index \
     --readFilesIn  $bam --readFilesType SAM SE \
+    --soloInputSAMattrBarcodeSeq CR UR \
     --soloCBwhitelist /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/3M-february-2018.txt \
     --runThreadN 14 \
     --outFileNamePrefix $outdir \
