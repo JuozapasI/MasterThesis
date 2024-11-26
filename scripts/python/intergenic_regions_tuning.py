@@ -66,9 +66,12 @@ def process_regions(bed_file, forward_bedgraph, reverse_bedgraph, output_file):
         else:
             continue
         results.append([region["chrom"], left, right, region["strand"], region["count"]])
-
+    
+    results = pd.DataFrame(results, columns=["chrom", "start", "end", "strand", "id"])
+    results["name"] = "."
+    results["score"] = "."
     # Write refined regions to output file
-    pd.DataFrame(results, columns=["chrom", "start", "end", "strand", "id"]).to_csv(output_file, sep="\t", header=False, index=False)
+    results.to_csv(output_file, sep="\t", header=False, index=False, columns=["chrom", "start", "end", "name", "score", "strand", "id"])
 
 if __name__ == "__main__":
     # Get command-line arguments
