@@ -20,7 +20,7 @@ STAR \
     --readFilesIn  "${fastq_dir}Chromium_3p_GEX_Human_PBMC_S1_L001_R2_001.fastq.gz" "${fastq_dir}Chromium_3p_GEX_Human_PBMC_S1_L001_R1_001.fastq.gz" \
     --soloCBwhitelist /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/3M-february-2018.txt \
     --runThreadN 14 \
-    --outFileNamePrefix /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/solo_output/ \
+    --outFileNamePrefix /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/solo_output.10x/ \
     --readFilesCommand zcat \
     --runDirPerm All_RWX \
     --outSAMtype BAM SortedByCoordinate \
