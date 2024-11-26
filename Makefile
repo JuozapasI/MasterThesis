@@ -10,8 +10,7 @@ first =  $(firstword $(references))
 last = $(lastword $(references))
 without_first = $(wordlist 2, $(words $(references)), $(references))
 
-order = $(first)
-order += $(foreach n, $(without_first), $(lastword $(order)).$(n))
+order = 10x 10x.gencode 10x.gencode.ncbi 10x.gencode.ncbi.lnc
 
 order_without_first = $(wordlist 2, $(words $(order)), $(order))
 
@@ -54,11 +53,13 @@ data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.be
 bedtools intersect -s -u -wa -abam $$< -b data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed > $$@))
 
 # Separate cases for the first reference, as we additionally filter out AT rich sequences
-data/%/unassigned_reads/$(first).intergenic.bam: data/%/unassigned_reads/$(first).unassigned.bam data/%/$(first).gene_ranges_sorted.bed
-	bedtools intersect -s -v -abam $< -b data/$*/$(first).gene_ranges_sorted.bed | \
-	( samtools view -H - ; samtools view - | grep -E -v "A{60}|T{60}" ; ) | samtools view -h -b - > $@
-	bedtools intersect -s -v -abam $< -b data/$*/$(first).gene_ranges_sorted.bed | \
-	( samtools view -H - ; samtools view - | grep -E "A{60}|T{$(AT)}" ; ) | samtools view -h -b - > AT_seq.bam
+data/%/unassigned_reads/$(first).intergenic.bam: data/%/unassigned_reads/$(first).unassigned.bam data/$(first).gene_ranges_sorted.bed
+	bedtools intersect -s -v -abam $< -b data/$(first).gene_ranges_sorted.bed > tmp_bam
+	( samtools view -H tmp_bam ; samtools view tmp_bam | grep -E -v "A{60}|T{$(AT)}" ; ) | samtools view -h -b - > $@
+	bedtools intersect -s -v -abam $< -b data/$(first).gene_ranges_sorted.bed > tmp_bam
+	( samtools view -H tmp_bam ; samtools view tmp_bam | grep -E "A{60}|T{$(AT)}" ; ) | \
+	samtools view -h -b - > data/$*/unassigned_reads/AT_seq.bam
+	rm tmp_bam
 
 
 %.clusters.bed: %.bam
@@ -71,6 +72,16 @@ data/%/unassigned_reads/$(first).intergenic.bam: data/%/unassigned_reads/$(first
 	
 %.clusters.good.bed: %.clusters.bed
 	awk -F'\t' '{if ($$5 > $(clusterThreshold)) {print $$0}}' $< | sort -rnk5,5r > $@
+
+$(foreach f, $(order), $(eval \
+data/%/unassigned_reads/$(f).intersecting_genes.bed: data/%/unassigned_reads/$(f).intersecting.clusters.good.fine.bed \
+data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed; \
+bedtools intersect -s -wa -wb -abam $$< -b data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed > $$@))
+
+%.intersecting_gene_list.tsv: %.intersecting_genes.bed
+	cut -f 11 $< | sort -u > $@
+	
+data/%/unassigned_reads/$(first).modified.gtf:
 	
 %.forward.bam: %.bam
 	samtools view -h -b -F 16 $< > $@
