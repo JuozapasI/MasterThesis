@@ -3,8 +3,17 @@ barcode = 16
 clusterThreshold = 100
 fasta = data/12.fa
 ATrichThreshold = 70
+AT = 60
 
-order = 10x 10x.gencode 10x.gencode.ncbi 10x.gencode.ncbi.lnc
+references = 10x gencode ncbi lnc
+first =  $(firstword $(references))
+last = $(lastword $(references))
+without_first = $(wordlist 2, $(words $(references)), $(references))
+
+order = $(first)
+order += $(foreach n, $(without_first), $(lastword $(order)).$(n))
+
+order_without_first = $(wordlist 2, $(words $(order)), $(order))
 
 .SECONDARY:
 
@@ -18,7 +27,7 @@ all: thesis.pdf data/PBMC_10x/unassigned_reads/stats.txt
 
 # Extracting unassigned reads
 $(foreach f, $(order), $(eval \
-data/%/unassigned_reads/$(f).unassigned.bam: data/%/solo_output_$(f)/Aligned.sortedByCoord.out.bam | data/%/unassigned_reads; \
+data/%/unassigned_reads/$(f).unassigned.bam: data/%/solo_output.$(f)/Aligned.sortedByCoord.out.bam | data/%/unassigned_reads; \
 bash scripts/bash/take_unassigned.sh $$< $$@ $(barcode) $(umi)))
 
 # Generating gene location bed file from gtf
@@ -33,15 +42,25 @@ data/%/unassigned_reads:
 	mkdir -p $@
 
 # Extracting intergenic reads
-$(foreach f, $(order), $(eval \
-data/%/unassigned_reads/$(f).intergenic.bam: data/%/unassigned_reads/$(f).unassigned.bam; \
-bedtools intersect -s -v -abam $$< -b data/$(f).gene_ranges_sorted.bed > $$@))
+$(foreach f, $(order_without_first), $(eval \
+data/%/unassigned_reads/$(f).intergenic.bam: data/%/unassigned_reads/$(f).unassigned.bam \
+data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed; \
+bedtools intersect -s -v -abam $$< -b data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed > $$@))
 	
 # Extracting intersecting reads
 $(foreach f, $(order), $(eval \
-data/%/unassigned_reads/$(f).intergenic.bam: data/%/unassigned_reads/$(f).unassigned.bam; \
-bedtools intersect -s -u -wa -abam $$< -b data/$(f).gene_ranges_sorted.bed > $$@))
-	
+data/%/unassigned_reads/$(f).intersecting.bam: data/%/unassigned_reads/$(f).unassigned.bam \
+data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed; \
+bedtools intersect -s -u -wa -abam $$< -b data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed > $$@))
+
+# Separate cases for the first reference, as we additionally filter out AT rich sequences
+data/%/unassigned_reads/$(first).intergenic.bam: data/%/unassigned_reads/$(first).unassigned.bam data/%/$(first).gene_ranges_sorted.bed
+	bedtools intersect -s -v -abam $< -b data/$*/$(first).gene_ranges_sorted.bed | \
+	( samtools view -H - ; samtools view - | grep -E -v "A{60}|T{60}" ; ) | samtools view -h -b - > $@
+	bedtools intersect -s -v -abam $< -b data/$*/$(first).gene_ranges_sorted.bed | \
+	( samtools view -H - ; samtools view - | grep -E "A{60}|T{$(AT)}" ; ) | samtools view -h -b - > AT_seq.bam
+
+
 %.clusters.bed: %.bam
 	bedtools bamtobed -i $< | \
 	sort -k1,1 -k2,2n | \
@@ -87,11 +106,9 @@ data/%/unassigned_reads/intergenic.clusters.sequences.tsv: data/%/unassigned_rea
 data/%/unassigned_reads/intergenic.clusters.GCcontent.tsv: data/%/unassigned_reads/intergenic.clusters.sequences.tsv 
 	awk '{l=length($0); gc=gsub(/[GCgc]/,""); print (gc/l)*100}' $< > $@
 	
-data/%/solo_intergenic_gencode/Aligned.sortedByCoord.out.bam: data/%/unassigned_reads/intergenic.bam data/index_gencode
-	bash scripts/solo/starsolo_from_bam.sh data/$*/unassigned_reads/intergenic.bam data/index_gencode/ data/$*/solo_intergenic_gencode
-
-# data/%/solo_intergenic_gencode_ncbi/Aligned.sortedByCoord.out.bam: data/%/unassigned_reads/gencode_intergenic.bam data/index_ncbi
-#	bash scripts/solo/starsolo_from_bam.sh data/$*/unassigned_reads/gencode_intergenic.bam data/index_ncbi/ data/$*/solo_intergenic_gencode
+$(foreach f, $(order_without_first), $(eval \
+data/%/solo_output.$(f)/Aligned.sortedByCoord.out.bam: data/%/unassigned_reads/$(basename $(f)).intergenic.bam; \
+bash scripts/solo/starsolo_from_bam.sh $$< data/index_$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f)))/ data/$$*/solo_output.$(f)/))
 	
 
 
