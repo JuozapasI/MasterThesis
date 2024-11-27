@@ -90,6 +90,7 @@ for(i in 1:nrow(new_gtf)){
     new_gtf[i, "start"] = max(new_gtf[i, "start"], genes_n[new_gtf[i, "gene_id"], "start"])
     new_gtf[i, "end"] = min(new_gtf[i, "end"], genes_n[new_gtf[i, "gene_id"], "end"])
 }
+new_gtf <- new_gtf[new_gtf$start <= new_gtf$end, ]
 
 # Save modified new gft entries:
 new_gtf <- GenomicRanges::makeGRangesFromDataFrame(new_gtf, keep.extra.columns=TRUE, na.rm=TRUE)
