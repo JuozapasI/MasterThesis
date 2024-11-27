@@ -55,13 +55,17 @@ rownames(genes_df) <- genes_df$gene_id
 
 # Set priority scores, lower score = higher priority
 overlappers$priority <- 0
-for(gene in overlappers$gene){
-  # By gene type:
-  if(genes_df[gene, "gene_type"] %in% valuable_types) {overlappers[gene, "priority"] = 0}
-  else if((genes_df[gene, "gene_type"] == "lncRNA") |
-          (genes_df[gene, "gene_type"] == "lincRNA")) {overlappers[gene, "priority"] = 10}
-  else {overlappers[gene, "priority"] = 20}
-  
+if(("gene_type" %in% colnames(genes_df)) | ("gene_biotype" %in% colnames(genes_df))
+{
+  if("gene_type" %in% colnames(genes_df)) gene_type = "gene_type"
+  else gene_type = "gene_biotype"
+  for(gene in overlappers$gene){
+    # By gene type:
+    if(genes_df[gene, gene_type] %in% valuable_types) {overlappers[gene, "priority"] = 0}
+    else if((genes_df[gene, gene_type] == "lncRNA") |
+            (genes_df[gene, gene_type] == "lincRNA")) {overlappers[gene, "priority"] = 10}
+    else {overlappers[gene, "priority"] = 20}
+  }
   # By level:
   if ("level" %in% colnames(genes_df)) {
     overlappers[gene, "priority"] = as.integer(overlappers[gene, "priority"]) +
