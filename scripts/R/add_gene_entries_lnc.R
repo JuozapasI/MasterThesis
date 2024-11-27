@@ -6,6 +6,7 @@ gtf_file <- "/tmp/Mazutislab-out/Juozapas/Thesis/data/lnc_original.gtf"
 output_file <- "/tmp/Mazutislab-out/Juozapas/Thesis/data/lnc.gtf"
 gtf <- rtracklayer::import(gtf_file, format = "gtf")
 gtf_df <- as.data.frame(gtf)
+gtf_df$gene_type <- "lnc"
 
 # Ensure the data contains a gene_id column
 if (!"gene_id" %in% colnames(gtf_df)) {
@@ -25,6 +26,7 @@ gene_entries <- gtf_df %>%
     source = dplyr::first(source),           # Source (e.g., "ENSEMBL")
     frame = ".",                                    # Placeholder frame
     type = "gene",                                  # Set type to "gene"
+    gene_type = "lnc"
   )
 
 # Convert back to GTF-compatible format
