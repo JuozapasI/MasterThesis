@@ -25,7 +25,6 @@ gene_entries <- gtf_df %>%
     source = dplyr::first(source),           # Source (e.g., "ENSEMBL")
     frame = ".",                                    # Placeholder frame
     type = "gene",                                  # Set type to "gene"
-    gene_name = dplyr::first(gene_name) # Add optional gene_name if available
   )
 
 # Convert back to GTF-compatible format
