@@ -58,11 +58,11 @@ overlappers = overlappers[o,]
 # Resolve overlaps by shortening new gene entries
 
 for(gene in overlappers$gene){
-    overlaps <- strsplit(overlappers[gene, "overlapping_genes"], ",\\s*")
+    overlaps <- unlist(strsplit(overlappers[gene, "overlapping_genes"], ",\\s*"))
+    strand <- genes_n[gene, "strand"]
     for(gene2 in overlaps){
         start <- genes_orig[gene2, "start"] - 100
         end <- genes_orig[gene2, "end"] + 100
-        strand <- genes_n[gene, "strand"]
         if(strand == "+") {
             if((genes_n[gene, "start"] >= start) & (genes_n[gene, "start"] <= end)){
             genes_n[gene, "start"] = end + 1
