@@ -62,7 +62,7 @@ for(gene in overlappers$gene){
     for(gene2 in overlaps){
         start <- genes_orig[gene2, "start"] - 100
         end <- genes_orig[gene2, "end"] + 100
-        starnd <- genes_n[gene, "strand"]
+        strand <- genes_n[gene, "strand"]
         if(strand == "+") {
             if((genes_n[gene, "start"] >= start) & (genes_n[gene, "start"] <= end)){
             genes_n[gene, "start"] = end + 1
