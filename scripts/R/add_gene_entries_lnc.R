@@ -14,17 +14,17 @@ if (!"gene_id" %in% colnames(gtf_df)) {
 
 # Create gene entries by grouping by gene_id
 gene_entries <- gtf_df %>%
-  filter(type == "exon") %>%            # Only consider exon entries
-  group_by(gene_id) %>%                # Group by gene_id
+  filter(type == "exon") %>%                        # Only consider exon entries
+  group_by(gene_id) %>%                             # Group by gene_id
   summarise(
-    seqnames = first(seqnames),        # Take the chromosome
-    start = min(start),                # Start is the minimum exon start
-    end = max(end),                    # End is the maximum exon end
-    strand = first(strand),            # Take the strand information
-    score = ".",                       # Placeholder score
-    source = first(source),            # Source (e.g., "ENSEMBL")
-    frame = ".",                       # Placeholder frame
-    type = "gene",                     # Set type to "gene"
+    seqnames = first(as.character(seqnames)),       # Take the chromosome
+    start = min(start),                             # Start is the minimum exon start
+    end = max(end),                                 # End is the maximum exon end
+    strand = first(as.character(strand)),           # Take the strand information
+    score = ".",                                    # Placeholder score
+    source = first(as.character(source)),           # Source (e.g., "ENSEMBL")
+    frame = ".",                                    # Placeholder frame
+    type = "gene",                                  # Set type to "gene"
     gene_name = first(gene_name, na.rm = TRUE) # Add optional gene_name if available
   )
 
