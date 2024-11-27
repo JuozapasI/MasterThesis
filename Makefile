@@ -4,6 +4,7 @@ clusterThreshold = 100
 fasta = data/12.fa
 ATrichThreshold = 70
 AT = 60
+ends_dist = 1000
 
 references = 10x gencode ncbi lnc
 first =  $(firstword $(references))
@@ -81,7 +82,25 @@ bedtools intersect -s -wa -wb -abam $$< -b data/$(word $(words $(subst ., ,$(f))
 %.intersecting_gene_list.tsv: %.intersecting_genes.bed
 	cut -f 11 $< | sort -u > $@
 	
-data/%/unassigned_reads/$(first).modified.gtf:
+$(foreach f, $(order), $(eval \
+data/%/unassigned_reads/$(f).overlappers.csv: data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gtf \
+data/%/unassigned_reads/$(f).intersecting_gene_list.tsv; \
+Rscript scripts/R/Overlappers.R $$^ $$@))
+
+$(foreach f, $(order), $(eval \
+data/%/unassigned_reads/$(f).overlaps_modified.gtf: data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gtf \
+data/%/unassigned_reads/$(f).overlappers.csv; \
+Rscript scripts/R/ResolveOverlappers.R $$^ $(ends_dist) $$@))
+
+# Assemble modified gtf for the first reference (i.e. with resolved overlaps)
+data/%/unassigned_reads/$(first).modified.gtf: data/%/unassigned_reads/$(first).intersecting_gene_list.tsv \
+data/$(first).gtf data/%/unassigned_reads/$(first).overlaps_modified.gtf
+	( grep -v -f $< data/$(first).gtf; cat data/%/unassigned_reads/$(first).overlaps_modified.gtf ; ) | \
+	sort -k1,1 -k4,4n > $@
+
+# For the second and on, we need to make sure that appended entries doesn't overlap with previous gtf
+
+	
 	
 %.forward.bam: %.bam
 	samtools view -h -b -F 16 $< > $@
