@@ -55,8 +55,7 @@ rownames(genes_df) <- genes_df$gene_id
 
 # Set priority scores, lower score = higher priority
 overlappers$priority <- 0
-if(("gene_type" %in% colnames(genes_df)) | ("gene_biotype" %in% colnames(genes_df))
-{
+if(("gene_type" %in% colnames(genes_df)) | ("gene_biotype" %in% colnames(genes_df))){
   if("gene_type" %in% colnames(genes_df)) gene_type = "gene_type"
   else gene_type = "gene_biotype"
   for(gene in overlappers$gene){
