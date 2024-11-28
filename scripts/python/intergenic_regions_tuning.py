@@ -70,6 +70,12 @@ def process_regions(bed_file, forward_bedgraph, reverse_bedgraph, output_file):
     results = pd.DataFrame(results, columns=["chrom", "start", "end", "strand", "id"])
     results["name"] = "."
     results["score"] = "."
+    # Sort as bed file ('sort -k1,1 -k2,2n')
+    sorted_df = df.sort_values(
+    by=['chrom', 'start'],
+    key=lambda col: col.astype(str) if col.name == 'chrom' else col,
+    ascending=[True, True]
+    )
     # Write refined regions to output file
     results.to_csv(output_file, sep="\t", header=False, index=False, columns=["chrom", "start", "end", "name", "score", "strand", "id"])
 
