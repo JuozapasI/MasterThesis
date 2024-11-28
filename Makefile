@@ -1,7 +1,7 @@
 umi = 12
 barcode = 16
 clusterThreshold = 100
-fasta = data/12.fa
+fasta = data/GRCh38.dna.primary_assembly.fa
 ATrichThreshold = 70
 AT = 60
 ends_dist = 1000
@@ -14,6 +14,7 @@ without_first = $(wordlist 2, $(words $(references)), $(references))
 order = 10x 10x.gencode 10x.gencode.ncbi 10x.gencode.ncbi.lnc
 
 order_without_first = $(wordlist 2, $(words $(order)), $(order))
+order_last = $(lastword $(order))
 
 .SECONDARY:
 
@@ -31,7 +32,7 @@ data/%/unassigned_reads/$(f).unassigned.bam: data/%/solo_output.$(f)/Aligned.sor
 bash scripts/bash/take_unassigned.sh $$< $$@ $(barcode) $(umi)))
 
 # Generating gene location bed file from gtf
-data/%.gene_ranges_sorted.bed: data/%.gtf
+%.gene_ranges_sorted.bed: %.gtf
 	awk 'BEGIN {FS = "\t"; OFS = FS} { \
 		if ($$0 ~ /transcript_id/) {print $$0} \
 		else {print $$0" transcript_id \"\""} }' $< | \
@@ -66,18 +67,20 @@ data/%/unassigned_reads/$(first).intergenic.bam: data/%/unassigned_reads/$(first
 %.clusters.bed: %.bam
 	bedtools bamtobed -i $< | \
 	sort -k1,1 -k2,2n | \
-	bedtools merge -s -c 6 -o distinct,count > $@
+	bedtools merge -s -c 6 -o distinct,count | \
+	sort -k1,1 -k2,2n > $@
 	
 %.clusters.thrash.bed: %.clusters.bed
 	awk -F'\t' '{if ($$5 <= $(clusterThreshold)) {print $$0}}' $< > $@
 	
 %.clusters.good.bed: %.clusters.bed
-	awk -F'\t' '{if ($$5 > $(clusterThreshold)) {print $$0}}' $< | sort -rnk5,5r > $@
+	awk -F'\t' '{if ($$5 > $(clusterThreshold)) {print $$0}}' $< > $@
 
 $(foreach f, $(order), $(eval \
 data/%/unassigned_reads/$(f).intersecting_genes.bed: data/%/unassigned_reads/$(f).intersecting.clusters.good.fine.bed \
 data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed; \
-bedtools intersect -s -wa -wb -abam $$< -b data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed > $$@))
+bedtools intersect -s -wa -wb -abam $$< -b data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed | \
+sort -k1,1 -k2,2n > $$@))
 
 %.intersecting_gene_list.tsv: %.intersecting_genes.bed
 	cut -f 11 $< | sort -u > $@
@@ -95,12 +98,21 @@ Rscript scripts/R/ResolveOverlappers.R $$^ $(ends_dist) $$@))
 # Assemble modified gtf for the first reference (i.e. with resolved overlaps)
 data/%/unassigned_reads/$(first).modified.gtf: data/%/unassigned_reads/$(first).intersecting_gene_list.tsv \
 data/$(first).gtf data/%/unassigned_reads/$(first).overlaps_modified.gtf
-	( grep -v -f $< data/$(first).gtf; cat data/%/unassigned_reads/$(first).overlaps_modified.gtf ; ) | \
+	( grep -v -f $< data/$(first).gtf; cat data/$*/unassigned_reads/$(first).overlaps_modified.gtf ; ) | \
 	sort -k1,1 -k4,4n > $@
 
 # For the second and on, we need to make sure that appended entries doesn't overlap with previous gtf
+$(foreach f, $(order_without_first), $(eval \
+data/%/unassigned_reads/$(f).new_entries.gtf: data/%/unassigned_reads/$(basename $(f)).modified.gtf \
+data/%/unassigned_reads/$(f).overlaps_modified.gtf; \
+Rscript scripts/R/ResolveGtfsOverlaps.R $$^ $$@))
 
-	
+# And then we can merge gtfs
+$(foreach f, $(order_without_first), $(eval \
+data/%/unassigned_reads/$(f).modified.gtf: data/%/unassigned_reads/$(basename $(f)).modified.gtf \
+data/%/unassigned_reads/$(f).new_entries.gtf; \
+( cat $$< ; cat data/$$*/unassigned_reads/$(f).new_entries.gtf ; ) | \
+	sort -k1,1 -k4,4n > $$@))
 	
 %.forward.bam: %.bam
 	samtools view -h -b -F 16 $< > $@
@@ -117,23 +129,11 @@ data/$(first).gtf data/%/unassigned_reads/$(first).overlaps_modified.gtf
 %.clusters.good.fine.bed: %.clusters.good.bed %.coverage.forward.bg %.coverage.backward.bg
 	python scripts/python/intergenic_regions_tuning.py $^ $@
 	
-data/%/unassigned_reads/igv.intergenic.snapshot.batch.txt: data/%/unassigned_reads/intergenic.clusters.good.fine.bed data/%/unassigned_reads/intergenic.bam
-	mkdir -p data/$*/unassigned_reads/intergenic_snapshots/ 
-	python scripts/python/igv_batch_script_generator.py $^ \
-		  data/$*/unassigned_reads/intergenic_snapshots/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
-		  data/gencode.v47.sorted.gtf data/$*/unassigned_reads/igv.snapshot.batch.txt
-		  
-data/%/unassigned_reads/igv.intersecting.snapshot.batch.txt: data/%/unassigned_reads/intersecting.clusters.good.fine.bed data/%/unassigned_reads/intersecting.bam
-	mkdir -p data/$*/unassigned_reads/intersecting_snapshots/ 
-	python scripts/python/igv_batch_script_generator.py $^ \
-		  data/$*/unassigned_reads/intersecting_snapshots/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
-		  data/gencode.v47.sorted.gtf data/$*/unassigned_reads/intersecting.igv.snapshot.batch.txt
-	
 
-data/%/unassigned_reads/intergenic.clusters.sequences.tsv: data/%/unassigned_reads/intergenic.clusters.good.fine.bed
+data/%/unassigned_reads/$(order_last).intergenic.clusters.sequences.tsv: data/%/unassigned_reads/$(order_last).intergenic.clusters.good.fine.bed
 	bedtools getfasta -fi $(fasta) -nameOnly -tab -bed $< | cut -f2 > $@
 	
-data/%/unassigned_reads/intergenic.clusters.GCcontent.tsv: data/%/unassigned_reads/intergenic.clusters.sequences.tsv 
+data/%/unassigned_reads/$(order_last).intergenic.clusters.GCcontent.tsv: data/%/unassigned_reads/$(order_last).intergenic.clusters.sequences.tsv 
 	awk '{l=length($0); gc=gsub(/[GCgc]/,""); print (gc/l)*100}' $< > $@
 	
 $(foreach f, $(order_without_first), $(eval \
@@ -142,12 +142,48 @@ bash scripts/solo/starsolo_from_bam.sh $$< data/index_$(word $(words $(subst ., 
 	
 
 
+#In final part, check if there are any clusters very close to genes 3' ends and extend those genes if there are
+%.distances.clusters.good.fine.tsv: %.intergenic.clusters.good.fine.bed %.modified.gene_ranges_sorted.bed
+	bedtools closest -a $< -b $*.modified.gene_ranges_sorted.bed -s -D a -id -fu > $@
 
+# Split clusters into close to 3' ends and not
+data/%/unassigned_reads/final.intergenic.clusters_near_genes.txt: data/%/unassigned_reads/$(order_last).distances.clusters.good.fine.tsv
 
+data/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt: data/%/unassigned_reads/$(order_last).distances.clusters.good.fine.tsv
 
+# Make gene extension list
+data/%/final.extension_candidates.csv: data/%/unassigned_reads/final.intergenic.clusters_near_genes.txt
 
+# Make new intergenic gene list:
+data/%/final.new_gene_list.csv: data/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt
 
+# Assemble final gtf
+%final.gtf: %$(last_order).modified.gtf %final.extension_candidates.csv %final.new_gene_list.csv
 
+# Make final genome index
+data/%/index_final/: data/%/unassigned_reads/final.gtf 
+	bash scripts/solo/genome_index.sh $< $(fasta) $@
+
+# Run starsolo on final gtf
+data/%/solo_output.final/Aligned.sortedByCoord.out.bam: data/%/solo_output.$(first)/Aligned.sortedByCoord.out.bam \
+data/%/index_final/
+	bash scripts/solo/starsolo_from_bam.sh $^ data/$*/solo_output.final/
+
+	
+data/%/unassigned_reads/igv.intergenic.snapshot.batch.txt: data/%/unassigned_reads/intergenic.clusters.good.fine.bed \
+data/%/unassigned_reads/intergenic.bam
+	mkdir -p data/$*/unassigned_reads/intergenic_snapshots/ 
+	python scripts/python/igv_batch_script_generator.py $^ \
+		  data/$*/unassigned_reads/intergenic_snapshots/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
+		  data/gencode.v47.sorted.gtf data/$*/unassigned_reads/igv.snapshot.batch.txt
+		  
+data/%/unassigned_reads/igv.intersecting.snapshot.batch.txt: data/%/unassigned_reads/$(order_last).intersecting.clusters.good.fine.bed \
+data/%/unassigned_reads/$(order_last).intersecting.bam
+	mkdir -p data/$*/unassigned_reads/intersecting_snapshots/ 
+	python scripts/python/igv_batch_script_generator.py $^ \
+		  data/$*/unassigned_reads/intersecting_snapshots/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
+		  data/gencode.v47.sorted.gtf data/$*/unassigned_reads/intersecting.igv.snapshot.batch.txt
+	
 
 
 
