@@ -5,6 +5,9 @@ fasta = data/GRCh38.dna.primary_assembly.fa
 ATrichThreshold = 70
 AT = 60
 ends_dist = 1000
+closeEndThreshold = 100
+extensionCountThreshold = 100
+newGeneCountThreshold = 100
 
 references = 10x gencode ncbi lnc
 first =  $(firstword $(references))
@@ -15,6 +18,11 @@ order = 10x 10x.gencode 10x.gencode.ncbi 10x.gencode.ncbi.lnc
 
 order_without_first = $(wordlist 2, $(words $(order)), $(order))
 order_last = $(lastword $(order))
+
+debug:
+	echo $(order)
+	echo $(first)
+	echo $(order_last)
 
 .SECONDARY:
 
@@ -34,8 +42,9 @@ bash scripts/bash/take_unassigned.sh $$< $$@ $(barcode) $(umi)))
 # Generating gene location bed file from gtf
 %.gene_ranges_sorted.bed: %.gtf
 	awk 'BEGIN {FS = "\t"; OFS = FS} { \
+		if ($$3 == "gene") { \
 		if ($$0 ~ /transcript_id/) {print $$0} \
-		else {print $$0" transcript_id \"\""} }' $< | \
+		else {print $$0" transcript_id \"\""} } }' $< | \
 	gtf2bed | \
 	sort -k1,1 -k2,2n > $@
 	
@@ -148,17 +157,22 @@ bash scripts/solo/starsolo_from_bam.sh $$< data/index_$(word $(words $(subst ., 
 
 # Split clusters into close to 3' ends and not
 data/%/unassigned_reads/final.intergenic.clusters_near_genes.txt: data/%/unassigned_reads/$(order_last).distances.clusters.good.fine.tsv
+	awk -F'\t' '{if((-1 * $$18) < $(closeEndThreshold) && $$11 != ".") {print $$0}}' $< > $@
 
 data/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt: data/%/unassigned_reads/$(order_last).distances.clusters.good.fine.tsv
+	awk -F'\t' '{if((-1 * $$18) >= $(closeEndThreshold)) {print $$0}}' $< > $@
 
 # Make gene extension list
-data/%/final.extension_candidates.csv: data/%/unassigned_reads/final.intergenic.clusters_near_genes.txt
+data/%/unassigned_reads/final.extension_candidates.csv: data/%/unassigned_reads/final.intergenic.clusters_near_genes.txt
+	awk 'BEGIN {FS = "\t"; OFS = FS;} {if ($$7 >= $(extensionCountThreshold)) {print $$1, $$2, $$3, $$6, $$11}}' $< > $@
 
 # Make new intergenic gene list:
-data/%/final.new_gene_list.csv: data/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt
+data/%/unassigned_reads/final.new_gene_list.csv: data/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt
+	awk 'BEGIN {FS = "\t"; OFS = FS;} {if ($$7 >= $(newGeneCountThreshold)) {print $$1, $$2, $$3, $$6}}' $< > $@
 
 # Assemble final gtf
-%final.gtf: %$(last_order).modified.gtf %final.extension_candidates.csv %final.new_gene_list.csv
+%/final.gtf: %/$(order_last).modified.gtf %/final.extension_candidates.csv %/final.new_gene_list.csv
+	Rscript scripts/R/final_gtf.R $^ $@
 
 # Make final genome index
 data/%/index_final/: data/%/unassigned_reads/final.gtf 
