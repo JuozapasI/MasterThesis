@@ -7,7 +7,7 @@ AT = 60
 ends_dist = 1000
 closeEndThreshold = 100
 extensionCountThreshold = 100
-newGeneCountThreshold = 100
+newGeneCountThreshold = 1000
 
 references = 10x gencode ncbi lnc
 first =  $(firstword $(references))
@@ -26,7 +26,9 @@ debug:
 
 .SECONDARY:
 
-all: thesis.pdf data/PBMC_10x/unassigned_reads/stats.txt
+all: data/PBMC_10x/solo_output.final/Aligned.sortedByCoord.out.bam \
+data/PBMC_10x/unassigned_reads/igv_snapshots/new_gene_candidates.batch.txt \
+data/PBMC_10x/unassigned_reads/igv_snapshots/extension_candidates.batch.txt
 
 %.pdf: %.tex
 	latexmk -pdf -silent -deps-out=.depend $*
@@ -149,10 +151,12 @@ $(foreach f, $(order_without_first), $(eval \
 data/%/solo_output.$(f)/Aligned.sortedByCoord.out.bam: data/%/unassigned_reads/$(basename $(f)).intergenic.bam; \
 bash scripts/solo/starsolo_from_bam.sh $$< data/index_$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f)))/ data/$$*/solo_output.$(f)/))
 	
-
+# Filter those clusters that came from AT rich regions:
+%.filteredAT.intergenic.clusters.good.fine.bed: %.intergenic.clusters.good.fine.bed %.intergenic.clusters.GCcontent.tsv
+	paste -d ',' $^ | awk -F',' '$$2 > 30 {print $$1}' > $@
 
 #In final part, check if there are any clusters very close to genes 3' ends and extend those genes if there are
-%.distances.clusters.good.fine.tsv: %.intergenic.clusters.good.fine.bed %.modified.gene_ranges_sorted.bed
+%.distances.clusters.good.fine.tsv: %.filteredAT.intergenic.clusters.good.fine.bed %.modified.gene_ranges_sorted.bed
 	bedtools closest -a $< -b $*.modified.gene_ranges_sorted.bed -s -D a -id -fu > $@
 
 # Split clusters into close to 3' ends and not
@@ -178,28 +182,34 @@ data/%/unassigned_reads/final.new_gene_list.csv: data/%/unassigned_reads/final.i
 data/%/index_final/: data/%/unassigned_reads/final.gtf 
 	bash scripts/solo/genome_index.sh $< $(fasta) $@
 
+
 # Run starsolo on final gtf
 data/%/solo_output.final/Aligned.sortedByCoord.out.bam: data/%/solo_output.$(first)/Aligned.sortedByCoord.out.bam \
 data/%/index_final/
-	bash scripts/solo/starsolo_from_bam.sh $^ data/$*/solo_output.final/
+	# Shufle bam
+	samtools collate -u -o tmp_shuffled.bam $< 
+	bash scripts/solo/starsolo_from_bam.sh tmp_shuffled.bam data/$*/index_final/ data/$*/solo_output.final/
+	rm tmp_shuffled.bam
 
-	
-data/%/unassigned_reads/igv.intergenic.snapshot.batch.txt: data/%/unassigned_reads/intergenic.clusters.good.fine.bed \
-data/%/unassigned_reads/intergenic.bam
-	mkdir -p data/$*/unassigned_reads/intergenic_snapshots/ 
+
+# Make igv snapshots script for extension candidates
+data/%/unassigned_reads/igv_snapshots/extension_candidates.batch.txt: data/%/unassigned_reads/final.extension_candidates.csv \
+data/%/solo_output.10x/Aligned.sortedByCoord.out.bam
+	mkdir -p data/$*/unassigned_reads/igv_snapshots/extension_candidates/ 
 	python scripts/python/igv_batch_script_generator.py $^ \
-		  data/$*/unassigned_reads/intergenic_snapshots/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
-		  data/gencode.v47.sorted.gtf data/$*/unassigned_reads/igv.snapshot.batch.txt
+		  data/$*/unassigned_reads/igv_snapshots/extension_candidates/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
+		  data/gencode.v47.sorted.gtf $@
+
+# Make igv snaphots script for new gene candidates
+data/%/unassigned_reads/igv_snapshots/new_gene_candidates.batch.txt: data/%/unassigned_reads/final.new_gene_list.csv \
+data/%/solo_output.10x/Aligned.sortedByCoord.out.bam
+	mkdir -p data/$*/unassigned_reads/igv_snapshots/intergenic_snapshots/ 
+	python scripts/python/igv_batch_script_generator.py $^ \
+		  data/$*/unassigned_reads/igv_snapshots/new_gene_candidates/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
+		  data/gencode.v47.sorted.gtf $@
 		  
-data/%/unassigned_reads/igv.intersecting.snapshot.batch.txt: data/%/unassigned_reads/$(order_last).intersecting.clusters.good.fine.bed \
-data/%/unassigned_reads/$(order_last).intersecting.bam
-	mkdir -p data/$*/unassigned_reads/intersecting_snapshots/ 
-	python scripts/python/igv_batch_script_generator.py $^ \
-		  data/$*/unassigned_reads/intersecting_snapshots/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
-		  data/gencode.v47.sorted.gtf data/$*/unassigned_reads/intersecting.igv.snapshot.batch.txt
-	
-
-
+		  
+		  
 
 # Summary
 data/%/unassigned_reads/stats.txt: data/%/unassigned_reads/unassigned.bam \
