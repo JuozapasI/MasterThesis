@@ -11,5 +11,4 @@ source activate /home/MazutisLab/software/pkg/miniconda3/envs/RefEnh
 export PATH="/home/MazutisLab/software/pkg/miniconda3/envs/RefEnh/bin:$PATH"
 
 cd /tmp/Mazutislab-out/Juozapas/Thesis/
-make data/PBMC_10x/solo_intergenic_gencode/Aligned.sortedByCoord.out.bam
-
+make all
