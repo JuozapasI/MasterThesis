@@ -65,12 +65,15 @@ if(("gene_type" %in% colnames(genes_df)) | ("gene_biotype" %in% colnames(genes_d
             (genes_df[gene, gene_type] == "lincRNA")) {overlappers[gene, "priority"] = 10}
     else {overlappers[gene, "priority"] = 20}
   }
-  # By level:
-  if ("level" %in% colnames(genes_df)) {
+}
+# By level:
+if ("level" %in% colnames(genes_df)) {
+  for(gene in overlappers$gene){
     overlappers[gene, "priority"] = as.integer(overlappers[gene, "priority"]) +
     as.integer(genes_df[gene, "level"])
   }
 }
+
 
 rownames(overlappers) <- 1:nrow(overlappers)
 write.csv(overlappers, output)
