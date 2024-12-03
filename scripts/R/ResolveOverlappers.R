@@ -175,29 +175,32 @@ for(gene in overlappers$gene){
   start_dels <- start_dels[complete.cases(start_dels)]
   end_dels <- as.integer(strsplit(overlappers[gene, "delete_end"], " ")[[1]])
   end_dels <- end_dels[complete.cases(end_dels)]
-  for(j in 1:length(start_dels)){
-        start_del = start_dels[j] - 100 # Need to discuss gap size
-        end_del = end_dels[j] + 100
-        gene_entries <- which(genome_annotation$gene_id == gene)
-        for(gene_entry in gene_entries){
-          if(strand == "+") {
-            if((genome_annotation[gene_entry, "start"] >= start_del) & (genome_annotation[gene_entry, "start"] <= end_del)){
-            genome_annotation[gene_entry, "start"] = end_del + 1
-            }
-            else if((genome_annotation[gene_entry, "start"] <= start_del) & (genome_annotation[gene_entry, "end"] >= start_del)){
+
+  start_del = min(start_dels) - 100
+  end_del = max(end_dels) + 100
+
+  gene_entries <- which(genome_annotation$gene_id == gene)
+
+  for(gene_entry in gene_entries){
+    if(strand == "+") {
+      if((genome_annotation[gene_entry, "start"] >= start_del) & (genome_annotation[gene_entry, "start"] <= end_del)){
+      genome_annotation[gene_entry, "start"] = end_del + 1
+      }
+      else if((genome_annotation[gene_entry, "start"] <= start_del) & (genome_annotation[gene_entry, "end"] >= start_del)){
                 genome_annotation[gene_entry, "start"] = end_del + 1
-            }
-          }
-          if(strand == "-") {
-            if((genome_annotation[gene_entry, "start"] <= start_del) & (genome_annotation[gene_entry, "end"] >= start_del)){
-            genome_annotation[gene_entry, "end"] = start_del - 1
-            }
-            else if((genome_annotation[gene_entry, "start"] >= start_del) & (genome_annotation[gene_entry, "start"] <= end_del)){
-                genome_annotation[gene_entry, "end"] = start_del - 1
-            }
-          }
-        }
+      }
     }
+    if(strand == "-") {
+      if((genome_annotation[gene_entry, "start"] <= start_del) & (genome_annotation[gene_entry, "end"] >= start_del)){
+      genome_annotation[gene_entry, "end"] = start_del - 1
+      }
+      else if((genome_annotation[gene_entry, "start"] >= start_del) & (genome_annotation[gene_entry, "start"] <= end_del)){
+          genome_annotation[gene_entry, "end"] = start_del - 1
+      }
+    }
+  }
+
+ 
 }
 genome_annotation <- genome_annotation[genome_annotation$start <= genome_annotation$end, ]
 genome_annotation <- genome_annotation[order(genome_annotation$seqnames, genome_annotation$start), ]
