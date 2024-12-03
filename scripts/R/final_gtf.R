@@ -13,6 +13,8 @@ extension_candidates <- read.csv(extension_candidates_file, header = FALSE, sep 
 colnames(extension_candidates) <- c("chrom", "start", "end", "strand", "gene_id")
 new_gene_candidates <- read.csv(new_gene_candidates_file, header = FALSE,  sep = "\t")
 colnames(new_gene_candidates) <- c("seqnames", "start", "end", "strand")
+new_gene_candidates$start = new_gene_candidates$start - 100
+new_gene_candidates$end = new_gene_candidates$end + 100
 new_gene_candidates$source <- "bam_reads"
 new_gene_candidates$type <- "gene"
 new_gene_candidates$score <- NA
@@ -26,8 +28,15 @@ new_gene_candidates$gene_name <- new_gene_candidates$gene_id
 for(i in 1:nrow(extension_candidates)){
     gene = extension_candidates[i, "gene_id"]
     entries = which(gtf$gene_id == gene)
-    gene_entry = which(gtf$type[entries] == "gene")
-    exon_entries = which(gtf$type[entries] == "exon")
+
+    gene_entry = "none"
+    for(j in entries) if (gtf[j, "type"] == "gene") {gene_entry = j; break;}
+    if(gene_entry = "none") {print(paste(gene, "doesn't have gene entry")); next;}
+    
+    exon_entries = c()
+    for(j in entries) if(gtf[j, "type"] == exon) exon_entries = c(exon_entries, j)
+    if(length(exon_entries) == 0) {print(paste(gene, "doesn't have exon entry")); next;}
+
     gene_start = gtf[gene_entry, "start"]
     gene_end = gtf[gene_entry, "end"]
 
@@ -36,6 +45,7 @@ for(i in 1:nrow(extension_candidates)){
 
     exon_start <- min(gtf$start[exon_entries])
     exon_end <- max(gtf$start[exon_entries])
+
     for(j in exon_entries){
         if(extend == "start"){
             if(gtf[j, "start"] == exon_start) gtf[j, "start"] <- extension_limit
