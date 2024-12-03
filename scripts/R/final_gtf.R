@@ -34,7 +34,7 @@ for(i in 1:nrow(extension_candidates)){
     if(gene_entry == "none") {print(paste(gene, "doesn't have gene entry")); next;}
     
     exon_entries = c()
-    for(j in entries) if(gtf[j, "type"] == exon) exon_entries = c(exon_entries, j)
+    for(j in entries) if(gtf[j, "type"] == "exon") exon_entries = c(exon_entries, j)
     if(length(exon_entries) == 0) {print(paste(gene, "doesn't have exon entry")); next;}
 
     gene_start = gtf[gene_entry, "start"]
