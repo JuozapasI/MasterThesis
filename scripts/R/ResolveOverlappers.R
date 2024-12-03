@@ -157,6 +157,9 @@ while(1 %in% overlappers$unresolved_overlaps){
 
 }
 
+# Save the list with modification for manual inspection (if needed)
+write.csv(overlappers, sub("\\.gtf$", ".csv", output))
+
 # Now create updated genome annotation
 
 # Delete those that were marked for deletion
