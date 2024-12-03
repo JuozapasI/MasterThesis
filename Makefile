@@ -203,7 +203,7 @@ data/%/solo_output.10x/Aligned.sortedByCoord.out.bam
 # Make igv snaphots script for new gene candidates
 data/%/unassigned_reads/igv_snapshots/new_gene_candidates.batch.txt: data/%/unassigned_reads/final.new_gene_list.csv \
 data/%/solo_output.10x/Aligned.sortedByCoord.out.bam
-	mkdir -p data/$*/unassigned_reads/igv_snapshots/intergenic_snapshots/ 
+	mkdir -p data/$*/unassigned_reads/igv_snapshots/new_gene_candidates/ 
 	python scripts/python/igv_batch_script_generator.py $^ \
 		  data/$*/unassigned_reads/igv_snapshots/new_gene_candidates/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
 		  data/gencode.v47.sorted.gtf $@
