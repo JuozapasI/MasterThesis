@@ -44,7 +44,7 @@ for(i in 1:nrow(extension_candidates)){
     else {extension_limit = extension_candidates[i, "end"] + 100; extend = "end"}
 
     exon_start <- min(gtf$start[exon_entries])
-    exon_end <- max(gtf$start[exon_entries])
+    exon_end <- max(gtf$end[exon_entries])
 
     for(j in exon_entries){
         if(extend == "start"){
