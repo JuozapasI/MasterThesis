@@ -28,7 +28,8 @@ debug:
 
 all: data/PBMC_10x/solo_output.final/Aligned.sortedByCoord.out.bam \
 data/PBMC_10x/unassigned_reads/igv_snapshots/new_gene_candidates.batch.txt \
-data/PBMC_10x/unassigned_reads/igv_snapshots/extension_candidates.batch.txt
+data/PBMC_10x/unassigned_reads/igv_snapshots/extension_candidates.batch.txt \
+data/PBMC_10x/unassigned_reads/igv_snapshots/overlaps.batch.txt
 
 %.pdf: %.tex
 	latexmk -pdf -silent -deps-out=.depend $*
@@ -206,6 +207,14 @@ data/%/solo_output.10x/Aligned.sortedByCoord.out.bam
 	mkdir -p data/$*/unassigned_reads/igv_snapshots/new_gene_candidates/ 
 	python scripts/python/igv_batch_script_generator.py $^ \
 		  data/$*/unassigned_reads/igv_snapshots/new_gene_candidates/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
+		  data/gencode.v47.sorted.gtf $@
+		  
+# Make igv snaphots script for overlaps (first reference)
+data/%/unassigned_reads/igv_snapshots/overlaps.batch.txt: data/%/unassigned_reads/$(first).intersecting.clusters.good.fine.bed \
+data/%/solo_output.10x/Aligned.sortedByCoord.out.bam
+	mkdir -p data/$*/unassigned_reads/igv_snapshots/overlaps/ 
+	python scripts/python/igv_batch_script_generator.py $^ \
+		  data/$*/unassigned_reads/igv_snapshots/overlaps/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
 		  data/gencode.v47.sorted.gtf $@
 		  
 		  
