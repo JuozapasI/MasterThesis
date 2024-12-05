@@ -26,10 +26,7 @@ debug:
 
 .SECONDARY:
 
-all: data/PBMC_10x/solo_output.final/Aligned.sortedByCoord.out.bam \
-data/PBMC_10x/unassigned_reads/igv_snapshots/new_gene_candidates.batch.txt \
-data/PBMC_10x/unassigned_reads/igv_snapshots/extension_candidates.batch.txt \
-data/PBMC_10x/unassigned_reads/igv_snapshots/overlaps.batch.txt
+all: data/PBMC_10x/unassigned_reads/Summary.txt
 
 %.pdf: %.tex
 	latexmk -pdf -silent -deps-out=.depend $*
@@ -67,9 +64,10 @@ data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.be
 bedtools intersect -s -u -wa -abam $$< -b data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed > $$@))
 
 # Separate cases for the first reference, as we additionally filter out AT rich sequences
-data/%/unassigned_reads/$(first).intergenic.bam: data/%/unassigned_reads/$(first).unassigned.bam data/$(first).gene_ranges_sorted.bed
+data/%/unassigned_reads/$(first).intergenic.bam data/%/unassigned_reads/AT_seq.bam: data/%/unassigned_reads/$(first).unassigned.bam data/$(first).gene_ranges_sorted.bed
 	bedtools intersect -s -v -abam $< -b data/$(first).gene_ranges_sorted.bed > tmp_bam
-	( samtools view -H tmp_bam ; samtools view tmp_bam | grep -E -v "A{60}|T{$(AT)}" ; ) | samtools view -h -b - > $@
+	( samtools view -H tmp_bam ; samtools view tmp_bam | grep -E -v "A{60}|T{$(AT)}" ; ) | \
+	samtools view -h -b - > data/$*/unassigned_reads/$(first).intergenic.bam
 	bedtools intersect -s -v -abam $< -b data/$(first).gene_ranges_sorted.bed > tmp_bam
 	( samtools view -H tmp_bam ; samtools view tmp_bam | grep -E "A{60}|T{$(AT)}" ; ) | \
 	samtools view -h -b - > data/$*/unassigned_reads/AT_seq.bam
@@ -221,34 +219,23 @@ data/%/solo_output.10x/Aligned.sortedByCoord.out.bam
 		  
 
 # Summary
-data/%/unassigned_reads/stats.txt: data/%/unassigned_reads/unassigned.bam \
-					data/%/unassigned_reads/intersecting.bam \
-					data/%/unassigned_reads/intergenic.bam \
-					data/%/unassigned_reads/intergenic.clusters.thrash.bed \
-					data/%/unassigned_reads/intergenic.clusters.good.bed \
-					data/%/unassigned_reads/intergenic.clusters.GCcontent.tsv
-	echo -n "Total unassigned (and unique) reads: " > $@
-	samtools view data/$*/unassigned_reads/unassigned.bam | wc -l >> $@
-	echo "Of them:" >> $@
-	echo -n "\tintersecting with genes: " >> $@
-	samtools view data/$*/unassigned_reads/intersecting.bam | wc -l >> $@
-	echo -n "\tintergenic: " >> $@
-	samtools view data/$*/unassigned_reads/intergenic.bam | wc -l >> $@
-	echo "Out of the intergenic: " >> $@
-	echo -n "\tAre in clusters of size less than or equal to ${clusterThreshold}: " >> $@
-	awk -F'\t' '{sum += $$5} END {print sum}' data/$*/unassigned_reads/intergenic.clusters.thrash.bed >> $@
-	echo -n "\tAre in clusters of size greater than ${clusterThreshold}: " >> $@
-	awk -F'\t' '{sum += $$5} END {print sum}' data/$*/unassigned_reads/intergenic.clusters.good.bed >> $@
-	echo "From the cluster larger than ${clusterThreshold}:" >> $@
-	echo -n "\tComes from the AT-rich regions (> ${ATrichThreshold}%): " >> $@
-	awk -F'\t' 'BEGIN {sum = 0} FNR==NR {percentage[NR]=$$1; next} {if (percentage[FNR] < 100 - ${ATrichThreshold}) sum += $$5} END {print sum}' \
-		data/$*/unassigned_reads/intergenic.clusters.GCcontent.tsv \
-		data/$*/unassigned_reads/intergenic.clusters.good.bed >> $@
-	echo -n "\tComes from non-AT-rich regions: " >> $@
-	awk -F'\t' 'BEGIN {sum = 0} FNR==NR {percentage[NR]=$$1; next} {if (percentage[FNR] >= 100 - ${ATrichThreshold}) sum += $$5} END {print sum}' \
-		data/$*/unassigned_reads/intergenic.clusters.GCcontent.tsv \
-		data/$*/unassigned_reads/intergenic.clusters.good.bed >> $@
-	echo "\tMapped to ncbi reference" >> $@
+data/%/unassigned_reads/Summary.txt: data/%/solo_output.10x/Aligned.sortedByCoord.out.bam \
+data/%/unassigned_reads/10x.unassigned.bam \
+data/%/unassigned_reads/10x.intersecting.bam \
+data/%/unassigned_reads/10x.intergenic.bam \
+data/%/unassigned_reads/AT_seq.bam \
+data/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.clusters.good.bed \
+data/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.clusters.thrash.bed \
+data/%/unassigned_reads/10x.gencode.unassigned.bam \
+data/%/unassigned_reads/10x.gencode.intersecting.bam \
+data/%/unassigned_reads/10x.gencode.intergenic.bam \
+data/%/unassigned_reads/10x.gencode.ncbi.unassigned.bam \
+data/%/unassigned_reads/10x.gencode.ncbi.intersecting.bam \
+data/%/unassigned_reads/10x.gencode.ncbi.intergenic.bam \
+data/%/unassigned_reads/10x.gencode.ncbi.lnc.unassigned.bam \
+data/%/unassigned_reads/10x.gencode.ncbi.lnc.intersecting.bam \
+data/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.bam 
+	bash scripts/bash/statistics.sh $^ > $@
 
 		
 clean:
