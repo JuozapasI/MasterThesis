@@ -4,9 +4,12 @@ bam=$1
 index=$2
 outdir=$3
 
+# Shuffle bam first for more efficient mapping
+samtools collate -u -o ${bam}.shuffled.bam $1
+
 STAR \
     --genomeDir $index \
-    --readFilesIn  $bam --readFilesType SAM SE \
+    --readFilesIn  ${bam}.shuffled.bam --readFilesType SAM SE \
     --soloInputSAMattrBarcodeSeq CR UR \
     --soloCBwhitelist /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/3M-february-2018.txt \
     --runThreadN 14 \
@@ -23,4 +26,6 @@ STAR \
     --soloCBmatchWLtype 1MM \
     --soloUMIdedup Exact \
     --soloUMIlen 12
+    
+rm ${bam}.shuffled.bam
     
