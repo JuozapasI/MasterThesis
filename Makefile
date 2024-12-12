@@ -6,8 +6,13 @@ ATrichThreshold = 70
 AT = 60
 ends_dist = 1000
 closeEndThreshold = 100
-extensionCountThreshold = 100
-newGeneCountThreshold = 1000
+cpmThreshold = 5
+
+seq_depth = 200000000
+
+extensionCountThreshold = $(shell echo $$(($(cpmThreshold) * $(seq_depth) / 1000000 / 5)))
+newGeneCountThreshold = $(shell echo $$(($(cpmThreshold) * $(seq_depth) / 1000000)))
+
 
 references = 10x gencode ncbi lnc
 first =  $(firstword $(references))
@@ -26,7 +31,8 @@ debug:
 
 .SECONDARY:
 
-all: data/PBMC_10x/unassigned_reads/Summary.txt
+all: data/PBMC_10x/unassigned_reads/Summary.txt data/brain/unassigned_reads/Summary.txt \
+data/brain/unassigned_reads/final.gtf data/brain/solo_output.final/Aligned.sortedByCoord.out.bam
 
 %.pdf: %.tex
 	latexmk -pdf -silent -deps-out=.depend $*
@@ -47,7 +53,7 @@ bash scripts/bash/take_unassigned.sh $$< $$@ $(barcode) $(umi)))
 		else {print $$0" transcript_id \"\""} } }' $< | \
 	gtf2bed | \
 	sort -k1,1 -k2,2n > $@
-	
+
 data/%/unassigned_reads:
 	mkdir -p $@
 
@@ -185,10 +191,7 @@ data/%/index_final/: data/%/unassigned_reads/final.gtf
 # Run starsolo on final gtf
 data/%/solo_output.final/Aligned.sortedByCoord.out.bam: data/%/solo_output.$(first)/Aligned.sortedByCoord.out.bam \
 data/%/index_final/
-	# Shufle bam
-	samtools collate -u -o tmp_shuffled.bam $< 
-	bash scripts/solo/starsolo_from_bam.sh tmp_shuffled.bam data/$*/index_final/ data/$*/solo_output.final/
-	rm tmp_shuffled.bam
+	bash scripts/solo/starsolo_from_bam.sh $^ data/$*/solo_output.final/
 
 
 # Make igv snapshots script for extension candidates
@@ -236,6 +239,17 @@ data/%/unassigned_reads/10x.gencode.ncbi.lnc.unassigned.bam \
 data/%/unassigned_reads/10x.gencode.ncbi.lnc.intersecting.bam \
 data/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.bam 
 	bash scripts/bash/statistics.sh $^ > $@
+	
+
+# Captured gene list:
+data/%/unassigned_reads/captured_genes_$(first).csv: data/%/solo_output.$(first)/Aligned.sortedByCoord.out.bam
+	samtools view $< | grep -o -P "GN:Z:[^ \t]*" | cut -d':' -f3 | sort | uniq > $@
+	
+data/%/unassigned_reads/captured_genes_final.csv: data/%/solo_output.final/Aligned.sortedByCoord.out.bam
+	samtools view $< | grep -o -P "GN:Z:[^ \t]*" | cut -d':' -f3 | sort | uniq > $@
+
+
+
 
 		
 clean:
