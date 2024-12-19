@@ -12,16 +12,15 @@ gtf <- as.data.frame(gtf)
 extension_candidates <- read.csv(extension_candidates_file, header = FALSE, sep = "\t")
 colnames(extension_candidates) <- c("chrom", "start", "end", "strand", "gene_id")
 new_gene_candidates <- read.csv(new_gene_candidates_file, header = FALSE,  sep = "\t")
-colnames(new_gene_candidates) <- c("seqnames", "start", "end", "strand")
+colnames(new_gene_candidates) <- c("seqnames", "start", "end", "gene_name", "score", "strand")
 new_gene_candidates$start = new_gene_candidates$start - 100
 new_gene_candidates$end = new_gene_candidates$end + 100
 new_gene_candidates$source <- "bam_reads"
 new_gene_candidates$type <- "gene"
-new_gene_candidates$score <- NA
 new_gene_candidates$phase <- NA
 new_gene_candidates$width <- new_gene_candidates$end - new_gene_candidates$start + 1
-new_gene_candidates$gene_id <- paste("INTERGENIC", 1:nrow(new_gene_candidates), sep = "")
-new_gene_candidates$gene_name <- new_gene_candidates$gene_id
+new_gene_candidates$gene_id <- new_gene_candidates$gene_name
+
 
 
 # Extend genes in extension list:
