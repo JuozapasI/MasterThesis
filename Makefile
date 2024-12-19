@@ -8,12 +8,6 @@ ends_dist = 1000
 closeEndThreshold = 100
 cpmThreshold = 5
 
-seq_depth = 200000000
-
-extensionCountThreshold = $(shell echo $$(($(cpmThreshold) * $(seq_depth) / 1000000 / 5)))
-newGeneCountThreshold = $(shell echo $$(($(cpmThreshold) * $(seq_depth) / 1000000)))
-
-
 references = 10x gencode ncbi lnc
 first =  $(firstword $(references))
 last = $(lastword $(references))
@@ -24,15 +18,41 @@ order = 10x 10x.gencode 10x.gencode.ncbi 10x.gencode.ncbi.lnc
 order_without_first = $(wordlist 2, $(words $(order)), $(order))
 order_last = $(lastword $(order))
 
+datasets = PBMC_10x brain PBMC_10x_2
+
+#$(foreach dataset, $(datasets), $(eval $(dataset)_seq_depth = \
+#$(shell samtools flagstat --threads 8 data/$(dataset)/solo_output.$(first)/Aligned.sortedByCoord.out.bam | head -2 | tail -1 | cut -d ' ' -f1)))
+#
+#$(foreach dataset, $(datasets), $(eval $(dataset)_extensionCountThreshold = \
+#$(shell echo $$(($(cpmThreshold) * $($(dataset)_seq_depth) / 1000000 / 5)))))
+#
+#$(foreach dataset, $(datasets), $(eval $(dataset)_newGeneCountThreshold = \
+#$(shell echo $$(($(cpmThreshold) * $($(dataset)_seq_depth) / 1000000)))))
+
+PBMC_10x_seq_depth = 182330834
+PBMC_10x_2_seq_depth = 496387931
+brain_seq_depth = 206360627
+
+PBMC_10x_extensionCountThreshold = 182
+PBMC_10x_2_extensionCountThreshold = 496
+brain_extensionCountThreshold = 206
+
+PBMC_10x_newGeneCountThreshold = 911
+PBMC_10x_2_newGeneCountThreshold = 2481
+brain_newGeneCountThreshold = 1031
+
 debug:
-	echo $(order)
-	echo $(first)
-	echo $(order_last)
+	echo $(PBMC_10x_extensionCountThreshold) $(PBMC_10x_newGeneCountThreshold)
 
 .SECONDARY:
 
-all: data/PBMC_10x/unassigned_reads/Summary.txt data/brain/unassigned_reads/Summary.txt \
-data/brain/unassigned_reads/final.gtf data/brain/solo_output.final/Aligned.sortedByCoord.out.bam
+#.PHONY: datasets
+
+all: data/PBMC_10x/unassigned_reads/Summary.txt data/PBMC_10x/solo_output.final/Aligned.sortedByCoord.out.bam \
+data/PBMC_10x_2/unassigned_reads/Summary.txt data/PBMC_10x_2/solo_output.final/Aligned.sortedByCoord.out.bam \
+data/brain/unassigned_reads/Summary.txt data/brain/solo_output.final/Aligned.sortedByCoord.out.bam
+
+%.dataset: data/%/unassigned_reads/Summary.txt data/%/solo_output.final/Aligned.sortedByCoord.out.bam
 
 %.pdf: %.tex
 	latexmk -pdf -silent -deps-out=.depend $*
@@ -71,13 +91,13 @@ bedtools intersect -s -u -wa -abam $$< -b data/$(word $(words $(subst ., ,$(f)))
 
 # Separate cases for the first reference, as we additionally filter out AT rich sequences
 data/%/unassigned_reads/$(first).intergenic.bam data/%/unassigned_reads/AT_seq.bam: data/%/unassigned_reads/$(first).unassigned.bam data/$(first).gene_ranges_sorted.bed
-	bedtools intersect -s -v -abam $< -b data/$(first).gene_ranges_sorted.bed > tmp_bam
-	( samtools view -H tmp_bam ; samtools view tmp_bam | grep -E -v "A{60}|T{$(AT)}" ; ) | \
+	bedtools intersect -s -v -abam $< -b data/$(first).gene_ranges_sorted.bed > tmp_bam_$*
+	( samtools view -H tmp_bam_$* ; samtools view tmp_bam_$* | grep -E -v "A{60}|T{$(AT)}" ; ) | \
 	samtools view -h -b - > data/$*/unassigned_reads/$(first).intergenic.bam
-	bedtools intersect -s -v -abam $< -b data/$(first).gene_ranges_sorted.bed > tmp_bam
-	( samtools view -H tmp_bam ; samtools view tmp_bam | grep -E "A{60}|T{$(AT)}" ; ) | \
+	bedtools intersect -s -v -abam $< -b data/$(first).gene_ranges_sorted.bed > tmp_bam_$*
+	( samtools view -H tmp_bam_$* ; samtools view tmp_bam_$* | grep -E "A{60}|T{$(AT)}" ; ) | \
 	samtools view -h -b - > data/$*/unassigned_reads/AT_seq.bam
-	rm tmp_bam
+	rm tmp_bam_$*
 
 
 %.clusters.bed: %.bam
@@ -153,7 +173,8 @@ data/%/unassigned_reads/$(order_last).intergenic.clusters.GCcontent.tsv: data/%/
 	awk '{l=length($0); gc=gsub(/[GCgc]/,""); print (gc/l)*100}' $< > $@
 	
 $(foreach f, $(order_without_first), $(eval \
-data/%/solo_output.$(f)/Aligned.sortedByCoord.out.bam: data/%/unassigned_reads/$(basename $(f)).intergenic.bam; \
+data/%/solo_output.$(f)/Aligned.sortedByCoord.out.bam: data/%/unassigned_reads/$(basename $(f)).intergenic.bam \
+data/index_$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f)))/; \
 bash scripts/solo/starsolo_from_bam.sh $$< data/index_$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f)))/ data/$$*/solo_output.$(f)/))
 	
 # Filter those clusters that came from AT rich regions:
@@ -173,19 +194,22 @@ data/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt: data/%/una
 
 # Make gene extension list
 data/%/unassigned_reads/final.extension_candidates.csv: data/%/unassigned_reads/final.intergenic.clusters_near_genes.txt
-	awk 'BEGIN {FS = "\t"; OFS = FS;} {if ($$7 >= $(extensionCountThreshold)) {print $$1, $$2, $$3, $$6, $$11}}' $< > $@
+	awk 'BEGIN {FS = "\t"; OFS = FS;} {if ($$7 >= $($*_extensionCountThreshold)) {print $$1, $$2, $$3, $$6, $$11}}' $< > $@
 
 # Make new intergenic gene list:
-data/%/unassigned_reads/final.new_gene_list.csv: data/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt
-	awk 'BEGIN {FS = "\t"; OFS = FS;} {if ($$7 >= $(newGeneCountThreshold)) {print $$1, $$2, $$3, $$6}}' $< > $@
+data/%/unassigned_reads/final.new_gene_list.bed: data/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt
+	awk -v depth="$($*_seq_depth)" -v threshold="$($*_newGeneCountThreshold)" 'BEGIN {FS = "\t"; OFS = FS;} \
+	{if ($$7 >= threshold) {i += 1; print $$1, $$2, $$3, "INTERGENIC" i, $$7 * 1000000 / depth, $$6}}' $< > $@
 
 # Assemble final gtf
-%/final.gtf: %/$(order_last).modified.gtf %/final.extension_candidates.csv %/final.new_gene_list.csv
+%/final.gtf: %/$(order_last).modified.gtf %/final.extension_candidates.csv %/final.new_gene_list.bed
 	Rscript scripts/R/final_gtf.R $^ $@
 
 # Make final genome index
 data/%/index_final/: data/%/unassigned_reads/final.gtf 
 	bash scripts/solo/genome_index.sh $< $(fasta) $@
+	
+$(foreach reference, $(references), $(eval data/index_$(reference)/: data/$(reference).gtf ; bash scripts/solo/genome_index.sh $$< $(fasta) $$@ ))
 
 
 # Run starsolo on final gtf
@@ -239,7 +263,10 @@ data/%/unassigned_reads/10x.gencode.ncbi.lnc.unassigned.bam \
 data/%/unassigned_reads/10x.gencode.ncbi.lnc.intersecting.bam \
 data/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.bam 
 	bash scripts/bash/statistics.sh $^ > $@
-	
+
+# Computing conservation scores for intergenic genes
+%/conservation_scores.csv: %/final.new_gene_list.bed data/hg38.phastCons100way.bed
+	bedtools map -a $< -b data/hg38.phastCons100way.bed -c 5 -o mean > $@
 
 # Captured gene list:
 data/%/unassigned_reads/captured_genes_$(first).csv: data/%/solo_output.$(first)/Aligned.sortedByCoord.out.bam
