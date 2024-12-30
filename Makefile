@@ -52,7 +52,7 @@ all: data/PBMC_10x/unassigned_reads/Summary.txt data/PBMC_10x/solo_output.final/
 data/PBMC_10x_2/unassigned_reads/Summary.txt data/PBMC_10x_2/solo_output.final/Aligned.sortedByCoord.out.bam \
 data/brain/unassigned_reads/Summary.txt data/brain/solo_output.final/Aligned.sortedByCoord.out.bam
 
-%.dataset: data/%/unassigned_reads/Summary.txt data/%/solo_output.final/Aligned.sortedByCoord.out.bam
+%.dataset: data/datasets/%/unassigned_reads/Summary.txt data/datasets/%/solo_output.final/Aligned.sortedByCoord.out.bam
 
 %.pdf: %.tex
 	latexmk -pdf -silent -deps-out=.depend $*
@@ -62,7 +62,7 @@ data/brain/unassigned_reads/Summary.txt data/brain/solo_output.final/Aligned.sor
 
 # Extracting unassigned reads
 $(foreach f, $(order), $(eval \
-data/%/unassigned_reads/$(f).unassigned.bam: data/%/solo_output.$(f)/Aligned.sortedByCoord.out.bam | data/%/unassigned_reads; \
+data/datasets/%/unassigned_reads/$(f).unassigned.bam: data/datasets/%/solo_output.$(f)/Aligned.sortedByCoord.out.bam | data/datasets/%/unassigned_reads; \
 bash scripts/bash/take_unassigned.sh $$< $$@ $(barcode) $(umi)))
 
 # Generating gene location bed file from gtf
@@ -74,29 +74,29 @@ bash scripts/bash/take_unassigned.sh $$< $$@ $(barcode) $(umi)))
 	gtf2bed | \
 	sort -k1,1 -k2,2n > $@
 
-data/%/unassigned_reads:
+data/datasets/%/unassigned_reads:
 	mkdir -p $@
 
 # Extracting intergenic reads
 $(foreach f, $(order_without_first), $(eval \
-data/%/unassigned_reads/$(f).intergenic.bam: data/%/unassigned_reads/$(f).unassigned.bam \
-data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed; \
-bedtools intersect -s -v -abam $$< -b data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed > $$@))
+data/datasets/%/unassigned_reads/$(f).intergenic.bam: data/datasets/%/unassigned_reads/$(f).unassigned.bam \
+data/genome/references/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed; \
+bedtools intersect -s -v -abam $$< -b data/genome/references/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed > $$@))
 	
 # Extracting intersecting reads
 $(foreach f, $(order), $(eval \
-data/%/unassigned_reads/$(f).intersecting.bam: data/%/unassigned_reads/$(f).unassigned.bam \
-data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed; \
-bedtools intersect -s -u -wa -abam $$< -b data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed > $$@))
+data/datasets/%/unassigned_reads/$(f).intersecting.bam: data/datasets/%/unassigned_reads/$(f).unassigned.bam \
+data/genome/references/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed; \
+bedtools intersect -s -u -wa -abam $$< -b data/genome/references/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed > $$@))
 
 # Separate cases for the first reference, as we additionally filter out AT rich sequences
-data/%/unassigned_reads/$(first).intergenic.bam data/%/unassigned_reads/AT_seq.bam: data/%/unassigned_reads/$(first).unassigned.bam data/$(first).gene_ranges_sorted.bed
-	bedtools intersect -s -v -abam $< -b data/$(first).gene_ranges_sorted.bed > tmp_bam_$*
+data/datasets/%/unassigned_reads/$(first).intergenic.bam data/datasets/%/unassigned_reads/AT_seq.bam: data/datasets/%/unassigned_reads/$(first).unassigned.bam data/genome/references/$(first).gene_ranges_sorted.bed
+	bedtools intersect -s -v -abam $< -b data/genome/references/$(first).gene_ranges_sorted.bed > tmp_bam_$*
 	( samtools view -H tmp_bam_$* ; samtools view tmp_bam_$* | grep -E -v "A{60}|T{$(AT)}" ; ) | \
-	samtools view -h -b - > data/$*/unassigned_reads/$(first).intergenic.bam
-	bedtools intersect -s -v -abam $< -b data/$(first).gene_ranges_sorted.bed > tmp_bam_$*
+	samtools view -h -b - > data/datasets/$*/unassigned_reads/$(first).intergenic.bam
+	bedtools intersect -s -v -abam $< -b data/genome/references/$(first).gene_ranges_sorted.bed > tmp_bam_$*
 	( samtools view -H tmp_bam_$* ; samtools view tmp_bam_$* | grep -E "A{60}|T{$(AT)}" ; ) | \
-	samtools view -h -b - > data/$*/unassigned_reads/AT_seq.bam
+	samtools view -h -b - > data/datasets/$*/unassigned_reads/AT_seq.bam
 	rm tmp_bam_$*
 
 
@@ -113,41 +113,41 @@ data/%/unassigned_reads/$(first).intergenic.bam data/%/unassigned_reads/AT_seq.b
 	awk -F'\t' '{if ($$5 > $(clusterThreshold)) {print $$0}}' $< > $@
 
 $(foreach f, $(order), $(eval \
-data/%/unassigned_reads/$(f).intersecting_genes.bed: data/%/unassigned_reads/$(f).intersecting.clusters.good.fine.bed \
-data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed; \
-bedtools intersect -s -wa -wb -abam $$< -b data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed | \
+data/datasets/%/unassigned_reads/$(f).intersecting_genes.bed: data/datasets/%/unassigned_reads/$(f).intersecting.clusters.good.fine.bed \
+data/genome/references/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed; \
+bedtools intersect -s -wa -wb -abam $$< -b data/genome/references/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed | \
 sort -k1,1 -k2,2n > $$@))
 
 %.intersecting_gene_list.tsv: %.intersecting_genes.bed
 	cut -f 11 $< | sort -u > $@
 	
 $(foreach f, $(order), $(eval \
-data/%/unassigned_reads/$(f).overlappers.csv: data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gtf \
-data/%/unassigned_reads/$(f).intersecting_gene_list.tsv; \
+data/datasets/%/unassigned_reads/$(f).overlappers.csv: data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gtf \
+data/datasets/%/unassigned_reads/$(f).intersecting_gene_list.tsv; \
 Rscript scripts/R/Overlappers.R $$^ $$@))
 
 $(foreach f, $(order), $(eval \
-data/%/unassigned_reads/$(f).overlaps_modified.gtf: data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gtf \
-data/%/unassigned_reads/$(f).overlappers.csv; \
+data/datasets/%/unassigned_reads/$(f).overlaps_modified.gtf: data/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gtf \
+data/datasets/%/unassigned_reads/$(f).overlappers.csv; \
 Rscript scripts/R/ResolveOverlappers.R $$^ $(ends_dist) $$@))
 
 # Assemble modified gtf for the first reference (i.e. with resolved overlaps)
-data/%/unassigned_reads/$(first).modified.gtf: data/%/unassigned_reads/$(first).intersecting_gene_list.tsv \
-data/$(first).gtf data/%/unassigned_reads/$(first).overlaps_modified.gtf
-	( grep -v -f $< data/$(first).gtf; cat data/$*/unassigned_reads/$(first).overlaps_modified.gtf ; ) | \
+data/datasets/%/unassigned_reads/$(first).modified.gtf: data/datasets/%/unassigned_reads/$(first).intersecting_gene_list.tsv \
+data/genome/references/$(first).gtf data/datasets/%/unassigned_reads/$(first).overlaps_modified.gtf
+	( grep -v -f $< data/genome/references/$(first).gtf; cat data/datasets/$*/unassigned_reads/$(first).overlaps_modified.gtf ; ) | \
 	sort -k1,1 -k4,4n > $@
 
 # For the second and on, we need to make sure that appended entries doesn't overlap with previous gtf
 $(foreach f, $(order_without_first), $(eval \
-data/%/unassigned_reads/$(f).new_entries.gtf: data/%/unassigned_reads/$(basename $(f)).modified.gtf \
-data/%/unassigned_reads/$(f).overlaps_modified.gtf; \
+data/datasets/%/unassigned_reads/$(f).new_entries.gtf: data/datasets/%/unassigned_reads/$(basename $(f)).modified.gtf \
+data/datasets/%/unassigned_reads/$(f).overlaps_modified.gtf; \
 Rscript scripts/R/ResolveGtfsOverlaps.R $$^ $$@))
 
 # And then we can merge gtfs
 $(foreach f, $(order_without_first), $(eval \
-data/%/unassigned_reads/$(f).modified.gtf: data/%/unassigned_reads/$(basename $(f)).modified.gtf \
-data/%/unassigned_reads/$(f).new_entries.gtf; \
-( cat $$< ; cat data/$$*/unassigned_reads/$(f).new_entries.gtf ; ) | \
+data/datasets/%/unassigned_reads/$(f).modified.gtf: data/datasets/%/unassigned_reads/$(basename $(f)).modified.gtf \
+data/datasets/%/unassigned_reads/$(f).new_entries.gtf; \
+( cat $$< ; cat data/datasets/$$*/unassigned_reads/$(f).new_entries.gtf ; ) | \
 	sort -k1,1 -k4,4n > $$@))
 	
 %.forward.bam: %.bam
@@ -166,16 +166,16 @@ data/%/unassigned_reads/$(f).new_entries.gtf; \
 	python scripts/python/intergenic_regions_tuning.py $^ $@
 	
 
-data/%/unassigned_reads/$(order_last).intergenic.clusters.sequences.tsv: data/%/unassigned_reads/$(order_last).intergenic.clusters.good.fine.bed
+data/datasets/%/unassigned_reads/$(order_last).intergenic.clusters.sequences.tsv: data/datasets/%/unassigned_reads/$(order_last).intergenic.clusters.good.fine.bed
 	bedtools getfasta -fi $(fasta) -nameOnly -tab -bed $< | cut -f2 > $@
 	
-data/%/unassigned_reads/$(order_last).intergenic.clusters.GCcontent.tsv: data/%/unassigned_reads/$(order_last).intergenic.clusters.sequences.tsv 
+data/datasets/%/unassigned_reads/$(order_last).intergenic.clusters.GCcontent.tsv: data/datasets/%/unassigned_reads/$(order_last).intergenic.clusters.sequences.tsv 
 	awk '{l=length($0); gc=gsub(/[GCgc]/,""); print (gc/l)*100}' $< > $@
 	
 $(foreach f, $(order_without_first), $(eval \
-data/%/solo_output.$(f)/Aligned.sortedByCoord.out.bam: data/%/unassigned_reads/$(basename $(f)).intergenic.bam \
-data/index_$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f)))/; \
-bash scripts/solo/starsolo_from_bam.sh $$< data/index_$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f)))/ data/$$*/solo_output.$(f)/))
+data/datasets/%/solo_output.$(f)/Aligned.sortedByCoord.out.bam: data/datasets/%/unassigned_reads/$(basename $(f)).intergenic.bam \
+data/genome/indices/index_$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f)))/; \
+bash scripts/solo/starsolo_from_bam.sh $$< data/genome/indices/index_$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f)))/ data/datasets/$$*/solo_output.$(f)/))
 	
 # Filter those clusters that came from AT rich regions:
 %.filteredAT.intergenic.clusters.good.fine.bed: %.intergenic.clusters.good.fine.bed %.intergenic.clusters.GCcontent.tsv
@@ -186,18 +186,18 @@ bash scripts/solo/starsolo_from_bam.sh $$< data/index_$(word $(words $(subst ., 
 	bedtools closest -a $< -b $*.modified.gene_ranges_sorted.bed -s -D a -id -fu > $@
 
 # Split clusters into close to 3' ends and not
-data/%/unassigned_reads/final.intergenic.clusters_near_genes.txt: data/%/unassigned_reads/$(order_last).distances.clusters.good.fine.tsv
+data/datasets/%/unassigned_reads/final.intergenic.clusters_near_genes.txt: data/datasets/%/unassigned_reads/$(order_last).distances.clusters.good.fine.tsv
 	awk -F'\t' '{if((-1 * $$18) < $(closeEndThreshold) && $$11 != ".") {print $$0}}' $< > $@
 
-data/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt: data/%/unassigned_reads/$(order_last).distances.clusters.good.fine.tsv
+data/datasets/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt: data/datasets/%/unassigned_reads/$(order_last).distances.clusters.good.fine.tsv
 	awk -F'\t' '{if((-1 * $$18) >= $(closeEndThreshold)) {print $$0}}' $< > $@
 
 # Make gene extension list
-data/%/unassigned_reads/final.extension_candidates.csv: data/%/unassigned_reads/final.intergenic.clusters_near_genes.txt
+data/datasets/%/unassigned_reads/final.extension_candidates.csv: data/datasets/%/unassigned_reads/final.intergenic.clusters_near_genes.txt
 	awk 'BEGIN {FS = "\t"; OFS = FS;} {if ($$7 >= $($*_extensionCountThreshold)) {print $$1, $$2, $$3, $$6, $$11}}' $< > $@
 
 # Make new intergenic gene list:
-data/%/unassigned_reads/final.new_gene_list.bed: data/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt
+data/datasets/%/unassigned_reads/final.new_gene_list.bed: data/datasets/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt
 	awk -v depth="$($*_seq_depth)" -v threshold="$($*_newGeneCountThreshold)" 'BEGIN {FS = "\t"; OFS = FS;} \
 	{if ($$7 >= threshold) {i += 1; print $$1, $$2, $$3, "INTERGENIC" i, $$7 * 1000000 / depth, $$6}}' $< > $@
 
@@ -206,62 +206,62 @@ data/%/unassigned_reads/final.new_gene_list.bed: data/%/unassigned_reads/final.i
 	Rscript scripts/R/final_gtf.R $^ $@
 
 # Make final genome index
-data/%/index_final/: data/%/unassigned_reads/final.gtf 
+data/datasets/%/index_final/: data/datasets/%/unassigned_reads/final.gtf 
 	bash scripts/solo/genome_index.sh $< $(fasta) $@
 	
-$(foreach reference, $(references), $(eval data/index_$(reference)/: data/$(reference).gtf ; bash scripts/solo/genome_index.sh $$< $(fasta) $$@ ))
+$(foreach reference, $(references), $(eval data/genome/indices/index_$(reference)/: data/genome/references/$(reference).gtf ; bash scripts/solo/genome_index.sh $$< $(fasta) $$@ ))
 
 
 # Run starsolo on final gtf
-data/%/solo_output.final/Aligned.sortedByCoord.out.bam: data/%/solo_output.$(first)/Aligned.sortedByCoord.out.bam \
-data/%/index_final/
-	bash scripts/solo/starsolo_from_bam.sh $^ data/$*/solo_output.final/
+data/datasets/%/solo_output.final/Aligned.sortedByCoord.out.bam: data/datasets/%/solo_output.$(first)/Aligned.sortedByCoord.out.bam \
+data/datasets/%/index_final/
+	bash scripts/solo/starsolo_from_bam.sh $^ data/datasets/$*/solo_output.final/
 
 
 # Make igv snapshots script for extension candidates
-data/%/unassigned_reads/igv_snapshots/extension_candidates.batch.txt: data/%/unassigned_reads/final.extension_candidates.csv \
-data/%/solo_output.10x/Aligned.sortedByCoord.out.bam
-	mkdir -p data/$*/unassigned_reads/igv_snapshots/extension_candidates/ 
+data/datasets/%/unassigned_reads/igv_snapshots/extension_candidates.batch.txt: data/datasets/%/unassigned_reads/final.extension_candidates.csv \
+data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam
+	mkdir -p data/datasets/$*/unassigned_reads/igv_snapshots/extension_candidates/ 
 	python scripts/python/igv_batch_script_generator.py $^ \
-		  data/$*/unassigned_reads/igv_snapshots/extension_candidates/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
+		  data/datasets/$*/unassigned_reads/igv_snapshots/extension_candidates/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
 		  data/gencode.v47.sorted.gtf $@
 
 # Make igv snaphots script for new gene candidates
-data/%/unassigned_reads/igv_snapshots/new_gene_candidates.batch.txt: data/%/unassigned_reads/final.new_gene_list.csv \
-data/%/solo_output.10x/Aligned.sortedByCoord.out.bam
-	mkdir -p data/$*/unassigned_reads/igv_snapshots/new_gene_candidates/ 
+data/datasets/%/unassigned_reads/igv_snapshots/new_gene_candidates.batch.txt: data/datasets/%/unassigned_reads/final.new_gene_list.csv \
+data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam
+	mkdir -p data/datasets/$*/unassigned_reads/igv_snapshots/new_gene_candidates/ 
 	python scripts/python/igv_batch_script_generator.py $^ \
-		  data/$*/unassigned_reads/igv_snapshots/new_gene_candidates/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
+		  data/datasets/$*/unassigned_reads/igv_snapshots/new_gene_candidates/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
 		  data/gencode.v47.sorted.gtf $@
 		  
 # Make igv snaphots script for overlaps (first reference)
-data/%/unassigned_reads/igv_snapshots/overlaps.batch.txt: data/%/unassigned_reads/$(first).intersecting.clusters.good.fine.bed \
-data/%/solo_output.10x/Aligned.sortedByCoord.out.bam
-	mkdir -p data/$*/unassigned_reads/igv_snapshots/overlaps/ 
+data/datasets/%/unassigned_reads/igv_snapshots/overlaps.batch.txt: data/datasets/%/unassigned_reads/$(first).intersecting.clusters.good.fine.bed \
+data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam
+	mkdir -p data/datasets/$*/unassigned_reads/igv_snapshots/overlaps/ 
 	python scripts/python/igv_batch_script_generator.py $^ \
-		  data/$*/unassigned_reads/igv_snapshots/overlaps/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
+		  data/datasets/$*/unassigned_reads/igv_snapshots/overlaps/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
 		  data/gencode.v47.sorted.gtf $@
 		  
 		  
 		  
 
 # Summary
-data/%/unassigned_reads/Summary.txt: data/%/solo_output.10x/Aligned.sortedByCoord.out.bam \
-data/%/unassigned_reads/10x.unassigned.bam \
-data/%/unassigned_reads/10x.intersecting.bam \
-data/%/unassigned_reads/10x.intergenic.bam \
-data/%/unassigned_reads/AT_seq.bam \
-data/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.clusters.good.bed \
-data/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.clusters.thrash.bed \
-data/%/unassigned_reads/10x.gencode.unassigned.bam \
-data/%/unassigned_reads/10x.gencode.intersecting.bam \
-data/%/unassigned_reads/10x.gencode.intergenic.bam \
-data/%/unassigned_reads/10x.gencode.ncbi.unassigned.bam \
-data/%/unassigned_reads/10x.gencode.ncbi.intersecting.bam \
-data/%/unassigned_reads/10x.gencode.ncbi.intergenic.bam \
-data/%/unassigned_reads/10x.gencode.ncbi.lnc.unassigned.bam \
-data/%/unassigned_reads/10x.gencode.ncbi.lnc.intersecting.bam \
-data/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.bam 
+data/datasets/%/unassigned_reads/Summary.txt: data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam \
+data/datasets/%/unassigned_reads/10x.unassigned.bam \
+data/datasets/%/unassigned_reads/10x.intersecting.bam \
+data/datasets/%/unassigned_reads/10x.intergenic.bam \
+data/datasets/%/unassigned_reads/AT_seq.bam \
+data/datasets/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.clusters.good.bed \
+data/datasets/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.clusters.thrash.bed \
+data/datasets/%/unassigned_reads/10x.gencode.unassigned.bam \
+data/datasets/%/unassigned_reads/10x.gencode.intersecting.bam \
+data/datasets/%/unassigned_reads/10x.gencode.intergenic.bam \
+data/datasets/%/unassigned_reads/10x.gencode.ncbi.unassigned.bam \
+data/datasets/%/unassigned_reads/10x.gencode.ncbi.intersecting.bam \
+data/datasets/%/unassigned_reads/10x.gencode.ncbi.intergenic.bam \
+data/datasets/%/unassigned_reads/10x.gencode.ncbi.lnc.unassigned.bam \
+data/datasets/%/unassigned_reads/10x.gencode.ncbi.lnc.intersecting.bam \
+data/datasets/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.bam 
 	bash scripts/bash/statistics.sh $^ > $@
 
 # Computing conservation scores for intergenic genes
@@ -269,10 +269,10 @@ data/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.bam
 	bedtools map -a $< -b data/hg38.phastCons100way.bed -c 5 -o mean > $@
 
 # Captured gene list:
-data/%/unassigned_reads/captured_genes_$(first).csv: data/%/solo_output.$(first)/Aligned.sortedByCoord.out.bam
+data/datasets/%/unassigned_reads/captured_genes_$(first).csv: data/datasets/%/solo_output.$(first)/Aligned.sortedByCoord.out.bam
 	samtools view $< | grep -o -P "GN:Z:[^ \t]*" | cut -d':' -f3 | sort | uniq > $@
 	
-data/%/unassigned_reads/captured_genes_final.csv: data/%/solo_output.final/Aligned.sortedByCoord.out.bam
+data/datasets/%/unassigned_reads/captured_genes_final.csv: data/datasets/%/solo_output.final/Aligned.sortedByCoord.out.bam
 	samtools view $< | grep -o -P "GN:Z:[^ \t]*" | cut -d':' -f3 | sort | uniq > $@
 
 
