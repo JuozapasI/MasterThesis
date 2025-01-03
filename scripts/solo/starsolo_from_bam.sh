@@ -3,6 +3,10 @@
 bam=$1
 index=$2
 outdir=$3
+umi=$4
+
+source activate /home/MazutisLab/software/pkg/miniconda3/envs/star-J
+export PATH="/home/MazutisLab/software/pkg/miniconda3/envs/star-J/bin:$PATH"
 
 # Shuffle bam first for more efficient mapping
 samtools collate -u -o ${bam}.shuffled.bam $1
@@ -11,7 +15,6 @@ STAR \
     --genomeDir $index \
     --readFilesIn  ${bam}.shuffled.bam --readFilesType SAM SE \
     --soloInputSAMattrBarcodeSeq CR UR \
-    --soloCBwhitelist /tmp/Mazutislab-out/Juozapas/Thesis/data/PBMC_10x/3M-february-2018.txt \
     --runThreadN 14 \
     --outFileNamePrefix $outdir \
     --readFilesCommand samtools view -F 0x100 \
@@ -25,7 +28,10 @@ STAR \
     --soloType CB_UMI_Simple \
     --soloCBmatchWLtype 1MM \
     --soloUMIdedup Exact \
-    --soloUMIlen 12
+    --soloCBtype String \
+    --soloCBwhitelist None \
+    --soloBarcodeReadLength 0 \
+    --soloUMIlen ${umi}
     
 rm ${bam}.shuffled.bam
     
