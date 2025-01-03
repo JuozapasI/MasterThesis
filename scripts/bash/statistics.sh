@@ -36,7 +36,7 @@ intersecting_ncbi=$(samtools flagstat $intersecting_bam_ncbi | head -2 | tail -1
 intergenic_ncbi=$(samtools flagstat $intergenic_bam_ncbi | head -2 | tail -1 | cut -d ' ' -f1)
 unassigned_lnc=$(samtools flagstat $unassigned_bam_lnc | head -2 | tail -1 | cut -d ' ' -f1)
 intersecting_lnc=$(samtools flagstat $intersecting_bam_lnc | head -2 | tail -1 | cut -d ' ' -f1)
-intergenic_lnc=$(samtools flagstat $intergenic_bam_ncbi | head -2 | tail -1 | cut -d ' ' -f1)
+intergenic_lnc=$(samtools flagstat $intergenic_bam_lnc | head -2 | tail -1 | cut -d ' ' -f1)
 
 print_percentage() {
     value=$1
@@ -63,13 +63,13 @@ print_percentage $intergenic_gencode $total_reads "Intergenic:"
 # Print mapped to ncbi reference
 echo "Intergenic mapped to ncbi reference,,"
 print_percentage $unassigned_ncbi $total_reads "Unassigned reads:"
-print_percentage $intersecting_ncbi $total_reads "Unassigned intersecting gencode reference:"
+print_percentage $intersecting_ncbi $total_reads "Unassigned intersecting ncbi reference:"
 print_percentage $intergenic_ncbi $total_reads "Intergenic:"
 
 # Print mapped to lncRNA reference
 echo "Intergenic mapped to lncRNA reference,,"
 print_percentage $unassigned_lnc $total_reads "Unassigned reads:"
-print_percentage $intersecting_lnc $total_reads "Unassigned intersecting gencode reference:"
+print_percentage $intersecting_lnc $total_reads "Unassigned intersecting lncpedia reference:"
 print_percentage $intergenic_lnc $total_reads "Intergenic:"
 print_percentage $intergenic_trash_lnc $total_reads "    Intergenic small clusters:"
 print_percentage $intergenic_good_lnc $total_reads "    Intergenic big clusters:"
