@@ -9,7 +9,7 @@ def load_bedgraph(file_path):
 
 def load_bed(file_path):
     """Load a BED file into a pandas DataFrame."""
-    bed = pd.read_csv(file_path, sep="\t", header=None, names=["chrom", "start", "end", "strand", "count"])
+    bed = pd.read_csv(file_path, sep="\t", header=None, names=["chrom", "start", "end", "name", "count", "strand"])
     bed["chrom"] = bed["chrom"].astype(str)
     return bed
 
