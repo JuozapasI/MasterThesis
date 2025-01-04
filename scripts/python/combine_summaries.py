@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import sys
 
 def process_summary_file(file_path):
     data = []
@@ -49,8 +50,8 @@ def main(input_dir, output_file):
     
     generate_latex_table(data, output_file)
 
-input_directory = "/home/juzis/try/"
-output_latex_file = "/home/juzis/summary_table.tex"
+input_directory = sys.argv[1]
+output_latex_file = sys.argv[2]
 main(input_directory, output_latex_file)
 
 
