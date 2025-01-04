@@ -1,5 +1,4 @@
 import os
-import pandas as pd
 import sys
 
 def process_summary_file(file_path):
