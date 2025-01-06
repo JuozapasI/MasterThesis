@@ -292,7 +292,7 @@ data/datasets/%/unassigned_reads/captured_genes_final.csv: data/datasets/%/solo_
 	samtools view $< | grep -o -P "GN:Z:[^ \t]*" | cut -d':' -f3 | sort | uniq > $@
 
 
-data/datasets/%/unassigned_reads/additional_gene_summary.txt: data/datasets/%/unassigned_reads/$(first).intergenic.clusters.good.bed $(references_paths) 
+data/datasets/%/unassigned_reads/additional_gene_summary.txt: data/datasets/%/unassigned_reads/$(first).intergenic.clusters.good.bed $(references_paths)
 	bedtools intersect -wb -s -a $< -b $(references_paths) -names $(references) | \
 	awk -F '\t' '{split($$17, a, "gene_type \""); split(a[2], b, "\""); print $$7, b[1];}' | \
 	sort | uniq -c | sort -k2,2 -k1,1nr > $@
@@ -349,7 +349,11 @@ data/downstream/intergenic/%.csv: data/datasets/%/unassigned_reads/conservation_
 
 # Combine count summaries into one latex table
 data/downstream/summaries/count_summaries/count_summary.tex: data/downstream/summaries/count_summaries/
-	python scripts/python/combine_summaries.py $< $@
+	python scripts/python/combine_count_summaries.py $< $@
+	
+# Combine intersecting genes summaries into one latex table
+data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex: data/downstream/summaries/gene_summaries/
+	python scripts/python/combine_intersecting_gene_summaries.py $< $@
 	
 
 		
