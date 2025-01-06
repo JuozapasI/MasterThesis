@@ -306,32 +306,32 @@ data/datasets/%/unassigned_reads/additional_gene_summary.txt: data/datasets/%/un
 data/downstream/matrices/%/10x/matrix.mtx.gz: data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam
 	mkdir -p data/downstream/matrices/$*/10x/
 	cp data/datasets/$*/solo_output.10x/Solo.out/GeneFull/raw/matrix.mtx data/downstream/matrices/$*/10x/matrix.mtx
-	gzip data/downstream/matrices/$*/10x/matrix.mtx
+	gzip -f data/downstream/matrices/$*/10x/matrix.mtx
 	
 data/downstream/matrices/%/10x/features.tsv.gz: data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam
 	mkdir -p data/downstream/matrices/$*/10x/
 	cp data/datasets/$*/solo_output.10x/Solo.out/GeneFull/raw/features.tsv data/downstream/matrices/$*/10x/features.tsv
-	gzip data/downstream/matrices/$*/10x/features.tsv
+	gzip -f data/downstream/matrices/$*/10x/features.tsv
 	
 data/downstream/matrices/%/10x/barcodes.tsv.gz: data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam
 	mkdir -p data/downstream/matrices/$*/10x/
 	cp data/datasets/$*/solo_output.10x/Solo.out/GeneFull/raw/barcodes.tsv data/downstream/matrices/$*/10x/barcodes.tsv
-	gzip data/downstream/matrices/$*/10x/barcodes.tsv
+	gzip -f data/downstream/matrices/$*/10x/barcodes.tsv
 	
 data/downstream/matrices/%/final/matrix.mtx.gz: data/datasets/%/solo_output.final/Aligned.sortedByCoord.out.bam
 	mkdir -p data/downstream/matrices/$*/final/
 	cp data/datasets/$*/solo_output.final/Solo.out/GeneFull/raw/matrix.mtx data/downstream/matrices/$*/final/matrix.mtx
-	gzip data/downstream/matrices/$*/final/matrix.mtx
+	gzip -f data/downstream/matrices/$*/final/matrix.mtx
 	
 data/downstream/matrices/%/final/features.tsv.gz: data/datasets/%/solo_output.final/Aligned.sortedByCoord.out.bam
 	mkdir -p data/downstream/matrices/$*/final/
 	cp data/datasets/$*/solo_output.final/Solo.out/GeneFull/raw/features.tsv data/downstream/matrices/$*/final/features.tsv
-	gzip data/downstream/matrices/$*/final/features.tsv
+	gzip -f data/downstream/matrices/$*/final/features.tsv
 	
 data/downstream/matrices/%/final/barcodes.tsv.gz: data/datasets/%/solo_output.final/Aligned.sortedByCoord.out.bam
 	mkdir -p data/downstream/matrices/$*/final/
 	cp data/datasets/$*/solo_output.final/Solo.out/GeneFull/raw/barcodes.tsv data/downstream/matrices/$*/final/barcodes.tsv
-	gzip data/downstream/matrices/$*/final/barcodes.tsv
+	gzip -f data/downstream/matrices/$*/final/barcodes.tsv
 
 # Collect summaries:
 data/downstream/summaries/count_summaries/%.csv: data/datasets/%/unassigned_reads/Summary.txt
@@ -346,7 +346,12 @@ data/downstream/summaries/gene_summaries/%.csv: data/datasets/%/unassigned_reads
 data/downstream/intergenic/%.csv: data/datasets/%/unassigned_reads/conservation_scores.csv
 	mkdir -p data/downstream/intergenic/
 	cp $< $@
+
+# Combine count summaries into one latex table
+data/downstream/summaries/count_summaries/count_summary.tex: data/downstream/summaries/count_summaries/
+	python scripts/python/combine_summaries.py $< $@
 	
+
 		
 clean:
 	latexmk -c
