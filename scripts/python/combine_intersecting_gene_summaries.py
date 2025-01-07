@@ -56,7 +56,7 @@ def generate_latex_table(directory):
     latex_table += "Sample & " + " & ".join([f"\\texttt{{{name}}}" for name in sample_names]) + " \\\\\n\\hline\n"
     for row in latex_data:
         latex_table += " & ".join(map(str, row)) + " \\\\\n"
-    latex_table += "\\end{tabular}\n\\caption{Summary of gene types intersecting with unassigned reads}\n\\labe{tab:intersectingGenes}\n\\end{table}"
+    latex_table += "\\end{tabular}\n\\caption{Summary of gene types intersecting with unassigned reads}\n\\label{tab:intersectingGenes}\n\\end{table}"
 
     latex_table = latex_table.replace("_", r"\_")
     
