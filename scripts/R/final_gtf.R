@@ -20,6 +20,7 @@ new_gene_candidates$type <- "gene"
 new_gene_candidates$phase <- NA
 new_gene_candidates$width <- new_gene_candidates$end - new_gene_candidates$start + 1
 new_gene_candidates$gene_id <- new_gene_candidates$gene_name
+new_gene_candidates$gene_type <- "INTERGENIC"
 
 
 
