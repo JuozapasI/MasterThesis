@@ -22,12 +22,13 @@ def process_summary_file(file_path):
     return data
 
 def generate_latex_table(data, output_file):
-    latex_table = "\\begin{table}[htbp]\n\\centering\n\\begin{tabular}{|l|" + "c|" * (len(data[0]) - 1) + "}\n"
+    latex_table = "\\begin{table}[htbp]\n\\centering\n\\small\n\\begin{tabular}{|l|" + "c|" * (len(data[0]) - 1) + "}\n"
     latex_table += "\\hline\n"
     for row in data:
         latex_table += " & ".join([str(i) for i in row]) + " \\\\\n"
     
     latex_table += "\\hline\n\\end{tabular}\n\\caption{Summaries of Reads and Percentages.}\n\\label{tab:countSummariesCombined}\n\\end{table}"
+    latex_table = latex_table.replace("_", r"\_")
     
     with open(output_file, "w") as f:
         f.write(latex_table)
