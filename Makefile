@@ -54,10 +54,12 @@ debug:
 
 #.PHONY: $(datasets)
 
-all: $(datasets)
+all: 
 
 %.dataset: data/downstream/summaries/count_summaries/%.csv \
      data/downstream/summaries/gene_summaries/%.csv \
+     data/downstream/summaries/captured_gene_summaries/%.final.csv \
+     data/downstream/summaries/captured_gene_summaries/%.$(first).csv \
      data/downstream/matrices/%/10x/matrix.mtx.gz \
      data/downstream/matrices/%/10x/features.tsv.gz \
      data/downstream/matrices/%/10x/barcodes.tsv.gz \
@@ -65,7 +67,7 @@ all: $(datasets)
      data/downstream/matrices/%/final/features.tsv.gz \
      data/downstream/matrices/%/final/barcodes.tsv.gz \
      data/downstream/intergenic/%.csv
-	@echo "Building $* dataset"
+	@echo "Done with $* dataset"
 
 %.pdf: %.tex
 	latexmk -pdf -silent -deps-out=.depend $*
@@ -286,19 +288,29 @@ data/datasets/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.bam
 
 # Captured gene list:
 data/datasets/%/unassigned_reads/captured_genes_$(first).csv: data/datasets/%/solo_output.$(first)/Aligned.sortedByCoord.out.bam
-	samtools view $< | grep -o -P "GN:Z:[^ \t]*" | cut -d':' -f3 | sort | uniq > $@
+	samtools view -F 1024 -F 256 $< | grep -o -P "GX:Z:[^ \t]*" | cut -d':' -f3 | sort | uniq > $@
 	
 data/datasets/%/unassigned_reads/captured_genes_final.csv: data/datasets/%/solo_output.final/Aligned.sortedByCoord.out.bam
-	samtools view $< | grep -o -P "GN:Z:[^ \t]*" | cut -d':' -f3 | sort | uniq > $@
+	samtools view -F 1024 -F 256 $< | grep -o -P "GX:Z:[^ \t]*" | cut -d':' -f3 | sort | uniq > $@
+	
+%.gene_types.tsv: %.gtf
+	bash scripts/bash/extract_gene_types.sh  $< > $@
+	
+data/datasets/%/unassigned_reads/captured_gene_types.$(first).csv: data/datasets/%/unassigned_reads/captured_genes_$(first).csv \
+data/genome/references/$(first).gene_types.tsv
+	grep -f data/datasets/$*/unassigned_reads/captured_genes_$(first).csv data/genome/references/$(first).gene_types.tsv | \
+	cut -f 2 | sort | uniq -c | sort -nrk1,1 > $@
+
+data/datasets/%/unassigned_reads/captured_gene_types.final.csv: data/datasets/%/unassigned_reads/captured_genes_final.csv \
+data/datasets/%/unassigned_reads/final.gene_types.tsv
+	grep -f data/datasets/$*/unassigned_reads/captured_genes_final.csv data/datasets/$*/unassigned_reads/final.gene_types.tsv | \
+	cut -f 2 | sort | uniq -c | sort -nrk1,1 > $@
 
 
 data/datasets/%/unassigned_reads/additional_gene_summary.txt: data/datasets/%/unassigned_reads/$(first).intergenic.clusters.good.bed $(references_paths)
 	bedtools intersect -wb -s -a $< -b $(references_paths) -names $(references) | \
 	awk -F '\t' '{split($$17, a, "gene_type \""); split(a[2], b, "\""); print $$7, b[1];}' | \
 	sort | uniq -c | sort -k2,2 -k1,1nr > $@
-
-
-
 
 # data arrangement for downstream analyses
 
@@ -341,11 +353,21 @@ data/downstream/summaries/count_summaries/%.csv: data/datasets/%/unassigned_read
 data/downstream/summaries/gene_summaries/%.csv: data/datasets/%/unassigned_reads/additional_gene_summary.txt
 	mkdir -p data/downstream/summaries/gene_summaries/
 	cp $< $@
+
+data/downstream/summaries/captured_gene_summaries/%.final.csv: data/datasets/%/unassigned_reads/captured_gene_types.final.csv
+	mkdir -p data/downstream/summaries/captured_gene_summaries/
+	cp $< $@
+	
+data/downstream/summaries/captured_gene_summaries/%.$(first).csv: data/datasets/%/unassigned_reads/captured_gene_types.$(first).csv
+	mkdir -p data/downstream/summaries/captured_gene_summaries/
+	cp $< $@
 	
 # Collect intergenic regions info
 data/downstream/intergenic/%.csv: data/datasets/%/unassigned_reads/conservation_scores.csv
 	mkdir -p data/downstream/intergenic/
 	cp $< $@
+	
+
 
 # Combine count summaries into one latex table
 data/downstream/summaries/count_summaries/count_summary.tex: data/downstream/summaries/count_summaries/
@@ -353,6 +375,10 @@ data/downstream/summaries/count_summaries/count_summary.tex: data/downstream/sum
 	
 # Combine intersecting genes summaries into one latex table
 data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex: data/downstream/summaries/gene_summaries/
+	python scripts/python/combine_intersecting_gene_summaries.py $< $@
+	
+# Combine captured genes summaries into one latex table
+data/downstream/summaries/captured_gene_summaries/captured_gene_types_summary.tex: data/downstream/summaries/captured_gene_summaries/
 	python scripts/python/combine_intersecting_gene_summaries.py $< $@
 	
 
