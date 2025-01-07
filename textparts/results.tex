@@ -4,6 +4,19 @@ The enhanced transcriptomic reference allows to include those reads into downstr
 To achieve this, we have combine data from several different transcriptomic annotations,
 and additionally included in the annotation intergenic regions that contained relativelly high number of reads.
 
+\input{"data/downstream/summaries/count_summaries/count_summary.tex"}
+
+\subsection{Exploring unassigned reads}
+Unassigned reads could come from several sources:
+sequencing artefacts, genes that are not included into transcriptomic reference used, or genes that are not annotated yet.
+To check, we have looked at intersections of those unassigned reads and more comprehensive annotations.
+As we can see, that there are plenty of genes from more comprehensive annotations which intersect with unassigned genes,
+and number of those intersecting genes correlates with sequencing depth.
+
+\input{"data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex"}
+
+\input{"data/downstream/summaries/captured_gene_summaries/captured_gene_types_summary.tex"}
+
 \subsection{Intergenic regions}
 
 Observed intergenic regions can be either artefacts or be biologically meaningfull.
