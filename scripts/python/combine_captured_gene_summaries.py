@@ -1,10 +1,11 @@
 import pandas as pd
 import os
 import re
+import sys
 
 # Directory where the CSV files are stored
-dir_path = "/home/juzis/Studijos/Thesis/data/downstream/summaries/captured_gene_summaries/"
-output = "/home/juzis/Studijos/Thesis/data/downstream/summaries/captured_gene_summaries/captured_gene_types_summary.tex"
+dir_path = sys.argv[1]
+output = sys.argv[2]
 
 # Automatically detect sample names based on the files in the directory
 sample_files = [f for f in os.listdir(dir_path) if f.endswith(".10x.csv")]
