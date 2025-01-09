@@ -198,8 +198,9 @@ bash scripts/solo/starsolo_from_bam.sh $$< data/genome/indices/index_$(word $(wo
 	paste -d ',' $^ | awk -F',' '$$2 > 30 {print $$1}' > $@
 
 #In final part, check if there are any clusters very close to genes 3' ends and extend those genes if there are
+# Need to check if here for same region more than one line is generated!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %.distances.clusters.good.fine.tsv: %.filteredAT.intergenic.clusters.good.fine.bed %.modified.gene_ranges_sorted.bed
-	bedtools closest -a $< -b $*.modified.gene_ranges_sorted.bed -s -D a -id -fu > $@
+	bedtools closest -t first -a $< -b $*.modified.gene_ranges_sorted.bed -s -D a -id -fu > $@
 
 #Check if everything is ok here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #After changing bed format, if required column is still $18 etc.
@@ -237,28 +238,30 @@ data/datasets/%/index_final/
 
 
 # Make igv snapshots script for extension candidates
-data/datasets/%/unassigned_reads/igv_snapshots/extension_candidates.batch.txt: data/datasets/%/unassigned_reads/final.extension_candidates.csv \
-data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam
-	mkdir -p data/datasets/$*/unassigned_reads/igv_snapshots/extension_candidates/ 
-	python scripts/python/igv_batch_script_generator.py $^ \
-		  data/datasets/$*/unassigned_reads/igv_snapshots/extension_candidates/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
-		  data/gencode.v47.sorted.gtf $@
+#data/datasets/%/unassigned_reads/igv_snapshots/extension_candidates.batch.txt: data/datasets/%/unassigned_reads/final.extension_candidates.csv \
+#data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam
+#	mkdir -p data/datasets/$*/unassigned_reads/igv_snapshots/extension_candidates/ 
+#	python scripts/python/igv_batch_script_generator.py $^ \
+#		  data/datasets/$*/unassigned_reads/igv_snapshots/extension_candidates/ \
+#		  GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
+#		  data/gencode.v47.sorted.gtf $@
 
 # Make igv snaphots script for new gene candidates
-data/datasets/%/unassigned_reads/igv_snapshots/new_gene_candidates.batch.txt: data/datasets/%/unassigned_reads/final.new_gene_list.bed \
-data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam
-	mkdir -p data/datasets/$*/unassigned_reads/igv_snapshots/new_gene_candidates/ 
+data/downstream/igv/intergenic.batch.txt: data/downstream/intergenic/combined.bed 
+	mkdir -p data/downstream/igv/
 	python scripts/python/igv_batch_script_generator.py $^ \
-		  data/datasets/$*/unassigned_reads/igv_snapshots/new_gene_candidates/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
+		  bam_file \
+		  images/igv/intergenic/ \
+		  GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
 		  data/gencode.v47.sorted.gtf $@
 		  
 # Make igv snaphots script for overlaps (first reference)
-data/datasets/%/unassigned_reads/igv_snapshots/overlaps.batch.txt: data/datasets/%/unassigned_reads/$(first).intersecting.clusters.good.fine.bed \
-data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam
-	mkdir -p data/datasets/$*/unassigned_reads/igv_snapshots/overlaps/ 
-	python scripts/python/igv_batch_script_generator.py $^ \
-		  data/datasets/$*/unassigned_reads/igv_snapshots/overlaps/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
-		  data/gencode.v47.sorted.gtf $@
+#data/datasets/%/unassigned_reads/igv_snapshots/overlaps.batch.txt: data/datasets/%/unassigned_reads/$(first).intersecting.clusters.good.fine.bed \
+#data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam
+#	mkdir -p data/datasets/$*/unassigned_reads/igv_snapshots/overlaps/ 
+#	python scripts/python/igv_batch_script_generator.py $^ \
+#		  data/datasets/$*/unassigned_reads/igv_snapshots/overlaps/ GRCh38.dna.primary_assembly.fa GRCh38.dna.primary_assembly.fa \
+#		  data/gencode.v47.sorted.gtf $@
 		  
 		  
 		  
