@@ -382,10 +382,25 @@ data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex: data/dow
 	
 # Combine captured genes summaries into one latex table
 data/downstream/summaries/captured_gene_summaries/captured_gene_types_summary.tex: data/downstream/summaries/captured_gene_summaries/
-	python scripts/python/combine_intersecting_gene_summaries.py $< $@
-	
+	python scripts/python/combine_captured_gene_summaries.py $< $@
 
-		
+# Combine intergenic regions
+data/downstream/intergenic/combined.bed: data/downstream/intergenic/
+	awk -F '\t' 'BEGIN {OFS = FS} !seen[$$1, $$2, $$3, FILENAME]++ {print $$1, $$2, $$3, substr(FILENAME, 28, length(FILENAME) - 31) "." FNR, $$5, $$6, $$7}' data/downstream/intergenic/*.csv | \
+	sort -k1,1 -k2,2n | \
+	awk -F'\t' 'BEGIN {OFS = FS} {if($$7 == ".") {print $$1, $$2, $$3, $$4, $$5, $$6, 0} else {print $$0}}' | \
+	bedtools merge -s -c 4,5,6,6,7 -o collapse,mean,distinct,count,mean -i - | \
+	sort -k7,7nr -k5,5nr > $@
+
+# Check if intergenic regions overlap with prediction tools
+data/downstream/intergenic/predictions.bed: data/downstream/intergenic/combined.bed
+	bedtools intersect -s -loj -wa -wb -a $< -b data/genome/predictions/*.bed -names Augustus Geneid Gescan SIB SPG | \
+	awk -F'\t' 'BEGIN {OFS = FS} {print $$1, $$2, $$3, $$4, $$5, $$6, $$7, $$8, $$9}' > $@
+	
+# More comprehensive intersection list
+data/downstream/intergenic/predictions_full_prediction_entries.bed: data/downstream/intergenic/combined.bed
+	bedtools intersect -s -wa -wb -a $< -b data/genome/predictions/*.bed -names Augustus Geneid Gescan SIB SPG > $@
+
 clean:
 	latexmk -c
 	rm *.bbl
