@@ -24,7 +24,7 @@
 \usepackage{fancyhdr}
 \fancypagestyle{plain}{
   \fancyhf{} % Clear all header and footer fields
-  \fancyfoot[R]{\thepage} % Page number in the lower right corner
+  \fancyfoot[C]{\thepage} % Page number in the lower right corner
   \renewcommand{\headrulewidth}{0pt} % No header rule
   \renewcommand{\footrulewidth}{0pt} % No footer rule
 }
@@ -69,8 +69,10 @@
 \input{"textparts/abbreviations.tex"}
 
 \chapter{INTRODUCTION}
+\input{"textparts/introduction.tex"}
 
 \chapter{AIM AND TASKS}
+\input{"textparts/aimAndTasks.tex"}
 
 \chapter{LITERATURE REVIEW}
 \input{"textparts/literatureReview.tex"}
