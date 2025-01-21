@@ -2,3 +2,12 @@ papers/
 .depend
 drawings/
 *bib.sav
+scripts/notebooks/PBMC_10x.ipynb
+scripts/notebooks/intergenic.ipynb
+images/umaps/*
+images/umap_images_intergenic_regions/*
+igv/
+scripts/R/check.r
+scripts/R/debug.r
+scripts/notebooks/.ipynb_checkpoints/
+scripts/R/geneSummary.R
