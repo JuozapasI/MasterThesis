@@ -1,0 +1,16 @@
+The single cell RNA sequencing becomes more and more popular tool for analysis of cellular systems.
+This technology enables to sequence thousands of cells and provides huge amount of data.
+The typicall workflow of the anaysis of such data is to map reads to the known transcriptome and and construct cell-gene matrices,
+which are used in the downstream analysis.
+However, there are several problems regarding mapping to the known transcriptome:
+
+\begin{enumerate}
+  \item The transcriptomes used are not fully comprehensive.
+  Even though there are given great efforts to annotate all genes, it is very likelly that not all genes are annotated,
+  and many remains to be found.
+  Such yet undefined genes are missed in the typical scRNAseq analysis.
+  \item The human (and many other species) transcriptome is very complex, with many overlapping features.
+  This prevents mapping algorithms to assign short reads to a single feature, usually resulting in discarding such reads from analysis.
+\end{enumerate}
+
+Addressing such problems could reveal some biologically significant information, that is not used in the most current scRNAseq data analysis.
