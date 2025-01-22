@@ -1,5 +1,6 @@
 umi = 12
 barcode = 16
+# for indrops umi = 10 barcode = 28
 clusterThreshold = 100
 fasta = data/genome/fasta/GRCh38.dna.primary_assembly.fa
 ATrichThreshold = 70
@@ -72,6 +73,13 @@ data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex
      data/downstream/matrices/%/final/barcodes.tsv.gz \
      data/downstream/intergenic/%.csv
 	@echo "Done with $* dataset"
+	
+downstream: data/downstream/intergenic/predictions.bed \
+     data/downstream/summaries/captured_gene_summaries/captured_gene_types_summary.tex \
+     data/downstream/summaries/count_summaries/count_summary.tex \
+     data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex \
+     data/downstream/igv/intergenic.batch.txt \
+     data/downstream/intergenic/intergenic.gtf
 
 %.pdf: %.tex
 	latexmk -pdf -silent -deps-out=.depend $*
@@ -399,11 +407,23 @@ data/downstream/intergenic/combined.bed: data/downstream/intergenic/
 # Check if intergenic regions overlap with prediction tools
 data/downstream/intergenic/predictions.bed: data/downstream/intergenic/combined.bed
 	bedtools intersect -s -loj -wa -wb -a $< -b data/genome/predictions/*.bed -names Augustus Geneid Gescan SIB SPG | \
-	awk -F'\t' 'BEGIN {OFS = FS} {print $$1, $$2, $$3, $$4, $$5, $$6, $$7, $$8, $$9}' > $@
+	awk -F'\t' 'BEGIN {OFS = FS} !seen[$$4 ":" $$9]++ {print $$1, $$2, $$3, $$4, $$5, $$6, $$7, $$8, $$9}' | \
+	awk -F'\t' '{if($$4 in data) {cols[$$4] = cols[$$4] "," $$9;} \
+	else {data[$$4] = $$1 "\t" $$2 "\t" $$3 "\t" $$4 "\t" $$5 "\t" $$6 "\t" $$7 "\t" $$8; cols[$$4] = $$9;}} \
+	END {for (key in data) {print data[key] "\t" cols[key];}}' | sort -k7,7nr -k5,5nr > $@
 	
 # More comprehensive intersection list
 data/downstream/intergenic/predictions_full_prediction_entries.bed: data/downstream/intergenic/combined.bed
 	bedtools intersect -s -wa -wb -a $< -b data/genome/predictions/*.bed -names Augustus Geneid Gescan SIB SPG > $@
+	
+# Combine all those intergenic regions from various samples into one gtf annotaion
+data/downstream/intergenic/intergenic.gtf: data/downstream/intergenic/predictions.bed
+	awk -F '\t' 'BEGIN {OFS=FS} {print $$1, "scRNAseqData", "gene", $$2, $$3, ".", $$6, ".", \
+	"gene_id \"INT" NR "\"; gene_name \"INT" NR "\"; no_samples " $$7 "; mean_cpm " $$5 "; aliases \"" $$4 "\"; conservation_score " $$8 \
+	"; predictions \"" $$9 "\";"; \
+	print $$1, "scRNAseqData", "exon", $$2, $$3, ".", $$6, ".", \
+	"gene_id \"INT" NR "\"; gene_name \"INT" NR "\"; no_samples " $$7 "; mean_cpm " $$5 "; aliases \"" $$4 "\"; conservation_score " $$8 \
+	"; predictions \"" $$9 "\";";}' $< > $@
 
 clean:
 	latexmk -c
