@@ -35,16 +35,19 @@ datasets = PBMC_10x.dataset brain.dataset PBMC_10x_2.dataset PBMC_indrops.datase
 
 PBMC_10x_seq_depth = 182330834
 PBMC_10x_2_seq_depth = 496387931
+PBMC_10x_3_seq_depth = 368640939
 brain_seq_depth = 206360627
 PBMC_indrops_seq_depth = 112932507
 
 PBMC_10x_extensionCountThreshold = 182
 PBMC_10x_2_extensionCountThreshold = 496
+PBMC_10x_3_extensionCountThreshold = 368
 brain_extensionCountThreshold = 206
 PBMC_indrops_extensionCountThreshold = 112
 
 PBMC_10x_newGeneCountThreshold = 911
 PBMC_10x_2_newGeneCountThreshold = 2481
+PBMC_10x_3_newGeneCountThreshold = 1843
 brain_newGeneCountThreshold = 1031
 PBMC_indrops_newGeneCountThreshold = 564
 
@@ -75,7 +78,13 @@ downstream: data/downstream/intergenic/predictions.bed \
      data/downstream/summaries/count_summaries/count_summary.tex \
      data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex \
      data/downstream/igv/intergenic.batch.txt \
-     data/downstream/intergenic/intergenic.gtf
+     data/downstream/intergenic/intergenic.gtf \
+     data/downstream/intergenic/index/
+     
+%.dataset2: data/downstream/matrices/intergenic/%/matrix.mtx.gz \
+     data/downstream/matrices/intergenic/%/features.tsv.gz \
+     data/downstream/matrices/intergenic/%/barcodes.tsv.gz
+	@echo "$* done."
 
 %.pdf: %.tex
 	latexmk -pdf -silent -deps-out=.depend $*
@@ -94,7 +103,7 @@ bash scripts/bash/take_unassigned.sh $$< $$@ $(barcode) $(umi)))
 		if ($$3 == "gene") { \
 		if ($$0 ~ /transcript_id/) {print $$0} \
 		else {print $$0"; transcript_id \"\""} } }' $< | \
-	gtf2bed | \
+	gtf2bed --do-not-sort | \
 	sort -k1,1 -k2,2n > $@
 
 data/datasets/%/unassigned_reads:
@@ -393,7 +402,7 @@ data/downstream/summaries/captured_gene_summaries/captured_gene_types_summary.te
 	python scripts/python/combine_captured_gene_summaries.py $< $@
 
 # Combine intergenic regions
-data/downstream/intergenic/combined.bed: data/downstream/intergenic/
+data/downstream/intergenic/combined.bed:
 	awk -F '\t' 'BEGIN {OFS = FS} !seen[$$1, $$2, $$3, FILENAME]++ {print $$1, $$2, $$3, substr(FILENAME, 28, length(FILENAME) - 31) "." FNR, $$5, $$6, $$7}' data/downstream/intergenic/*.csv | \
 	sort -k1,1 -k2,2n | \
 	awk -F'\t' 'BEGIN {OFS = FS} {if($$7 == ".") {print $$1, $$2, $$3, $$4, $$5, $$6, 0} else {print $$0}}' | \
@@ -420,6 +429,69 @@ data/downstream/intergenic/intergenic.gtf: data/downstream/intergenic/prediction
 	print $$1, "scRNAseqData", "exon", $$2, $$3, ".", $$6, ".", \
 	"gene_id \"INT" NR "\"; gene_name \"INT" NR "\"; no_samples " $$7 "; mean_cpm " $$5 "; aliases \"" $$4 "\"; conservation_score " $$8 \
 	"; predictions \"" $$9 "\";";}' $< > $@
+
+# Make solo index for this annotation
+data/downstream/intergenic/index/: data/downstream/intergenic/intergenic.gtf
+	bash scripts/solo/genome_index.sh $< $(fasta) $@
+	
+# Run starsolo with combined intergenic annotations for all samples (use only unassigned sequences)
+data/datasets/%/solo_output.intergenic/Aligned.sortedByCoord.out.bam: data/datasets/%/unassigned_reads/$(order_last).intergenic.bam \
+     data/downstream/intergenic/index/
+	bash scripts/solo/starsolo_from_bam.sh $^ data/datasets/$*/solo_output.intergenic/ $(umi)
+	
+# Colect intergenic matrices
+data/downstream/matrices/intergenic/%/matrix.mtx.gz: data/datasets/%/solo_output.intergenic/Aligned.sortedByCoord.out.bam
+	mkdir -p data/downstream/matrices/intergenic/$*/
+	cp data/datasets/$*/solo_output.intergenic/Solo.out/GeneFull/raw/matrix.mtx data/downstream/matrices/intergenic/$*/matrix.mtx
+	gzip -f data/downstream/matrices/intergenic/$*/matrix.mtx
+	
+data/downstream/matrices/intergenic/%/features.tsv.gz: data/datasets/%/solo_output.intergenic/Aligned.sortedByCoord.out.bam
+	mkdir -p data/downstream/matrices/intergenic/$*/
+	cp data/datasets/$*/solo_output.intergenic/Solo.out/GeneFull/raw/features.tsv data/downstream/matrices/intergenic/$*/features.tsv
+	gzip -f data/downstream/matrices/intergenic/$*/features.tsv
+	
+data/downstream/matrices/intergenic/%/barcodes.tsv.gz: data/datasets/%/solo_output.intergenic/Aligned.sortedByCoord.out.bam
+	mkdir -p data/downstream/matrices/intergenic/$*/
+	cp data/datasets/$*/solo_output.intergenic/Solo.out/GeneFull/raw/barcodes.tsv data/downstream/matrices/intergenic/$*/barcodes.tsv
+	gzip -f data/downstream/matrices/intergenic/$*/barcodes.tsv
+	
+	
+# Update combined intergenic gene list to contain distances to the closest genes
+data/downstream/intergenic/closest.bed: data/downstream/intergenic/predictions.bed
+	sort -k1,1 -k2,2n $< | \
+	bedtools closest -mdb all -t first -d -s -a stdin -b data/genome/references/gencode.gene_ranges_sorted.bed \
+	data/genome/references/ncbi.gene_ranges_sorted.bed -names gencode ncbi | \
+	awk -F '\t' 'BEGIN {OFS=FS} {split($$20, a, "gene_name"); split (a[2], b, "\""); \
+	print $$1, $$2, $$3, $$4, $$5, $$6, $$7, $$8, $$9, $$10 ":" b[2], $$21}' | \
+	bedtools closest -mdb all -t first -d -S -a stdin -b data/genome/references/gencode.gene_ranges_sorted.bed \
+	data/genome/references/ncbi.gene_ranges_sorted.bed -names gencode ncbi | \
+	awk -F '\t' 'BEGIN {OFS=FS} {split($$22, a, "gene_name"); split (a[2], b, "\""); \
+	print $$1, $$2, $$3, $$4, $$5, $$6, $$7, $$8, $$9, $$10, $$11, $$12 ":" b[2], $$23}' | \
+	sort -k7,7nr -k5,5rn | \
+	awk -F'\t' 'BEGIN {OFS=FS} {print $$1, $$2, $$3, "INT" NR, $$5, $$6, $$7, $$8, $$9, $$10, $$11, $$12, $$13, "aliases:" $$4}' > $@
+	
+# extend intergenic regions to find possible gene structures
+data/downstream/intergenic/extended_intervals.bed: data/downstream/intergenic/predictions.bed
+	awk -F '\t' 'BEGIN{OFS=FS} {if ($$6 == "+") {start = $$2 - 10000; end = $$3 + 1000} else {start = $$2 - 1000; end = $$3 + 10000}; \
+	print $$1, start, end, "INT" NR, ".", $$6}' $< > $@
+
+# get sequences of intergenic reads
+data/downstream/intergenic/augustus/sequences/: data/downstream/intergenic/extended_intervals.bed
+	mkdir -p $@
+	bedtools getfasta -name -fi $(fasta) -bed $< | cut -d ':' -f 1 > data/downstream/intergenic/augustus/sequences.fa
+	awk '/^>/ {if (out) close(out); gene = substr($$1,2);\
+	out="data/downstream/intergenic/augustus/sequences/" gene ".fa"} {print > out}' data/downstream/intergenic/augustus/sequences.fa
+	
+data/downstream/intergenic/augustus/predictions/: data/downstream/intergenic/closest.bed data/downstream/intergenic/augustus/sequences/
+	mkdir -p $@
+	awk -F '\t' '{if ($$6 == "+") {strand = "forward"} else {strand = "backward"}; \
+	cmd = "augustus --singlestrand=true --genemodel=partial --strand=" strand \
+	" --uniqueGeneId=true --species=human data/downstream/intergenic/augustus/sequences/" $$4 \
+	".fa > data/downstream/intergenic/augustus/predictions/" $$4; system(cmd)}' $<
+	
+data/downstream/intergenic/augustus/predictions.gtf: data/downstream/intergenic/augustus/predictions/ \
+      data/downstream/intergenic/extended_intervals.bed
+	bash scripts/bash/combine_augustus.sh $^ $@
 
 clean:
 	latexmk -c
