@@ -11,3 +11,6 @@ scripts/R/check.r
 scripts/R/debug.r
 scripts/notebooks/.ipynb_checkpoints/
 scripts/R/geneSummary.R
+images/umap_images_intergenic_regions/
+images/umaps/
+images/umaps_combined/
