@@ -71,7 +71,11 @@ debug:
 
 #.PHONY: $(datasets)
 
-all: 
+all: data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex \
+data/downstream/summaries/count_summaries/count_summary.tex \
+data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex
+
+
 
 %.dataset: data/downstream/summaries/count_summaries/%.csv \
      data/downstream/summaries/gene_summaries/%.csv \
