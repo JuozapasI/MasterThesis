@@ -1,6 +1,7 @@
 umi = 12
 barcode = 16
 # for indrops umi = 10 barcode = 28
+# for indrops_2 umi=8 barcode=17
 clusterThreshold = 100
 fasta = data/genome/fasta/GRCh38.dna.primary_assembly.fa
 ATrichThreshold = 70
@@ -37,19 +38,31 @@ PBMC_10x_seq_depth = 182330834
 PBMC_10x_2_seq_depth = 496387931
 PBMC_10x_3_seq_depth = 368640939
 brain_seq_depth = 206360627
+brain_2_seq_depth = 122556503
 PBMC_indrops_seq_depth = 112932507
+PBMC_indrops_2_seq_depth = 471705924
+eye_seq_depth = 375397270
+eye_2_seq_depth = 0
 
 PBMC_10x_extensionCountThreshold = 182
 PBMC_10x_2_extensionCountThreshold = 496
 PBMC_10x_3_extensionCountThreshold = 368
 brain_extensionCountThreshold = 206
+brain_2_extensionCountThreshold = 122
 PBMC_indrops_extensionCountThreshold = 112
+PBMC_indrops_2_extensionCountThreshold = 472
+eye_extensionCountThreshold = 375
+eye_2_extensionCountThreshold = 0
 
 PBMC_10x_newGeneCountThreshold = 911
 PBMC_10x_2_newGeneCountThreshold = 2481
 PBMC_10x_3_newGeneCountThreshold = 1843
 brain_newGeneCountThreshold = 1031
+brain_2_newGeneCountThreshold = 613
 PBMC_indrops_newGeneCountThreshold = 564
+PBMC_indrops_2_newGeneCountThreshold = 2358
+eye_newGeneCountThreshold = 1876
+eye_2_newGeneCountThreshold = 0
 
 debug:
 	echo $(references_paths)
