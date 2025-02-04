@@ -1,3 +1,5 @@
+export LC_ALL=C
+
 umi = 12
 barcode = 16
 # for indrops umi = 10 barcode = 28
@@ -42,7 +44,11 @@ brain_2_seq_depth = 122556503
 PBMC_indrops_seq_depth = 112932507
 PBMC_indrops_2_seq_depth = 471705924
 eye_seq_depth = 375397270
-eye_2_seq_depth = 0
+eye_2_seq_depth = 302243785
+lung_2_seq_depth = 511080104
+lung_5_seq_depth = 452105505
+lung_7_seq_depth = 524095146
+lung_8_seq_depth = 342092138
 
 PBMC_10x_extensionCountThreshold = 182
 PBMC_10x_2_extensionCountThreshold = 496
@@ -52,7 +58,11 @@ brain_2_extensionCountThreshold = 122
 PBMC_indrops_extensionCountThreshold = 112
 PBMC_indrops_2_extensionCountThreshold = 472
 eye_extensionCountThreshold = 375
-eye_2_extensionCountThreshold = 0
+eye_2_extensionCountThreshold = 302
+lung_2_extensionCountThreshold = 511
+lung_5_extensionCountThreshold = 452
+lung_7_extensionCountThreshold = 524
+lung_8_extensionCountThreshold = 342
 
 PBMC_10x_newGeneCountThreshold = 911
 PBMC_10x_2_newGeneCountThreshold = 2481
@@ -62,7 +72,11 @@ brain_2_newGeneCountThreshold = 613
 PBMC_indrops_newGeneCountThreshold = 564
 PBMC_indrops_2_newGeneCountThreshold = 2358
 eye_newGeneCountThreshold = 1876
-eye_2_newGeneCountThreshold = 0
+eye_2_newGeneCountThreshold = 1510
+lung_2_newGeneCountThreshold = 2555
+lung_5_newGeneCountThreshold = 2261
+lung_7_newGeneCountThreshold = 2620
+lung_8_newGeneCountThreshold = 1710
 
 debug:
 	echo $(references_paths)
