@@ -1,23 +1,45 @@
-\section{Datasets}
+\section{Data Acquisition}
 
-In this thesis following publically available datasets from scRNAseq experiments were used.
+\paragraph{\textbf{scRNAseq datasets}}
 
-\subsection{Peripheral Blood Mononuclear Cell (PBMC) Datasets}
-
-In total, five PBMC datasets where analyzed,
-three of them were generated using 10x 3' sequencing protocol (v3.1) and two using indrops (indrops\_v2 ?).
+We analyzed datasets from four different tissues: brain, blood, lung, and eye.
+All samples, except for two Peripheral Blood Mononuclear Cell (PBMC) datasets, were generated using the 10x Genomics v3.1 protocol.
+The two exceptions were prepared using the inDrops2 and inDrops protocols.
+All protocols capture short reads from the 3' ends of RNA molecules.
+The datasets are publicly available, with sources and additional details provided in Table \ref{tab:datasets}.
 
 \input{"textparts/tables/datasets.tex"}
 
-This dataset is publically available in 10X Genomics website.
-In this experiment, human peripheral blood mononuclear cells (PBMCs) were extracted from fresh whole peripheral blood samples obtained from StemExpress. PBMCs were isolated using SepMate density centrifugation methods.
-The library was generated from around 8000 cells (5140 cells recovered) using the Chromium Single Cell 3' v3.1 Reagent Kit,
-and sequenced on Illumina NovaSeq 6000 to a read depth of approximately 35000 mean reads per cell.
-The transcript reads have length of 90bp.
-All this information (and more) is available at
-\href{https://www.10xgenomics.com/datasets/5k-human-pbmcs-3-v3-1-chromium-controller-3-1-standard}{10X Genomics website}.
+\paragraph{\textbf{Genome and Transcriptomic references}}
 
-\subsection{Transcriptomic references}
+The human genome GRCh38 was used in this project, downloaded from the \href{https://ftp.ensembl.org/pub/release-113/fasta/homo_sapiens/dna/}{Ensembl website}.
+
+Four transcriptomic references were analyzed (see Table \ref{tab:references} for details).
+To ensure compatibility with the genome FASTA file, chromosome name prefixes ('chr') were removed from references that included them,
+as the genome file does not use these prefixes.
+This modification was performed using basic Linux command-line tools.
+Additionally, for the NCBI reference, chromosome names were converted to Ensembl-style notation using a custom Python script
+(e.g., 1, 2, 3 instead of NC\_000001.11, NC\_000002.12, NC\_000003.12, etc.).
+
+For references that do not have 'gene' entries, such entries were added
+(entry that spans all the components of a particular gene).
+
+\input{"textparts/tables/references.tex"}
+
+\paragraph{\textbf{Gene Prediction Tracks and Conservation Scores}}
+
+Gene predictions (tracks 'AUGUSTUS', 'Geneid genes', 'Gescan genes', 'SGP genes', 'SIB genes') and 
+genome conservation scores ('phastCons100way' track) were downloaded from \href{https://genome.ucsc.edu/}{UCSC genome browser}.
+
+\section{Computational Tools and Environment}
+
+All analyses were performed on a high-performance computing (HPC) cluster running a Linux environment.
+Software packages and tools were managed using Conda.
+The main tools and their versions are listed in Table \ref{tab:tools}.
+The exact Conda environment specifications (YAML file) can be found on [GitHub](GIVE LINK).
+The specific functions and parameters used are described in the following sections, where the general analysis pipeline will be explained.
+
+\input{"textparts/tables/tools.tex"}
 
 \section{Enhancing transcriptomic reference}
 
