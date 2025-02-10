@@ -1,3 +1,77 @@
+\section{Intergenic regions}
+14 samples were analysed, for each regions were found that contained sufficient amount of reads (threashold was set at 5 CPM).
+
+Firstly, to check if the intergenic regions contain any biologically meaningfull information,
+for each sample cells were clustered based only on those intergenic samples.
+As can be seen in some provided examples in Figure \ref{fig:intergenicClustering},
+clustering can be seen in this case and it roughly corresponds to the clustering using standard ('10x') annotation.
+This shows that biologically meaningful information is indeed present in those intergenic regions,
+Hence, further analysis were performed on those intergenic regions.
+
+The intergenic regions from all samples were combined into one list, resulting in a list of 13667 entries.
+For each region several metrics were calculated, including mean CPM (counts per million) per sample,
+the number of samples in which this region was detected, conservation score.
+Additionally it was checked if those regions overalap with any genes predicted by gene predictions tools,
+also, closest genes on the same and opposite strands (and distances from them) were found.
+The list was filtered based on the numer of samples the region was detected, allowing only those regions that are detected in all
+blood, brain, eye, or lung samples (with the exception for PBMC samples,
+for them more permissive filtering was applied, allowing those entries that were detected only by one sequencing protocol as well,
+i.e. it could be detected in all 'PBMC\_10x samples' or all 'PBMC\_indrops samples').
+This resulted in a filtered list of 2590 intergenic regions.
+
+Since the filtered list still remained huge, additional filtering criterions were applied:
+\begin{itemize}
+  \item \textbf{Conservation scores.} Since the conservation scores are not strand specific,
+  it makes no sense to filter out directly by the conservation score, because in the case there is other gene on the opposite strand
+  of defined region, the high conservation score could be induced by this other gene.
+  However, if there are no overlapping genes, high conservation score of an intergenic region could suggest that it might have some function.
+  Therefore, a group of possibly biologically meaningful locations were extracted by filtering those genes that have high conservation score
+  (threshold was set to 0.6) and do not overlap with any known genes (from the ncbi or genecode references).
+  \item \textbf{Gene predictions tools.} There are tools that predict genes based on the genomic sequence.
+  Such predictions (if overlapping with defined intergenic regions) would support the claim that
+  those (overlapping) intergenic regions are not noise, especially if the intergenic peaks would overlap with 3' ends of predicted genes.
+  \item \textbf{Intergenic region specificity.} In the case the reads from specific regions are present only in one cell group,
+  the biological origin of these reads are very likelly.
+  This would need at least partial manual inspection.
+\end{itemize}
+
+In the following subsections I will explore genes filtered by those strategies separatelly.
+
+\subsection{Intergenic regions with high conservation score}
+
+The filtering based on the conservation as described above left five intergenic regions, given in the Table \ref{tab:conservedIntergenic}.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        Name & Genomic coordinates & Conservation score & Found in samples \\
+        \midrule
+        INT1216 & 1:72282700-72282900 & 0.7534172617 & brain, eye\\
+	INT1829 & 1:77772950-77773050 & 0.6863111111 & lung \\
+	INT2199 & 6:148122550-148122750 & 0.6364459652 & brain, eye \\
+	INT2208 & 5:18162950-18163100 & 0.6138651685 & PBMC (indrops) \\
+	INT3636 & X:129412750-129413050 & 0.7218984354 & brain \\
+        \bottomrule
+    \end{tabular}
+    \caption{Conserved intergenic regions not overlapping with known genes from ncbi and gtf annotations.}
+    \label{tab:conservedIntergenic}
+\end{table}
+
+\subsection{Gene Predictions Tools}
+
+61 intergenic regions overlap with predicted genes from UCSC gene prediction archive, given in the Table \ref{tab:predictionToolsIntergenic}.
+
+\input{"textparts/tables/predictionToolsIntergenic.tex"}
+
+
+
+
+
+
+
+
+
 \section{Enhancing transcriptomic reference}
 
 The enhanced transcriptomic reference allows to include those reads into downstream analysis that otherwise would be discarded.
@@ -60,5 +134,3 @@ however, no significant change in clustering can be seen.
 \input{"data/downstream/summaries/captured_gene_summaries/captured_gene_types_summary.tex"}
 
 \subsection{Captured genes}
-
-
