@@ -37,6 +37,38 @@ Since the filtered list still remained huge, additional filtering criterions wer
 
 In the following subsections I will explore genes filtered by those strategies separatelly.
 
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_pbmc10x3.png}
+        \caption{10x PBMC 3}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_pbmc10x2.png}
+        \caption{10x PBMC 2}
+    \end{subfigure}
+    \vspace{0.5em}
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_eye.png}
+        \caption{eye}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_brain_2.png}
+        \caption{10x Brain 2}
+    \end{subfigure}
+    \caption{Comparison of clustering using standard clustering ('10x' reference) and using only defined intergenic regions.
+    As can be seen, for some samples intergenic regions are sufficient for rough clustering, for others (e.g. 'brain\_2' sample), 
+    noise gives some clustering artefacts.
+    Nevertheless, the clustering can be seen even in those noisy samples.}
+    \label{fig:intergenicClustering}
+\end{figure}
+
 \subsection{Intergenic regions with high conservation score}
 
 The filtering based on the conservation as described above left five intergenic regions, given in the Table \ref{tab:conservedIntergenic}.
@@ -54,16 +86,63 @@ The filtering based on the conservation as described above left five intergenic 
 	INT3636 & X:129412750-129413050 & 0.7218984354 & brain \\
         \bottomrule
     \end{tabular}
-    \caption{Conserved intergenic regions not overlapping with known genes from ncbi and gtf annotations.}
+    \caption{Conserved intergenic regions not overlapping with known genes from ncbi and gencode annotations.}
     \label{tab:conservedIntergenic}
 \end{table}
 
 \subsection{Gene Predictions Tools}
 
 61 intergenic regions overlap with predicted genes from UCSC gene prediction archive, given in the Table \ref{tab:predictionToolsIntergenic}.
+Of them 44 are in the 3' end of predicted gene (good, as our datasets are generated using 3' end sequencing protocols).
+Out of those 44 predicted genes, 15 are extended versions of genes present in gencode/ncbi references,
+you can see an example in Figure \ref{fig:predictedExtention}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/igv/INT33.png}
+  \caption{Example of gene which is predicted longer than are present in the gencode and ncbi annotations.
+  The intergenic region is located after the 3' end of gene DUSP1, however,
+  SIB prediction tool suggest that annotation of this gene should be extended.}
+  \label{fig:predictedExtention}
+\end{figure}
+
 
 \input{"textparts/tables/predictionToolsIntergenic.tex"}
 
+\subsection{Intergenic regions specific to some cell types}
+
+If reads from specific intergenic region are specific for only subset of cell types present in the sample,
+it is strong indication that those reads are not sequencing artefacts.
+Examples of such regions can be seen in the Figure \ref{fig:intergenicSpecific}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/intergenicSpecificExamples/INT1429_lung_5.png}
+        \caption{Lung 5 (INT1429)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/intergenicSpecificExamples/INT1524_PBMC_10x_2.png}
+        \caption{PBMC 10x 2 (INT1524)}
+    \end{subfigure}
+    \vspace{0.5em}
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/intergenicSpecificExamples/INT2214_brain_2.png}
+        \caption{Brain 2 (INT2214)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/intergenicSpecificExamples/INT2328_eye_3.png}
+        \caption{Eye 3 (INT2328)}
+    \end{subfigure}
+    \caption{Some examples of specificly expressed intergenic regions in various samples.}
+    \label{fig:intergenicSpecific}
+\end{figure}
 
 
 
@@ -71,6 +150,10 @@ The filtering based on the conservation as described above left five intergenic 
 
 
 
+
+
+
+\iffalse
 
 \section{Enhancing transcriptomic reference}
 
@@ -96,36 +179,6 @@ To check this, I have tried to cluster cells based only on the newly defined int
 While for PBMC\_indrops sample it looks as noise, for the 10x indrops samples it provides quite good clustering,
 meaning that at least some of those captured intergenic regions are not sequencing artefacts.
 
-\begin{figure}[htbp]
-    \centering
-    \begin{subfigure}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_indrops.png}
-        \caption{Indrops PBMC}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_pbmc10x1.png}
-        \caption{10x PBMC 1}
-    \end{subfigure}
-    \vspace{0.5em}
-    \begin{subfigure}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_pbmc10x2.png}
-        \caption{10x PBMC 2}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_brain.png}
-        \caption{10x Brain}
-    \end{subfigure}
-    \caption{Comparison of clustering using only intergenic regions versus standard (10x) reference.
-    'Intergenic' plots are colored according to the '10x' coloring.}
-    \label{fig:umapComparisonIntergenic}
-\end{figure}
-
 \subsection{Enhanced Reference}
 
 Using enhanced reference allowed us to have more captured genes in the data,
@@ -134,3 +187,5 @@ however, no significant change in clustering can be seen.
 \input{"data/downstream/summaries/captured_gene_summaries/captured_gene_types_summary.tex"}
 
 \subsection{Captured genes}
+
+\fi
