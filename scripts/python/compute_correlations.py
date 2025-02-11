@@ -10,7 +10,7 @@ samples = [
 ]
 
 adatas = {}
-
+print("Loading samples")
 for sample in samples:
     adatas[sample] = sc.read_h5ad(f'../../data/downstream/adatas/{sample}.h5ad')
     adatas[sample] = adatas[sample].raw.to_adata()
@@ -18,16 +18,18 @@ for sample in samples:
     sc.pp.log1p(adatas[sample])
 
 adatas_intergenic = {}
-
+print("Loading intergenic samples")
 for sample in samples:
     adatas_intergenic[sample] = sc.read_h5ad(f'../../data/downstream/adatas/intergenic_combined/{sample}.h5ad')
 
+print("Adjusting adatas")
 for sample in samples:
     # Ensure that both adatas contain same cells and same order of them
     mask =  [True if i in adatas[sample].obs_names.values else False for i in adatas_intergenic[sample].obs_names.values]
     adatas_intergenic[sample] = adatas_intergenic[sample][mask]
     adatas[sample] = adatas[sample][adatas_intergenic[sample].obs_names]
 
+print("Computing correlations")
 with open(intergenic_list_path, "r") as intergenic_list, open(f'{intergenic_list_path.removesuffix(".bed")}_with_correlations.bed', "w") as output:
     for line in intergenic_list:
         entries = line.strip().split('\t')
@@ -60,15 +62,15 @@ with open(intergenic_list_path, "r") as intergenic_list, open(f'{intergenic_list
                     if p < 0.05:
                         r2.append(r)
 
-            if(len(r1) == 0):
-                mean1 = "."
-            else:
-                mean1 = np.mean(r1)
+        if(len(r1) == 0):
+            mean1 = "."
+        else:
+            mean1 = np.mean(r1)
 
-            if(len(r2) == 0):
-                mean2 = "."
-            else:
-                mean2 = np.mean(r2)
+        if(len(r2) == 0):
+            mean2 = "."
+        else:
+            mean2 = np.mean(r2)
 
         output.write("\t".join(entries) + f"\t{mean1}\t{mean2}\n")
 
