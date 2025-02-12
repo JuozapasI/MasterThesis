@@ -4,6 +4,7 @@ umi = 12
 barcode = 16
 # for indrops umi = 10 barcode = 28
 # for indrops_2 umi=8 barcode=17
+# for eye umi=12 barcode=19
 clusterThreshold = 100
 fasta = data/genome/fasta/GRCh38.dna.primary_assembly.fa
 ATrichThreshold = 70
@@ -44,7 +45,8 @@ brain_2_seq_depth = 122556503
 PBMC_indrops_seq_depth = 112932507
 PBMC_indrops_2_seq_depth = 471705924
 eye_seq_depth = 375397270
-eye_2_seq_depth = 302243785
+eye_2_seq_depth = 140981808
+eye_3_seq_depth = 161261977
 lung_2_seq_depth = 511080104
 lung_5_seq_depth = 452105505
 lung_7_seq_depth = 524095146
@@ -58,7 +60,8 @@ brain_2_extensionCountThreshold = 122
 PBMC_indrops_extensionCountThreshold = 112
 PBMC_indrops_2_extensionCountThreshold = 472
 eye_extensionCountThreshold = 375
-eye_2_extensionCountThreshold = 302
+eye_2_extensionCountThreshold = 141
+eye_3_extensionCountThreshold = 161
 lung_2_extensionCountThreshold = 511
 lung_5_extensionCountThreshold = 452
 lung_7_extensionCountThreshold = 524
@@ -72,7 +75,8 @@ brain_2_newGeneCountThreshold = 613
 PBMC_indrops_newGeneCountThreshold = 564
 PBMC_indrops_2_newGeneCountThreshold = 2358
 eye_newGeneCountThreshold = 1876
-eye_2_newGeneCountThreshold = 1510
+eye_2_newGeneCountThreshold = 705
+eye_3_newGeneCountThreshold = 806
 lung_2_newGeneCountThreshold = 2555
 lung_5_newGeneCountThreshold = 2261
 lung_7_newGeneCountThreshold = 2620
@@ -104,13 +108,15 @@ data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex
      data/downstream/intergenic/%.csv
 	@echo "Done with $* dataset"
 	
-downstream: data/downstream/intergenic/predictions.bed \
+downstream: data/downstream/intergenic/closest.bed \
      data/downstream/summaries/captured_gene_summaries/captured_gene_types_summary.tex \
      data/downstream/summaries/count_summaries/count_summary.tex \
      data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex \
      data/downstream/igv/intergenic.batch.txt \
      data/downstream/intergenic/intergenic.gtf \
-     data/downstream/intergenic/index/
+     data/downstream/intergenic/index/ \
+     data/downstream/intergenic/augustus/predictions/ \
+     data/downstream/intergenic/augustus/predictions.gtf
      
 %.dataset2: data/downstream/matrices/intergenic/%/matrix.mtx.gz \
      data/downstream/matrices/intergenic/%/features.tsv.gz \
@@ -295,7 +301,7 @@ data/datasets/%/index_final/
 #		  data/gencode.v47.sorted.gtf $@
 
 # Make igv snaphots script for new gene candidates
-data/downstream/igv/intergenic.batch.txt: data/downstream/intergenic/combined.bed 
+data/downstream/igv/intergenic.batch.txt: data/downstream/intergenic/filtered.bed 
 	mkdir -p data/downstream/igv/
 	python scripts/python/igv_batch_script_generator.py $^ \
 		  bam_file \
@@ -453,12 +459,12 @@ data/downstream/intergenic/predictions_full_prediction_entries.bed: data/downstr
 	bedtools intersect -s -wa -wb -a $< -b data/genome/predictions/*.bed -names Augustus Geneid Gescan SIB SPG > $@
 	
 # Combine all those intergenic regions from various samples into one gtf annotaion
-data/downstream/intergenic/intergenic.gtf: data/downstream/intergenic/predictions.bed
+data/downstream/intergenic/intergenic.gtf: data/downstream/intergenic/filtered.bed
 	awk -F '\t' 'BEGIN {OFS=FS} {print $$1, "scRNAseqData", "gene", $$2, $$3, ".", $$6, ".", \
-	"gene_id \"INT" NR "\"; gene_name \"INT" NR "\"; no_samples " $$7 "; mean_cpm " $$5 "; aliases \"" $$4 "\"; conservation_score " $$8 \
+	"gene_id \"" $$4 "\"; gene_name \"" $$4 "\"; no_samples " $$7 "; mean_cpm " $$5 "; aliases \"" $$14 "\"; conservation_score " $$8 \
 	"; predictions \"" $$9 "\";"; \
 	print $$1, "scRNAseqData", "exon", $$2, $$3, ".", $$6, ".", \
-	"gene_id \"INT" NR "\"; gene_name \"INT" NR "\"; no_samples " $$7 "; mean_cpm " $$5 "; aliases \"" $$4 "\"; conservation_score " $$8 \
+	"gene_id \"" $$4 "\"; gene_name \"" $$4 "\"; no_samples " $$7 "; mean_cpm " $$5 "; aliases \"" $$14 "\"; conservation_score " $$8 \
 	"; predictions \"" $$9 "\";";}' $< > $@
 
 # Make solo index for this annotation
@@ -523,8 +529,19 @@ data/downstream/intergenic/augustus/predictions/: data/downstream/intergenic/clo
 data/downstream/intergenic/augustus/predictions.gtf: data/downstream/intergenic/augustus/predictions/ \
       data/downstream/intergenic/extended_intervals.bed
 	bash scripts/bash/combine_augustus.sh $^ $@
+	
+data/downstream/intergenic/augustus.bed: data/downstream/intergenic/closest.bed \
+     data/downstream/intergenic/augustus/predictions.gene_ranges_sorted.bed
+		bedtools intersect -s -wa -loj -a $< -b data/downstream/intergenic/augustus/predictions.gene_ranges_sorted.bed | \
+		cut -f 1-15 | \
+		awk -F '\t' 'BEGIN {OFS=FS} !seen[$$4]++ {if ($$15 == ".") {a = 0} else {a = 1}; \
+		print $$1,$$2,$$3,$$4,$$5,$$6,$$7,$$8,$$9,$$10,$$11,$$12,$$13,$$14,a}' > $@
+	
+data/downstream/intergenic/filtered.bed: data/downstream/intergenic/augustus.bed
+	awk '{if (gsub(/PBMC/, "&") == 5 || gsub(/lung/, "&") == 4 || gsub(/eye/, "&") == 3 || gsub(/brain/, "&") == 2 || \
+	gsub(/PBMC_indrops/, "&") == 2 || gsub(/PBMC_10x/, "&") == 3) {print $$0}}' $< > $@
 
 clean:
 	latexmk -c
 	rm *.bbl
-	rm *.bib.bak
+	rm *.bib.bak$
