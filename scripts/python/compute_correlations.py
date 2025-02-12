@@ -54,7 +54,7 @@ with open(intergenic_list_path, "r") as intergenic_list, open(f'{intergenic_list
 
             if gene2 in adatas[sample].var_names:
                 expr1 = adatas_intergenic[sample][:, gene0].X.toarray().flatten()
-                expr2 = adatas[sample][:, gene1].X.toarray().flatten()
+                expr2 = adatas[sample][:, gene2].X.toarray().flatten()
                 # Check if expression is non constant (particularly 0), if it is, then correlation is not defined
                 if not (np.all(expr1 == expr1[0]) or np.all(expr2 == expr2[0])):
                     r, p = stats.spearmanr(expr1, expr2)
