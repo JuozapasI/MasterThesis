@@ -34,6 +34,185 @@ These data can be used for constructing cellular atlases (\cite{Rozenblatt2017})
 understanding disease mechanisms (\cite{Zhang2024}),
 exploring cell differentiation and developmental processes (\cite{Skinner2024}), among many other applications.
 
+\section{scRNAseq data generation and analysis}
+
+Something here
+
+\subsection{Overview of scRNAseq protocols}
+
+The generation of scRNA-seq data is a complex, multi-step process that varies across different protocols.
+These protocols can be grouped based on several criteria, such as the type of RNA capture
+(e.g., 3' end, 5' end, or full-length) or the method of cell isolation
+(e.g., droplet-based methods such as inDrops (\cite{Klein2015}), Drop-seq (\cite{Macosko2015}),
+and Chromium by 10X Genomics (\cite{Zheng2017}),
+or plate-based methods such as CEL-Seq2 (\cite{Hashimshony2016}) and Smart-seq2 (\cite{Picelli2013})).
+
+In this project, datasets generated using droplet-based 3' end sequencing methods were analyzed.
+Therefore, these methods will be the focus of the following literature review.
+
+\paragraph{3' End Sequencing and Polyadenylation}
+
+3' end sequencing captures RNA molecules using primers complementary to poly(A) tails.
+Polyadenylation at the 3' end is a post-transcriptional modification
+in which non-templated adenosines are added to the 3' end of mRNA molecules.
+Although the poly(A) tail is present in almost all mRNAs,
+its length varies and can influence mRNA fate, stability, and translation efficiency (\cite{Brouze2022}).
+
+3' end sequencing protocols exploit this feature to selectively capture RNA molecules,
+enabling high-throughput and cost-effective sequencing.
+However, some RNA molecules lack poly(A) tails and are therefore not captured by these methods,
+such as replication-dependent histone mRNAs (\cite{Brouze2022}).
+
+\paragraph{Common Steps in scRNA-seq Protocols}
+
+Despite differences between scRNA-seq protocols, they share key steps:
+single-cell isolation, library preparation, and sequencing (\cite{Andrews2018}).
+In droplet-based methods, single cells are encapsulated in individual droplets containing hydrogel primers
+and a lysis mix (an example of a droplet generation device is shown in Figure \ref{fig:inDropsDevice}).
+Primers used in these protocols typically share a common structure, including:
+
+\begin{itemize}
+  \item \textbf{Cell barcodes:} Unique sequences that identify the cell from which a particular read originates (since all droplets are pooled and sequenced together).
+  \item \textbf{Unique molecular identifiers (UMIs):} Short sequences used to quantify the original number of RNA molecules, helping to eliminate amplification bias.
+  \item \textbf{PCR handles:} Sequences that facilitate amplification.
+  \item \textbf{Poly-T sequences}: In 3' end sequencing methods are used to selectively capture polyadenylated RNAs (\cite{Zhang2019}).
+\end{itemize}
+An example of primer design is shown in Figure \ref{fig:inDropsPrimer}.
+Once cells are encapsulated in droplets, lysis occurs, releasing RNA, which is then captured by the primers.
+A schematic overview of library preparation is provided in Figure \ref{fig:inDropsPipeline}.
+
+Depending on the method, reverse transcription may occur within the droplets
+(as in inDrops and 10X Genomics) or after demulsification (as in Drop-seq).
+Subsequent steps typically include RNA fragmentation, PCR amplification, and next-generation sequencing (NGS).
+
+\subsection{scRNAseq data analysis}
+
+\paragraph{Raw data processing}
+
+The output from NGS is typically FASTQ files, containing recorded sequences,
+as well as (depending on method) barcode and UMI sequences, and quality scores.
+The subsequent processing steps include quality control of FASTQ file (based on quality scores),
+filtering dublicate reads (using UMIs), mapping reads to the genome sequence, assigning the reads to the genes,
+and finally, counting gene expression per cell (barcode) (\cite{Heumos2023}) (see figure \ref{fig:rawData}).
+Usually, all these steps are performed with a single piece of dedicated software,
+such as STARsolo (\cite{Kaminow2021}), CellRanger (\cite{Zheng2017}) or other.
+It should be noted, that there are variations in the pipeline described above,
+depending on many experiment-related (e.g., whether the genome sequence or transcriptone of the study organism is known),
+or method-related (e.g., whether UMIs are used in the protocol) factors.
+The typical result of such processing is cell-gene matrix (i.e., a matrix where rows represent cells,
+columns represent genes, and each entry indicates the number of captured RNAs for a given gene in a specific cell).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/rawdata.png}
+  \caption{Pipeline of processing raw data.}
+  \label{fig:rawData}
+\end{figure}
+
+\paragraph{Cell-gene matrix processing}
+
+The next steps in the analysis of the scRNAseq data involves following steps:
+
+\begin{itemize}
+  \item \textbf{Quality control}
+The quality of indidual cells (barcodes) can be evaluated based on several factors, such as mitochondrial gene content
+(apoptotic cells tend to have a higher proportion of mitochondrial genes (\cite{Heumos2023})) or
+total number of captured genes (very low numbers can be produced by empty droplets).
+In some cases, two cells can end up in one droplet,
+resulting in count matrix row corresponding to genes from  both cells.
+Such matrix entries (doublets) can be filtered by using specialized software
+such Scrublet (\cite{Wolock2019}) or scDblFinder (\cite{Germain2022}).
+Another source of noise in scRNAseq data is ambient RNA,
+which consists of RNA that escapes individual droplets and spreads into the medium or other droplets,
+leading to background noise.
+Even though the amount of such RNA is not high (in good quality datasets it can be around 2\% (\cite{Young2020})),
+removing these RNAs from the count matrix can improve data quality.
+This can be achieved by identifying the background noise profile from empty droplets and
+adjusting the count matrix accordingly.
+There are dedicated softwares,
+such as SoupX (\cite{Young2020}), decontX (\cite{Yang2020}), CellBender (\cite{Fleming2023}) and others.
+  \item \textbf{Normalization}
+The next step in preprocessing pipeline is normalization.
+The goal of normalization is to transform the data so that the variation in gene expression levels is comparable,
+making subsequent analysis more efficient (\cite{Ahlmann2023}).
+Normalization can also help eliminate biases,
+such as differences in sequencing depth when combining data from multiple samples (\cite{Lingen2024}).
+There are numerous normalization methods, based on different approaches
+(e.g., delta-method-based, residual-based, latent gene expression-based, count-based (\cite{Ahlmann2023})).
+Thus, selecting a normalization method should be done carefully, depending on the experimental design.
+General recommendations for normalization suggest comparing several methods,
+and if the results are similar, opting for the simpler method (\cite{Lingen2024}).
+Sophisticated methods do not necessarily show better results, and a recent benchmarking study by \textcite{Ahlmann2023}
+has shown that simpler method (particularly the logarithm normalization,
+where each element $y$ of count matrix is transformed by formula $y_{trnasformed} = log(y+1)$)
+performs as well or better than more advanced methods.
+\item \textbf{Filtering genes}
+Once the data is normalized and cleaned, one can filter out non-informative genes.
+Initially, count matrices contain all the genes that are present in the transcriptome.
+However, not all of them are expressed in the sequenced data, or are expressed in negligable numbers (\cite{Heumos2023}).
+Therefore, it is common practice to filter such genes (e.g., genes that are expressed in less than three cells).
+Moreover, some genes might be expressed in all the cells more or less evenly (housekeeping genes),
+which do not provide useful information that could be usefull in, for instance, grouping cells or determining cell types.
+Therefore, in many applications, it is beneficial to leave only those genes, that are highly variable between cells.
+In such way, the dimensionality of the count matrix is greatly reduced without loosing significant information.
+Additionally, genes that are outside the scope of the specific study can also be filtered out.
+\item \textbf{Dimensionality reduction}
+Even after filtering and selecting only highly variable genes, several thousand genes usually remain.
+It is not feasible to visualize (and hard to interpret in general) data of such high dimentionality, therefore,
+dimensionality reduction is essential step of subsequent analysis.
+The idea of dimentionality reduction is simple:
+to reduce the dimentions of the data loosing as little information as possible.
+There are number dimensionality reduction methods based on different mathematical concepts,
+but the most widely used today include
+t-SNE (\cite{Hinton2002}), UMAP (\cite{McInnes2018}) and principal component analysis (PCA).
+Although the use of these algorithms are supported by some benchmarking studies
+(in the study of \textcite{Xiang2021}, t-SNE was showed best performance, while UMAP showed the highest stability),
+other benchmarking studies report different findings.
+The study of \textcite{Koch2021} suggested that such overlooked methods as
+latent Dirichlet alloacation (LDA) and PHATE show best performance.
+Meanwhile \textcite{Sun2019} provided guidelines for choosing dimensionality reduction method
+depending on downstream analysis tasks, and in their results UMAP and tSNE were not on the top choices.
+Thus, while UMAP and t-SNE remain the most popular methods in the field,
+it is worth considering alternative methods as well.
+\item \textbf{Clustering and other analyses}
+One of the most common tasks of scRNAseq data analysis is to identify and classify cell populations (\cite{Andrews2018}).
+This task requires to assign cells to different groups (clusters),
+such that cells in the same clusters are similar and distinct from cells in other clusters.
+There is a great variety of clustering algorithms available,
+including k-means, hierarchical and consensus clustering (\cite{Peng2020}).
+Benchmarking studies suggest that "no individual scRNA-seq clustering algorithm can capture true clusters and achieve
+optimal performance in all situations" (\cite{Peng2020}).
+
+Clustering is usually followed by cell typing (i.e., assigning cell type to the identified clusters),
+which is done by finding cell type specific markers
+or using automatic (machine learning) tools such as CellTypist (\cite{Dom2022}).
+The subsequent steps in the analysis depend on the focus of the particular study and can include
+analysis of the dynamics of cellular systems (RNA velocity, pseudotime),
+inferring gene regulatory networks (GRNs), and more.
+\end{itemize}
+
+The described analysis pipeline enables insights into multicellular systems.
+It is evident that all downstream analyses are directly influenced by the initial steps of raw data processing,
+with mapping being particularly crucial in the context of this project.
+While mapping algorithms and tools differ, they all rely on the genome and its annotation,
+which directly impact their results.
+In the next section, I will further expand on this topic.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\iffalse
 \section{Key methods and technologies in scRNAseq}
 
 \subsection{Key methods}
@@ -406,3 +585,4 @@ Finally (and most importantly in the context of this project), there is a need f
 which would allow to include more data in the downstream analysis.
 This enhancement could be either based on adjusting the existing references, or by including new genes,
 that need to be predicted and confirmed.
+\fi
