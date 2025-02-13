@@ -198,6 +198,51 @@ While mapping algorithms and tools differ, they all rely on the genome and its a
 which directly impact their results.
 In the next section, I will further expand on this topic.
 
+\subsection{Genome annotation}
+
+The genome annotation is typically refered as process of identifying and mapping genes into a given genome sequence (\cite{Guigo2023}).
+While definition is not difficult, the process itself is quite complex.
+This can be illustrated by the fact, the even after more than 20 years after human genome assembly,
+human genome annotation is constantly updated (and is expected to be updated in the future) with new transcripts (\cite{Mudge2024}),
+Figure \ref{fig:gencode} shows the gencode annotation changes during the time.
+
+It should be noted, that many medical and scientific research are dependant on the human gene list,
+with examples such as Genome-wide association studies (GWAS) (attempt to link genomic variant to nearby genes), RNA-seq analysis,
+exome sequencing projects (use exon capture kits that target most known exons) and others (\cite{Pertea2018}).
+
+Currently, two genome annotations are used most widelly: GENCODE (\cite{Mudge2024}) and RefSeq (\cite{OLeary2015}) (by NCBI).
+Even though they are regarded as mature genome references, they contain different number of genes
+(e.g. RefSec has 20078 protein coding genes (\cite{ncbi}), while GENCODE contains 19868 (\cite{ensembl})).
+This highligths the difficulty to properly annotate genome.
+To understand where those difficulties come from, the genome annotation process will be firstly overviewed.
+
+\paragraph{Genome annotation proccess}
+
+Currently, the main tool in genome annotation assembly is RNA sequencing.
+Full-length RNA sequencing allows to capture RNA molecules,
+and by alligning them to the reference genome one would be able to construct genome annotation of the species of interest (\cite{Salzberg2019}).
+While being very useful, is has its own caveats, with the main being that RNA-seq does not capture all RNA molecules.
+This would be particularly problem for rare transcripts, as they could be treated as noise or not captured at all (\cite{Salzberg2019}).
+Therefore, additionally using bioinformatic tools is required (\cite{Guigo2023}),
+and most of the current genome annotation pipelines combine RNA-seq data with computational methods.
+Computational methods can be classified as comparative (which employs the fact that protein-coding sequences usually more evolutionary conserved),
+or \textit{ab initio} (which integrates information about known sequence biases) (\cite{Guigo2023}).
+However, as mentioned before, the current genome annotations are still not perfect.
+
+While the number of protein-coding genes is approaching consensus (major databases report around 19000-20000 protein coding genes),
+the number of non-coding genes is expected to increase in the future (\cite{Amaral2023}).
+The reason for this is the more robust structure of the protein-coding genes (e.g. open reading frames (ORFs),
+codon biases that skew nucleotide distributions), which make them to be more easily founded by computational tools (\cite{Guigo2023}),
+as well more general interest in them, as they are very directly linked to the phenotype, which leads to more experimental confirmations.
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/gencode.png}
+  \caption{Number of different genes in the gencode annotation during time. Figure taken from paper by \textcite{Guigo2023}}
+  \label{fig:gencode}
+\end{figure}
+
 
 
 
