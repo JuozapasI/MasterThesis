@@ -62,7 +62,7 @@ In the following subsections I will explore genes filtered by those strategies s
         \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_brain_2.png}
         \caption{10x Brain 2}
     \end{subfigure}
-    \caption{Comparison of clustering using standard clustering ('10x' reference) and using only defined intergenic regions.
+    \caption{Comparison of clustering using standard annotation ('10x' reference) and using only defined intergenic regions.
     As can be seen, for some samples intergenic regions are sufficient for rough clustering, for others (e.g. 'brain\_2' sample), 
     noise gives some clustering artefacts.
     Nevertheless, the clustering can be seen even in those noisy samples.}
@@ -144,10 +144,61 @@ Examples of such regions can be seen in the Figure \ref{fig:intergenicSpecific}.
     \label{fig:intergenicSpecific}
 \end{figure}
 
+\subsection{ATAC data}
 
+ATAC sequencing shows open chromatin sites, which could potentially indicate that some transcription activity is happening at those sites.
+Hence, checking if there are overlaps between open chromatine regions and dewfined intergenic regions could provide additional evidence of
+those regions being not noise.
+However, there are some caveats in this 'evidence'.
+Firstly, open chromatin is mostly expected at the transcription start sites, promoter or other regulatory elements,
+which are typically located in the 5' end of the gene.
+Another problem is that majority of our defined regions lay on the opposite strands of known genes, while ATAC sequencing is not strand specific.
+In such cases, open chromatine could be present due to the transcription of those known genes.
 
+Out of 2590 intergenic regions, 309 intersected with ATAC intervals found from 10x PBMC ATAC data.
+Out of those 309 regions, only 20 were not overlapping with genes from GENCODE or RefSeq annotations.
 
+\subsection{Correlations}
 
+Another aspect to check is whether expression of those intergenic regions correlate with the expression of nearby genes.
+If it does, it might indicate several things:
+\begin{itemize}
+  \item If the region correlates with gene on the same strand:
+  \begin{itemize}
+    \item There might exist longer unannotated transcripts that involve those intergenic regions.
+    \item The intergenic genes are involved in the same processes as the gene.
+    \item They both can be transcribed by the same polymerases.
+  \end{itemize}
+  \item If the region correlates with gene on the oposite strand:
+  \begin{itemize}
+    \item The intergenic gene is involved in the same processes as the gene on the oposite strand.
+    \item There happens some transcription errors that cause transcription from the opposite strand.
+    \item There happens some errors in the library preparation/sequencing steps that cause template switch.
+  \end{itemize}
+\end{itemize}
+
+Which of those are the case in our samples, is hard to tell.
+Out of all defined intergenic regions, 86 showed Spearman correlation \textgreater 0.5 (p \textless 0.05) in at least 1 sample
+(80 correlated with genes on the opposite strand, 10 with gene on the same strand, 4 with both).
+Some examples can be seen in Figure \ref{fig:correlationUmaps}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/correlationUmaps/PBMC_10x_2_DUSP1.png}
+        \caption{Umaps of INT33 and DUSP1 (Spearman correlation 0.68) of the PBMC\_10x\_2 sample, both of them are on the same strand.}
+    \end{subfigure}
+    \vspace{0.5em}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/correlationUmaps/eye_3_SAMD5.png}
+        \caption{Umaps of INT978 and SAMD5 (Spearman correlation 0.85) of the eye\_3 sample,
+        intergenic region is on the opposite strand of the gene.}
+    \end{subfigure}
+    \caption{Correlation can be seen visually in UMAPs (colored by the normalized expression of the genes), here couple of examples given.}
+    \label{fig:correlationUmaps}
+\end{figure}
 
 
 
