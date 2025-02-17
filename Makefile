@@ -37,6 +37,9 @@ datasets = PBMC_10x.dataset brain.dataset PBMC_10x_2.dataset PBMC_indrops.datase
 #$(foreach dataset, $(datasets), $(eval $(dataset)_newGeneCountThreshold = \
 #$(shell echo $$(($(cpmThreshold) * $($(dataset)_seq_depth) / 1000000)))))
 
+# Defining tresholds (instead can be used above script to compute them automatically,
+# however, in such case, these thresholds are recalculated every time you run make, which takes a bit of time)
+
 PBMC_10x_seq_depth = 182330834
 PBMC_10x_2_seq_depth = 496387931
 PBMC_10x_3_seq_depth = 368640939
@@ -85,6 +88,7 @@ lung_8_newGeneCountThreshold = 1710
 debug:
 	echo $(references_paths)
 
+# Comment the line below out, if you want intermediate files to be cleaned afterwards automatically
 .SECONDARY:
 
 #.PHONY: $(datasets)
@@ -94,7 +98,7 @@ data/downstream/summaries/count_summaries/count_summary.tex \
 data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex
 
 
-
+# rule to generate all outputs for one dataset
 %.dataset: data/downstream/summaries/count_summaries/%.csv \
      data/downstream/summaries/gene_summaries/%.csv \
      data/downstream/summaries/captured_gene_summaries/%.final.csv \
@@ -107,7 +111,10 @@ data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex
      data/downstream/matrices/%/final/barcodes.tsv.gz \
      data/downstream/intergenic/%.csv
 	@echo "Done with $* dataset"
-	
+
+# rule to combine outputs from different datasets
+# important: should be runned only after all 'datasets', i.e. it doesn't check if outputs from all samples are present,
+# combines only those that are present
 downstream: data/downstream/intergenic/closest.bed \
      data/downstream/summaries/captured_gene_summaries/captured_gene_types_summary.tex \
      data/downstream/summaries/count_summaries/count_summary.tex \
@@ -117,15 +124,18 @@ downstream: data/downstream/intergenic/closest.bed \
      data/downstream/intergenic/index/ \
      data/downstream/intergenic/augustus/predictions/ \
      data/downstream/intergenic/augustus/predictions.gtf
-     
+
+# rule to map unassigned reads using combined intergenic annotation
 %.dataset2: data/downstream/matrices/intergenic/%/matrix.mtx.gz \
      data/downstream/matrices/intergenic/%/features.tsv.gz \
      data/downstream/matrices/intergenic/%/barcodes.tsv.gz
 	@echo "$* done."
 
+# rule for generating thesis pdf
 %.pdf: %.tex
 	latexmk -pdf -silent -deps-out=.depend $*
 
+# indexing bam files
 %.bam.bai: %.bam
 	samtools index $<
 
@@ -168,34 +178,42 @@ data/datasets/%/unassigned_reads/$(first).intergenic.bam data/datasets/%/unassig
 	samtools view -h -b - > data/datasets/$*/unassigned_reads/AT_seq.bam
 	rm tmp_bam_$*
 
-
+# rule for clustering reads
 %.clusters.bed: %.bam
 	bedtools bamtobed -i $< | \
 	sort -k1,1 -k2,2n | \
 	bedtools merge -s -c 6 -o distinct,count | \
 	sort -k1,1 -k2,2n | \
 	awk -F'\t' 'BEGIN {OFS = FS} {print $$1, $$2, $$3, ".", $$5, $$4}' > $@
-	
+
+# rule for taking small clusters of reads
 %.clusters.thrash.bed: %.clusters.bed
 	awk -F'\t' '{if ($$5 <= $(clusterThreshold)) {print $$0}}' $< > $@
-	
+
+# rule for taking big enough clusters of reads
+# initially we take clusters of at least 100 reads, later, when constructing intergenic region list,
+# more strict filtering (5 CPM) is applied.
 %.clusters.good.bed: %.clusters.bed
 	awk -F'\t' '{if ($$5 > $(clusterThreshold)) {print $$0}}' $< > $@
 
+# getting list of genes intersecting with unassigned reads
 $(foreach f, $(order), $(eval \
 data/datasets/%/unassigned_reads/$(f).intersecting_genes.bed: data/datasets/%/unassigned_reads/$(f).intersecting.clusters.good.fine.bed \
 data/genome/references/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed; \
 bedtools intersect -s -wa -wb -abam $$< -b data/genome/references/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gene_ranges_sorted.bed | \
 sort -k1,1 -k2,2n > $$@))
 
+# Extracting intersecting genes
 %.intersecting_gene_list.tsv: %.intersecting_genes.bed
 	cut -f 11 $< | sort -u > $@
-	
+
+# Getting list of overlapping genes that contain unassigned reads
 $(foreach f, $(order), $(eval \
 data/datasets/%/unassigned_reads/$(f).overlappers.csv: data/genome/references/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gtf \
 data/datasets/%/unassigned_reads/$(f).intersecting_gene_list.tsv; \
 Rscript scripts/R/Overlappers.R $$^ $$@))
 
+# Constructing GTF of the adjusted overlapping genes
 $(foreach f, $(order), $(eval \
 data/datasets/%/unassigned_reads/$(f).overlaps_modified.gtf: data/genome/references/$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f))).gtf \
 data/datasets/%/unassigned_reads/$(f).overlappers.csv; \
@@ -207,85 +225,91 @@ data/genome/references/$(first).gtf data/datasets/%/unassigned_reads/$(first).ov
 	( grep -v -f $< data/genome/references/$(first).gtf; cat data/datasets/$*/unassigned_reads/$(first).overlaps_modified.gtf ; ) | \
 	sort -k1,1 -k4,4n > $@
 
-# For the second and on, we need to make sure that appended entries doesn't overlap with previous gtf
+# Assembling adjusted gtf for second and on
+# In this case, we need to make sure that appended entries doesn't overlap with previous gtf
 $(foreach f, $(order_without_first), $(eval \
 data/datasets/%/unassigned_reads/$(f).new_entries.gtf: data/datasets/%/unassigned_reads/$(basename $(f)).modified.gtf \
 data/datasets/%/unassigned_reads/$(f).overlaps_modified.gtf; \
 Rscript scripts/R/ResolveGtfsOverlaps.R $$^ $$@))
 
-# And then we can merge gtfs
+# Merging GTFs (previously generated + new entries)
 $(foreach f, $(order_without_first), $(eval \
 data/datasets/%/unassigned_reads/$(f).modified.gtf: data/datasets/%/unassigned_reads/$(basename $(f)).modified.gtf \
 data/datasets/%/unassigned_reads/$(f).new_entries.gtf; \
 ( cat $$< ; cat data/datasets/$$*/unassigned_reads/$(f).new_entries.gtf ; ) | \
 	sort -k1,1 -k4,4n > $$@))
-	
+
+# rule for taking reads only on the positive strand
 %.forward.bam: %.bam
 	samtools view -h -b -F 16 $< > $@
-	
+
+# rule for taking reads only on the negative strand
 %.backward.bam: %.bam
 	samtools view -h -b -f 16 $< > $@
 
+# rule for compute coverage of reads on the positive strand
 %.coverage.forward.bg: %.forward.bam %.forward.bam.bai
 	bamCoverage -b $< -o $@ -of bedgraph -p max
 	
+# rule for compute coverage of reads on the negative strand
 %.coverage.backward.bg: %.backward.bam %.backward.bam.bai
 	bamCoverage -b $< -o $@ -of bedgraph -p max
-	
+
+# rule for adjusting intergenic regions boundaries
 %.clusters.good.fine.bed: %.clusters.good.bed %.coverage.forward.bg %.coverage.backward.bg
 	python scripts/python/intergenic_regions_tuning.py $^ $@
 	
-
+# rule to extract sequences of intergenic regions
 data/datasets/%/unassigned_reads/$(order_last).intergenic.clusters.sequences.tsv: data/datasets/%/unassigned_reads/$(order_last).intergenic.clusters.good.fine.bed
 	bedtools getfasta -fi $(fasta) -nameOnly -tab -bed $< | cut -f2 > $@
-	
+
+# rule to compute GC content of intergenic regions
 data/datasets/%/unassigned_reads/$(order_last).intergenic.clusters.GCcontent.tsv: data/datasets/%/unassigned_reads/$(order_last).intergenic.clusters.sequences.tsv 
 	awk '{l=length($0); gc=gsub(/[GCgc]/,""); print (gc/l)*100}' $< > $@
-	
+
+# rule to map unassigned reads not intersecting with genes from current reference using the next reference
 $(foreach f, $(order_without_first), $(eval \
 data/datasets/%/solo_output.$(f)/Aligned.sortedByCoord.out.bam: data/datasets/%/unassigned_reads/$(basename $(f)).intergenic.bam \
 data/genome/indices/index_$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f)))/; \
 bash scripts/solo/starsolo_from_bam.sh $$< data/genome/indices/index_$(word $(words $(subst ., ,$(f))), $(subst ., ,$(f)))/ data/datasets/$$*/solo_output.$(f)/ $(umi)))
 	
-# Filter those clusters that came from AT rich regions:
+# rule to filter those clusters that came from AT rich regions:
 %.filteredAT.intergenic.clusters.good.fine.bed: %.intergenic.clusters.good.fine.bed %.intergenic.clusters.GCcontent.tsv
 	paste -d ',' $^ | awk -F',' '$$2 > 30 {print $$1}' > $@
 
-#In final part, check if there are any clusters very close to genes 3' ends and extend those genes if there are
-# Need to check if here for same region more than one line is generated!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# rule to find distances from clusters to closest 3' ends of genes
 %.distances.clusters.good.fine.tsv: %.filteredAT.intergenic.clusters.good.fine.bed %.modified.gene_ranges_sorted.bed
 	bedtools closest -t first -a $< -b $*.modified.gene_ranges_sorted.bed -s -D a -id -fu > $@
 
-#Check if everything is ok here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#After changing bed format, if required column is still $18 etc.
-# Split clusters into close to 3' ends and not
+# rule to split clusters into close to 3' ends of genes and not
 data/datasets/%/unassigned_reads/final.intergenic.clusters_near_genes.txt: data/datasets/%/unassigned_reads/$(order_last).distances.clusters.good.fine.tsv
 	awk -F'\t' '{if((-1 * $$18) < $(closeEndThreshold) && $$11 != ".") {print $$0}}' $< > $@
 
+# rule to take those clusters that are not very close to 3' ends
 data/datasets/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt: data/datasets/%/unassigned_reads/$(order_last).distances.clusters.good.fine.tsv
 	awk -F'\t' '{if((-1 * $$18) >= $(closeEndThreshold)) {print $$0}}' $< > $@
 
-# Make gene extension list
+# rule to make gene extension list
 data/datasets/%/unassigned_reads/final.extension_candidates.csv: data/datasets/%/unassigned_reads/final.intergenic.clusters_near_genes.txt
 	awk 'BEGIN {FS = "\t"; OFS = FS;} {if ($$7 >= $($*_extensionCountThreshold)) {print $$1, $$2, $$3, $$6, $$11}}' $< > $@
 
-# Make new intergenic gene list:
+# rule to make new intergenic gene list:
 data/datasets/%/unassigned_reads/final.new_gene_list.bed: data/datasets/%/unassigned_reads/final.intergenic.clusters_far_from_genes.txt
 	awk -v depth="$($*_seq_depth)" -v threshold="$($*_newGeneCountThreshold)" 'BEGIN {FS = "\t"; OFS = FS;} \
 	{if ($$7 >= threshold) {i += 1; print $$1, $$2, $$3, "INTERGENIC" i, $$7 * 1000000 / depth, $$6}}' $< > $@
 
-# Assemble final gtf
+# rule to assemble final gtf (modified entries + intergenic genes)
 %/final.gtf: %/$(order_last).modified.gtf %/final.extension_candidates.csv %/final.new_gene_list.bed
 	Rscript scripts/R/final_gtf.R $^ $@
 
-# Make final genome index
+# rule to make final genome index
 data/datasets/%/index_final/: data/datasets/%/unassigned_reads/final.gtf 
 	bash scripts/solo/genome_index.sh $< $(fasta) $@
-	
+
+# rule to make STAR indices from gtf files
 $(foreach reference, $(references), $(eval data/genome/indices/index_$(reference)/: data/genome/references/$(reference).gtf ; bash scripts/solo/genome_index.sh $$< $(fasta) $$@ ))
 
-
-# Run starsolo on final gtf
+# rule to run starsolo on final gtf
 data/datasets/%/solo_output.final/Aligned.sortedByCoord.out.bam: data/datasets/%/solo_output.$(first)/Aligned.sortedByCoord.out.bam \
 data/datasets/%/index_final/
 	bash scripts/solo/starsolo_from_bam.sh $^ data/datasets/$*/solo_output.final/ $(umi)
@@ -320,7 +344,7 @@ data/downstream/igv/intergenic.batch.txt: data/downstream/intergenic/filtered.be
 		  
 		  
 
-# Summary
+# Gene count summary
 data/datasets/%/unassigned_reads/Summary.txt: data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam \
 data/datasets/%/unassigned_reads/10x.unassigned.bam \
 data/datasets/%/unassigned_reads/10x.intersecting.bam \
@@ -339,38 +363,41 @@ data/datasets/%/unassigned_reads/10x.gencode.ncbi.lnc.intersecting.bam \
 data/datasets/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.bam 
 	bash scripts/bash/statistics.sh $^ > $@
 
-# Computing conservation scores for intergenic genes
+# rule to compute conservation scores for intergenic regions
 %/conservation_scores.csv: %/final.new_gene_list.bed data/genome/conservation/hg38.phastCons100way.bed
 	bedtools map -a $< -b data/genome/conservation/hg38.phastCons100way.bed -c 5 -o mean > $@
 
-# Captured gene list:
+# rule to make captured gene list:
 data/datasets/%/unassigned_reads/captured_genes_$(first).csv: data/datasets/%/solo_output.$(first)/Aligned.sortedByCoord.out.bam
 	samtools view -F 1024 -F 256 $< | grep -o -P "GX:Z:[^ \t]*" | cut -d':' -f3 | sort | uniq > $@
-	
+# rule to make captured gene list (with final annotation):	
 data/datasets/%/unassigned_reads/captured_genes_final.csv: data/datasets/%/solo_output.final/Aligned.sortedByCoord.out.bam
 	samtools view -F 1024 -F 256 $< | grep -o -P "GX:Z:[^ \t]*" | cut -d':' -f3 | sort | uniq > $@
-	
+
+# rule to extract gene types from gtf:
 %.gene_types.tsv: %.gtf
 	bash scripts/bash/extract_gene_types.sh  $< > $@
-	
+
+# rule to make captured gene list:
 data/datasets/%/unassigned_reads/captured_gene_types.$(first).csv: data/datasets/%/unassigned_reads/captured_genes_$(first).csv \
 data/genome/references/$(first).gene_types.tsv
 	grep -f data/datasets/$*/unassigned_reads/captured_genes_$(first).csv data/genome/references/$(first).gene_types.tsv | \
 	cut -f 2 | sort | uniq -c | sort -nrk1,1 > $@
-
+# rule to make captured gene list (final annotation):
 data/datasets/%/unassigned_reads/captured_gene_types.final.csv: data/datasets/%/unassigned_reads/captured_genes_final.csv \
 data/datasets/%/unassigned_reads/final.gene_types.tsv
 	grep -f data/datasets/$*/unassigned_reads/captured_genes_final.csv data/datasets/$*/unassigned_reads/final.gene_types.tsv | \
 	cut -f 2 | sort | uniq -c | sort -nrk1,1 > $@
 
-
+# rule to make list of genes that were not detected using initial references, but are detected using final reference
 data/datasets/%/unassigned_reads/additional_gene_summary.txt: data/datasets/%/unassigned_reads/$(first).intergenic.clusters.good.bed $(references_paths)
 	bedtools intersect -wb -s -a $< -b $(references_paths) -names $(references) | \
 	awk -F '\t' '{split($$17, a, "gene_type \""); split(a[2], b, "\""); print $$7, b[1];}' | \
 	sort | uniq -c | sort -k2,2 -k1,1nr > $@
 
-# data arrangement for downstream analyses
 
+
+### Data arrangement for downstream analyses ###
 # Collect and compress matrices
 data/downstream/matrices/%/10x/matrix.mtx.gz: data/datasets/%/solo_output.10x/Aligned.sortedByCoord.out.bam
 	mkdir -p data/downstream/matrices/$*/10x/
@@ -454,7 +481,7 @@ data/downstream/intergenic/predictions.bed: data/downstream/intergenic/combined.
 	else {data[$$4] = $$1 "\t" $$2 "\t" $$3 "\t" $$4 "\t" $$5 "\t" $$6 "\t" $$7 "\t" $$8; cols[$$4] = $$9;}} \
 	END {for (key in data) {print data[key] "\t" cols[key];}}' | sort -k7,7nr -k5,5nr > $@
 	
-# More comprehensive intersection list
+# More comprehensive intersection list, if needed
 data/downstream/intergenic/predictions_full_prediction_entries.bed: data/downstream/intergenic/combined.bed
 	bedtools intersect -s -wa -wb -a $< -b data/genome/predictions/*.bed -names Augustus Geneid Gescan SIB SPG > $@
 	
@@ -507,40 +534,45 @@ data/downstream/intergenic/closest.bed: data/downstream/intergenic/predictions.b
 	sort -k7,7nr -k5,5rn | \
 	awk -F'\t' 'BEGIN {OFS=FS} {print $$1, $$2, $$3, "INT" NR, $$5, $$6, $$7, $$8, $$9, $$10, $$11, $$12, $$13, "aliases:" $$4}' > $@
 	
-# extend intergenic regions to find possible gene structures
+# extend intergenic regions for the augustus prediction tool
 data/downstream/intergenic/extended_intervals.bed: data/downstream/intergenic/predictions.bed
 	awk -F '\t' 'BEGIN{OFS=FS} {if ($$6 == "+") {start = $$2 - 10000; end = $$3 + 1000} else {start = $$2 - 1000; end = $$3 + 10000}; \
 	print $$1, start, end, "INT" NR, ".", $$6}' $< > $@
 
-# get sequences of intergenic reads
+# get sequences of intergenic regions
 data/downstream/intergenic/augustus/sequences/: data/downstream/intergenic/extended_intervals.bed
 	mkdir -p $@
 	bedtools getfasta -name -fi $(fasta) -bed $< | cut -d ':' -f 1 > data/downstream/intergenic/augustus/sequences.fa
 	awk '/^>/ {if (out) close(out); gene = substr($$1,2);\
 	out="data/downstream/intergenic/augustus/sequences/" gene ".fa"} {print > out}' data/downstream/intergenic/augustus/sequences.fa
-	
+
+# compute augustus predictions for neighborhoods of intergenic regions
 data/downstream/intergenic/augustus/predictions/: data/downstream/intergenic/closest.bed data/downstream/intergenic/augustus/sequences/
 	mkdir -p $@
 	awk -F '\t' '{if ($$6 == "+") {strand = "forward"} else {strand = "backward"}; \
 	cmd = "augustus --singlestrand=true --genemodel=partial --strand=" strand \
 	" --uniqueGeneId=true --species=human data/downstream/intergenic/augustus/sequences/" $$4 \
 	".fa > data/downstream/intergenic/augustus/predictions/" $$4; system(cmd)}' $<
-	
+
+# combine augustus predicted genes into one gtf
 data/downstream/intergenic/augustus/predictions.gtf: data/downstream/intergenic/augustus/predictions/ \
       data/downstream/intergenic/extended_intervals.bed
 	bash scripts/bash/combine_augustus.sh $^ $@
-	
+
+# update intergenic regions list to have a column showing if they intersect with local augustus predictions
 data/downstream/intergenic/augustus.bed: data/downstream/intergenic/closest.bed \
      data/downstream/intergenic/augustus/predictions.gene_ranges_sorted.bed
 		bedtools intersect -s -wa -loj -a $< -b data/downstream/intergenic/augustus/predictions.gene_ranges_sorted.bed | \
 		cut -f 1-15 | \
 		awk -F '\t' 'BEGIN {OFS=FS} !seen[$$4]++ {if ($$15 == ".") {a = 0} else {a = 1}; \
 		print $$1,$$2,$$3,$$4,$$5,$$6,$$7,$$8,$$9,$$10,$$11,$$12,$$13,$$14,a}' > $@
-	
+
+# filter intergenic regions to contain only intergenic regions found in sufficient number of samples
 data/downstream/intergenic/filtered.bed: data/downstream/intergenic/augustus.bed
-	awk '{if (gsub(/PBMC/, "&") == 5 || gsub(/lung/, "&") == 4 || gsub(/eye/, "&") == 3 || gsub(/brain/, "&") == 2 || \
+	awk '{if (gsub(/lung/, "&") == 4 || gsub(/eye/, "&") == 3 || gsub(/brain/, "&") == 2 || \
 	gsub(/PBMC_indrops/, "&") == 2 || gsub(/PBMC_10x/, "&") == 3) {print $$0}}' $< > $@
 
+# rule to clean working directory (mainly from the latex intermediates)
 clean:
 	latexmk -c
 	rm *.bbl
