@@ -68,8 +68,6 @@ Here is provided general description of the pipeline.
         \end{enumerate}
     \end{enumerate}
     \item Create final GTF and map initial sequences to it.
-    \item Compute statistics (reads mapped, genes captured).
-    \item Check clustering and other steps (in Jupyter notebooks).
 \end{enumerate}
 
 Reads were mapped using STAR, both in the case of mapping from fastq and bam input files.
@@ -90,13 +88,11 @@ The criterions for the resolving of overlapping genes are following:
   \item \textbf{Intersection types}: if 5' end gene is overlapping with 3' end of gene, 5' end of gene was shortened,
   as data we were using is generated using 3' end method, suggesting that reads in the 5' end regions of genes were not expected.
 \end{enumerate}
-The custom scripts can be found in the GITHUBLINK.
-
 
 This is rough description of the usage of various tools in the pipeline given above, the pipeline itself was implemented using GNU MAKE.
 For the full scripts, see GITHUBLINK.
 
-\subsection{Intergenic regions}
+\section{Intergenic regions}
 
 \paragraph{Extracting intergenic regions}
 
@@ -109,7 +105,7 @@ The filtering was done using awk.
 Cluster locations were adjusted using deeptools (to compute coverage) and custom python script,
 to avoid reads containing long introns making the intergenic clusters very wide.
 To accomplish this, for each intergenic region the maximum coverage location was found and extended to include neighbouring regions that had
-at least $ max\_value / 2$ coverage.
+at least $max\_value / 2$ coverage.
 
 The lists acquired from all samples were then merged using \textit{bedtools merge} function.
 This combined filter then was filtered to contain only regions detected in sufficient number of samples
@@ -136,6 +132,3 @@ For blood samples, cells were annotated automatically using CellTypist
 Then visualizations were made using UMAP embeddings (functions from the same \textit{scanpy} package).
 
 All the scripts with descriptions can be found in the GITHUBLINK.
-
-
-
