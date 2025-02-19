@@ -186,10 +186,6 @@ data/datasets/%/unassigned_reads/$(first).intergenic.bam data/datasets/%/unassig
 	sort -k1,1 -k2,2n | \
 	awk -F'\t' 'BEGIN {OFS = FS} {print $$1, $$2, $$3, ".", $$5, $$4}' > $@
 
-# rule for taking small clusters of reads
-%.clusters.thrash.bed: %.clusters.bed
-	awk -F'\t' '{if ($$5 <= $(clusterThreshold)) {print $$0}}' $< > $@
-
 # rule for taking big enough clusters of reads
 # initially we take clusters of at least 100 reads, later, when constructing intergenic region list,
 # more strict filtering (5 CPM) is applied.
@@ -351,7 +347,6 @@ data/datasets/%/unassigned_reads/10x.intersecting.bam \
 data/datasets/%/unassigned_reads/10x.intergenic.bam \
 data/datasets/%/unassigned_reads/AT_seq.bam \
 data/datasets/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.clusters.good.bed \
-data/datasets/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.clusters.thrash.bed \
 data/datasets/%/unassigned_reads/10x.gencode.unassigned.bam \
 data/datasets/%/unassigned_reads/10x.gencode.intersecting.bam \
 data/datasets/%/unassigned_reads/10x.gencode.intergenic.bam \
@@ -361,7 +356,7 @@ data/datasets/%/unassigned_reads/10x.gencode.ncbi.intergenic.bam \
 data/datasets/%/unassigned_reads/10x.gencode.ncbi.lnc.unassigned.bam \
 data/datasets/%/unassigned_reads/10x.gencode.ncbi.lnc.intersecting.bam \
 data/datasets/%/unassigned_reads/10x.gencode.ncbi.lnc.intergenic.bam 
-	bash scripts/bash/statistics.sh $^ > $@
+	bash scripts/bash/statistics.sh $^ $($*_newGeneCountThreshold) > $@
 
 # rule to compute conservation scores for intergenic regions
 %/conservation_scores.csv: %/final.new_gene_list.bed data/genome/conservation/hg38.phastCons100way.bed
