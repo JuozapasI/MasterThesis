@@ -32,7 +32,12 @@ Since the filtered list still remained huge, additional filtering criterions wer
   those (overlapping) intergenic regions are not noise, especially if the intergenic peaks would overlap with 3' ends of predicted genes.
   \item \textbf{Intergenic region specificity.} In the case the reads from specific regions are present only in one cell group,
   the biological origin of these reads are very likelly.
-  This would need at least partial manual inspection.
+  Such specific regions can be noticed using differential gene expression analysis,
+  i.e. checking how gene (or in our case, intergenic region) expression varies between different cell types.
+  \item \textbf{ATAC data.} ATAC data can show open chromatin regions, which are typically associated with active transcription.
+  If the intergenic regions overlap with open chromatin regions, this could provide additional evidence that reads from this region is not noise.
+  \item \textbf{Correlations with nearby genes.} If there exist correlations between the expression of the intergenic regions
+  and expression of nearby genes, that could suggest that those regions are not noise and are involved in the same pathways as their neighbours.
 \end{itemize}
 
 In the following subsections I will explore genes filtered by those strategies separatelly.
