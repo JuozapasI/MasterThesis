@@ -5,7 +5,8 @@ index=$2
 outdir=$3
 umi=$4
 
-# Shuffle bam first for more efficient mapping
+# Shuffle bam first for more efficient mapping,
+# otherwise uses very much RAM
 samtools collate -u -o ${bam}.shuffled.bam $1
 
 STAR \
