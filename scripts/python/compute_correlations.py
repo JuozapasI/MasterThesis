@@ -39,7 +39,7 @@ with open(intergenic_list_path, "r") as intergenic_list, open(f'{intergenic_list
         gene1 = entries[9].split(":")[1]
         gene2 = entries[11].split(":")[1]
 
-        r1, r2= [], []
+        r1, r2= {}, {}
 
         for sample in samples:
             if gene1 in adatas[sample].var_names:
@@ -50,7 +50,7 @@ with open(intergenic_list_path, "r") as intergenic_list, open(f'{intergenic_list
                     r, p = stats.spearmanr(expr1, expr2)
                     # Focus only on reliable results
                     if p < 0.05:
-                        r1.append(r)
+                        r1[sample] = r
 
             if gene2 in adatas[sample].var_names:
                 expr1 = adatas_intergenic[sample][:, gene0].X.toarray().flatten()
@@ -60,19 +60,23 @@ with open(intergenic_list_path, "r") as intergenic_list, open(f'{intergenic_list
                     r, p = stats.spearmanr(expr1, expr2)
                     # Focus only on reliable results
                     if p < 0.05:
-                        r2.append(r)
+                        r2[sample] = r
 
         if(len(r1) == 0):
-            mean1 = "."
+            max_sample_1 = "."
+            max_value_1 = "."
         else:
-            mean1 = np.mean(r1)
+            max_sample_1 = max(r1, key=r1.get)
+            max_value_1 = r1[max_sample_1]
 
         if(len(r2) == 0):
-            mean2 = "."
+            max_sample_2 = "."
+            max_value_2 = "."
         else:
-            mean2 = np.mean(r2)
+            max_sample_2 = max(r2, key=r2.get)
+            max_value_2 = r2[max_sample_2]
 
-        output.write("\t".join(entries) + f"\t{mean1}\t{mean2}\n")
+        output.write("\t".join(entries) + f"\t{max_sample_1}\t{max_value_1}\t{max_sample_2}\t{max_value_2}\n")
 
-
+print("Done!")
 
