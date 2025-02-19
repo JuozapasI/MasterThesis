@@ -43,43 +43,51 @@ The specific functions and parameters used are described in the following sectio
 
 \section{Enhancing transcriptomic reference}
 
-Here is provided general description of the pipeline.
+The full scripts are available on the GITHUBLINK, here only general description of the workflow and used tools provided.
+Here is provided general description of the pipeline:
 
 \begin{enumerate}
-    \item Map reads with transcriptomic reference.
-    \item Take unassigned (and unique) reads.
+    \item Map reads with initial transcriptomic reference.
+    \item Take unassigned (and uniquely mapped) reads.
     \item Split into intersecting and intergenic reads.
     \begin{enumerate}
         \item For intersecting:
         \begin{enumerate}
-            \item Cluster.
-            \item Filter-out relatively small clusters (custom threshold).
-            \item Resolve overlapping genes that have some reads.
-            \item From the second reference and further: add genes to the original GTF that contain reads and do not overlap with entries from the original.
+            \item Resolve overlapping genes that have unassigned reads.
+            \item From the second reference and further: add genes to the original GTF that contain unassigned reads
+            and do not overlap with entries from the original one.
         \end{enumerate}
         \item For intergenic:
         \begin{enumerate}
             \item Cluster.
             \item Filter-out relatively small clusters (custom threshold).
-            \item For the first reference only: filter-out AT-rich reads (clusters?).
-            \item For reads that have been left unexplained, repeat from the beginning with the next reference.
+            \item For the first reference only: filter-out AT-rich reads.
+            \item For reads that are left, repeat from the beginning with the next reference.
             \item For the last reference only: clusters that start just after 3' ends are assigned to genes (i.e., extend genes).
             \item For the last reference only: add largest intergenic unexplained regions to GTF (INTERGENIC entries).
         \end{enumerate}
     \end{enumerate}
     \item Create final GTF and map initial sequences to it.
+    \item Create list of large (\textgreater 5CPM) intergenic clusters.
 \end{enumerate}
 
-Reads were mapped using STAR, both in the case of mapping from fastq and bam input files.
+\paragraph{Mapping and filtering bam files}
+Reads were mapped using STARsolo (\cite{Kaminow2021}), both in the case of mapping from fastq and bam input files.
 Parameters were used the same for all samples (see GITHUBLINK), except the ones regarding barcode geometries.
-Filtering unassigned reads was done using awk, taking those that have valid barcode
+Filtering unassigned reads was done using \textit{awk}, taking those that have valid barcode
 (i.e. filtering out those reads that have barcode length not equal to the defined length)
 and were not assigned to any gene (i.e. had 'GN:Z:-' tag).
 Also, only uniquelly mapped reads were taken (tag 'NH:i:1').
 
+\paragraph{Classifying reads as 'intergenic' or 'intersecting' and reads clustering}
 Intersections of unassigned reads with references were checked using \textit{bedtools intersect} command.
+Those that intersect with genes were classified as 'intersecting', and those that do not – as 'intergenic'.
+Intersections were check in strand-specific manner (bedtools '-s' flag).
+The intergenic reads were clustered using \textit{bedtools merge}, again in a strand-specific manner.
 
-The overlapping gene resolving was done using custom R script.
+\paragraph{Manipulating transcriptomic references}
+The overlapping gene resolving and construction of enhanced transcriptomic reference was done using custom R script,
+particularly \textit{rtracklayer} library.
 The criterions for the resolving of overlapping genes are following:
 \begin{enumerate}
   \item \textbf{Gene type}: prefer protein coding genes over other types, lncRNA over remaining (e.g. pseudogenes).
@@ -90,7 +98,6 @@ The criterions for the resolving of overlapping genes are following:
 \end{enumerate}
 
 This is rough description of the usage of various tools in the pipeline given above, the pipeline itself was implemented using GNU MAKE.
-For the full scripts, see GITHUBLINK.
 
 \section{Intergenic regions}
 
@@ -100,12 +107,13 @@ The intergenic reads were extracted as described in the previous section (i.e. t
 and merged into clusters using \textit{bedtools merge} command.
 Clusters were filtered based on cluster size, to include at least 5 reads per million (CPM)
 (computed from the totol number of primary reads in the datasets).
-The filtering was done using awk.
+The filtering was done using \textit{awk}.
 
 Cluster locations were adjusted using deeptools (to compute coverage) and custom python script,
 to avoid reads containing long introns making the intergenic clusters very wide.
 To accomplish this, for each intergenic region the maximum coverage location was found and extended to include neighbouring regions that had
 at least $max\_value / 2$ coverage.
+In such way, intergenic regions were reduced to include 'peaks' of reads.
 
 The lists acquired from all samples were then merged using \textit{bedtools merge} function.
 This combined filter then was filtered to contain only regions detected in sufficient number of samples
@@ -118,7 +126,7 @@ combined intergenic annotation.
 
 \paragraph{Analysis of cell-gene matrices}
 
-The matrices produced by STAR filtered, allowing cells that have sufficient number of reads (thresholds selected manually),
+The matrices produced by STAR were filtered, allowing cells that have sufficient number of reads (thresholds selected manually),
 and only genes that were expressed in at least 3 cells.
 Also cells were filtered based on mitochondrial gene count (allowing up to 10\% of mitochondrial gene in a cell).
 Doublets were filtered using \textit{scrublet}.
