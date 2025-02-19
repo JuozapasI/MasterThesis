@@ -194,7 +194,7 @@ inferring gene regulatory networks (GRNs), and more.
 The described analysis pipeline enables insights into multicellular systems.
 It is evident that all downstream analyses are directly influenced by the initial steps of raw data processing,
 with mapping being particularly crucial in the context of this project.
-While mapping algorithms and tools differ, they all rely on the genome and its annotation,
+While mapping algorithms and tools differ, they all rely on the genome and its annotation (also refered as 'transcriptomic reference'),
 which directly impact their results.
 In the next section, I will further expand on this topic.
 
@@ -284,8 +284,69 @@ continued improvements in annotation methods remain a priority.
 
 \section{Transcriptomic references for scRNAseq}
 
-Having well annotated genome does not solve all the problems related to it.
-The complexity of the genome also causes problems for the mapping software.
+Having a well-annotated genome does not solve all the challenges encountered during the mapping step.
+In simple terms, mapping algorithms determine the genomic location to which a sequence aligns,
+and if an annotated gene is present at that location, the read is assigned to that gene.
+However, there are cases where assigning a read to a gene is not straightforward,
+such as when a read maps to multiple locations or to a unique location where overlapping genes are annotated.
+
+\paragraph{Multimappers}
+Reads with ambiguous origins (commonly referred to as multimappers) are typically excluded from analysis (\cite{Paz2024}).
+However, as demonstrated by (\textcite{Paz2024}), this approach can introduce biases that affect downstream analyses.
+Currently, various methods exist to handle such cases (\cite{Francoeur2020}),
+yet no entirely satisfactory solution has been established (\cite{Paz2024}).
+
+The aforementioned methods primarily rely on computational strategies to resolve multimappers,
+but the issue can also be approached from a transcriptomic reference perspective.
+For example, in the case of CellRanger (the mapping software from 10x Genomics)
+the GENCODE reference is filtered based on gene types (e.g., retaining protein-coding genes while filtering out pseudogenes) (\cite{10xRef}).
+While this filtering improves the number of reads included in downstream analyses, there is still room for improvement.
+
+\textcite{Pool2023} proposed three key steps to enhance transcriptomic references:
+\begin{enumerate}
+  \item Including reads mapped to intronic sequences in the analysis.
+  \item Extending the 3' ends of certain genes.
+  \item Resolving overlaps between specific genes.
+\end{enumerate}
+The first suggestion is not new in scRNA-seq research.
+Concepts such as RNA velocity, which rely on the ratio of spliced to unspliced RNA (\cite{Manno2018}),
+demonstrate that including intronic reads can provide valuable information.
+Moreover, most mapping tools (e.g., STARsolo, CellRanger) offer options to align reads either to exonic regions only or to entire genes.
+The second suggestion is based on the observation that scRNA-seq data often exhibits peaks of reads just beyond the 3' ends of genes.
+While the exact biological reasons remain unclear — possibly due to imprecise annotations —
+it is reasonable to associate these reads with the nearest genes.
+The third suggestion addresses gene overlaps.
+Reads originating from overlapping regions are often unassigned to any gene,
+yet in some cases, they are more likely to come from one gene rather than another.
+Overlapping gene resolution seeks to correct this by modifying the transcriptomic reference, either by shortening or removing certain genes.
+
+Although \textcite{Pool2023} proposed a tool to implement these strategies, it has limitations.
+Some of its aspects remain debatable (e.g., threshold choices), others seem unnecessary
+(such as handling exon-intron distinctions when most alignment tools already provide this option),
+and the process still requires significant manual effort.
+Thus, there is still a need for a more comprehensive tool for enhancing transcriptomic references — a need that will be addressed in this thesis.
+
+\paragraph{Reads mapped to the intergenic regions}
+Some reads map to the genome but not to any annotated gene.
+While these could simply be noise in scRNA-seq data, there is also the possibility that they contain biologically relevant information.
+As will be shown in the results section, scRNA-seq datasets indeed contain such reads, and they are not entirely noise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
