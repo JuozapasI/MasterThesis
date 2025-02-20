@@ -1,5 +1,25 @@
 \section{Intergenic regions}
-14 samples were analysed, for each regions were found that contained sufficient amount of reads (threashold was set at 5 CPM).
+
+14 datasets were analysed from various tissues (blood, brain, eye, lung), 
+for each  intergenic regions were found that contained sufficient amount of unassigned reads,
+as described in method section (threashold was set at 5 CPM).
+'Intergenic' is used here in a strand specific manner, i.e. the 'intergenic' region can be located on opposite strand of known gene.
+The lists of regions from all samples were combined and filtered by the number of samples in which they were detected,
+resulting in a list of 2590 intergenic regions.
+Of them 147 were not on the opposite strand of known genes, and will be refered from now on as 'isolated'.
+
+\paragraph{Isolated intergenic regions}
+
+The intergenic regions that are far from known genes might indicate novel genes.
+To check whether they are not artifacts, several aspects were considered:
+\begin{enumerate}
+  \item Whether they are differentially expressed on any samples, i.e. are they specific to some cell types.
+  If yes, then it strongly suggest, that they have biological origin and are not artifacts.
+  \item Whether there are AT-rich sequences (10 consecutive A/Ts) nearby (checked up to 500 bp upstream).
+  This could explain polymerase binding (however, not explain if this is a valid gene, or just an error).
+  \item Whether there are open chromatin regions upstream (which is often the case if the gene is actively transcribed).
+  \item Conservation score – coding regions tend to be more evolutionary conserved than non-coding regions.
+\end{enumerate}
 
 Firstly, to check if the intergenic regions contain any biologically meaningfull information,
 for each sample cells were clustered based only on those intergenic samples.
