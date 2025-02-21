@@ -519,11 +519,11 @@ data/downstream/matrices/intergenic/%/barcodes.tsv.gz: data/datasets/%/solo_outp
 data/downstream/intergenic/closest.bed: data/downstream/intergenic/predictions.bed
 	sort -k1,1 -k2,2n $< | \
 	bedtools closest -mdb all -t first -d -s -a stdin -b data/genome/references/gencode.gene_ranges_sorted.bed \
-	data/genome/references/ncbi.gene_ranges_sorted.bed -names gencode ncbi | \
+	data/genome/references/ncbi.gene_ranges_sorted.bed data/genome/references/lnc.gene_ranges_sorted.bed -names gencode ncbi lnc | \
 	awk -F '\t' 'BEGIN {OFS=FS} {split($$20, a, "gene_name"); split (a[2], b, "\""); \
 	print $$1, $$2, $$3, $$4, $$5, $$6, $$7, $$8, $$9, $$10 ":" b[2], $$21}' | \
 	bedtools closest -mdb all -t first -d -S -a stdin -b data/genome/references/gencode.gene_ranges_sorted.bed \
-	data/genome/references/ncbi.gene_ranges_sorted.bed -names gencode ncbi | \
+	data/genome/references/ncbi.gene_ranges_sorted.bed data/genome/references/lnc.gene_ranges_sorted.bed -names gencode ncbi lnc | \
 	awk -F '\t' 'BEGIN {OFS=FS} {split($$22, a, "gene_name"); split (a[2], b, "\""); \
 	print $$1, $$2, $$3, $$4, $$5, $$6, $$7, $$8, $$9, $$10, $$11, $$12 ":" b[2], $$23}' | \
 	sort -k7,7nr -k5,5rn | \
