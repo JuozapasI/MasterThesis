@@ -1,4 +1,5 @@
 export LC_ALL=C
+SHELL := /bin/bash
 
 umi = 12
 barcode = 16
@@ -566,6 +567,27 @@ data/downstream/intergenic/augustus.bed: data/downstream/intergenic/closest.bed 
 data/downstream/intergenic/filtered.bed: data/downstream/intergenic/augustus.bed
 	awk '{if (gsub(/lung/, "&") == 4 || gsub(/eye/, "&") == 3 || gsub(/brain/, "&") == 2 || \
 	gsub(/PBMC_indrops/, "&") == 2 || gsub(/PBMC_10x/, "&") == 3) {print $$0}}' $< > $@
+	
+data/downstream/intergenic/isolated.bed: data/downstream/intergenic/filtered.bed
+	awk -F '\t' '$$13 > 0' $< > $@
+	
+data/downstream/intergenic/isolated_sequences.tsv: data/downstream/intergenic/isolated.bed
+	awk -F '\t' 'BEGIN {OFS = FS} {if($$6 == "+") {print $$1, $$2 - 10000, $$3, $$4} else {print $$1, $$2, $$3 + 10000, $$4}}' $< | \
+	bedtools getfasta -nameOnly -tab -fi $(fasta) -bed stdin > $@
+
+data/downstream/intergenic/AT_distances_isolated.tsv: data/downstream/intergenic/isolated_sequences.tsv data/downstream/intergenic/isolated.bed
+	python scripts/python/find_ATrich_upstream.py $^ $@
+	
+data/downstream/intergenic/ATAC_distances_isolated.bed: data/downstream/intergenic/isolated.bed data/genome/ATAC/PBMC/ATAC.bed
+	bedtools closest -t first -D a -id -a <(sort -k1,1 -k2,2n $<) \
+	-b <( grep -f <( cut -f 1 data/downstream/intergenic/isolated.bed | sort | uniq | awk '{print "^" $$1 "\t"}' ) \
+	data/genome/ATAC/PBMC/ATAC.bed) | awk -F '\t' '{print $$4, $$22 * -1}' > $@
+	
+data/downstream/intergenic/gene_distances_upstream_isolated.bed: data/downstream/intergenic/isolated.bed
+	bedtools closest -mdb all -t first -D a -id -a <(sort -k1,1 -k2,2n $<) \
+	-b data/genome/references/gencode.gene_ranges_sorted.bed \
+	data/genome/references/ncbi.gene_ranges_sorted.bed data/genome/references/lnc.gene_ranges_sorted.bed -names gencode ncbi lnc | \
+	cut -f 4,16,20,22,27 | awk -F '\t' 'BEGIN{OFS=FS} {print $$1, $$2, $$3, $$4, $$5 * -1}' > $@
 
 # rule to clean working directory (mainly from the latex intermediates)
 clean:
