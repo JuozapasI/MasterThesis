@@ -10,16 +10,71 @@ Of them 147 were not on the opposite strand of known genes, and will be refered 
 
 \paragraph{Isolated intergenic regions}
 
-The intergenic regions that are far from known genes might indicate novel genes.
+The intergenic regions that are far from known genes and contain reads might indicate novel genes.
 To check whether they are not artifacts, several aspects were considered:
 \begin{enumerate}
   \item Whether they are differentially expressed on any samples, i.e. are they specific to some cell types.
-  If yes, then it strongly suggest, that they have biological origin and are not artifacts.
+  If yes, then it strongly suggests, that they have biological origin and are not artifacts.
   \item Whether there are AT-rich sequences (10 consecutive A/Ts) nearby (checked up to 500 bp upstream).
   This could explain polymerase binding (however, not explain if this is a valid gene, or just an error).
   \item Whether there are open chromatin regions upstream (which is often the case if the gene is actively transcribed).
   \item Conservation score – coding regions tend to be more evolutionary conserved than non-coding regions.
 \end{enumerate}
+
+\paragraph{Differential expression analysis}
+
+To check whether an intergenic region is differentially expressed, firstly all datasamples were clustered.
+For \textit{PBMC\_10x} samples, it was done using CellTypist (which as well annotates cells),
+and for other samples, it was done with 'leiden' algorithm, parameters were chosen manually,
+such that overall number of clusters would be similar between similar datasets (i.e. in all \textit{lung} samples there were 5-6 clusters achieved),
+and would visually approximatelly coincide with structures that can be seen in the umaps.
+All UMAPs colored by the clusters can be seen in the appendix \ref{fig:clusterings}.
+
+After filtering those regions that were differentially expressed (tresholds were used 0.01 for adjusted p-value and 0.5 for 'logfoldchange'),
+the 32 differentially expressed isolated intergenic regions were found.
+Some examples can be seen in Figure \ref{fig:isolatedDGE}.
+
+\begin{figure}[htbp]
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.45\textwidth]{images/isolatedDGEexamples/INT1492_PBMC_10x_3.png} &
+\includegraphics[width=0.45\textwidth]{images/isolatedDGEexamples/INT1554_lung_2.png} \\
+\includegraphics[width=0.45\textwidth]{images/isolatedDGEexamples/INT2456_eye_3.png} &
+\includegraphics[width=0.45\textwidth]{images/isolatedDGEexamples/INT6013_PBMC_10x_2.png} \\
+\end{tabular}
+\caption{Examples of differentially expressed isolated intergenic regions.}
+\label{fig:isolatedDGE}
+\end{figure}
+
+\paragraph{AT-rich regions}
+
+AT-rich regions (here defined as 10 consecutive A's or T's, allowing one 'error', i.e. other nuucleotide)
+were looked upstream of the isolated intergenic regions, and the first hits were reported.
+
+34 of the intergenic regions overlapped such AT rich regions, the distances from other isolated intergenic regions to such AT-rich regions varied,
+with mean 748 and median 283, the histogram can be seen in the Figure \ref{fig:distancesATrich}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/histogramATrich.png}
+  \caption{Distances from isolated intergenic regions to closest AT-rich region upstream
+  (if intergenic regions overlaps with AT-rich region, distance is set to 0)}
+  \label{fig:distancesATrich}
+\end{figure}
+
+\paragraph{Open chromatin}
+
+Open chromatin regions could provide additional evidence of transcriptional activity, if found in the upstream regions.
+However, to be more specific, distances to the closest genes should also be found and compared, 
+as those open chromatin sites upstream not necessarily are related to our intergenic regions, if there are other genes upstream,
+they could be the cause for this.
+
+The distances to open chromatin sites was found for each intergenic regions 
+
+
+
+
+\iffalse
 
 Firstly, to check if the intergenic regions contain any biologically meaningfull information,
 for each sample cells were clustered based only on those intergenic samples.
@@ -225,7 +280,7 @@ Some examples can be seen in Figure \ref{fig:correlationUmaps}.
     \label{fig:correlationUmaps}
 \end{figure}
 
-
+\fi
 
 
 
