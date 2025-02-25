@@ -33,10 +33,7 @@ def process_files(tsv_file, bed_file, output_file):
             seq = seq_dict[name]
             score_pos = compute_score(seq[::-1] if strand == '+' else seq)
             
-            distance = -1
-            if score_pos != -1:
-                distance = max(0, score_pos - (end - start))
-            out.write(f"{name}\t{distance}\n")
+            out.write(f"{name}\t{score_pos}\n")
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
