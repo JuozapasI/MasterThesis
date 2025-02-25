@@ -1,14 +1,20 @@
 \section{Intergenic regions}
 
-14 datasets were analysed from various tissues (blood, brain, eye, lung), 
+14 datasets were analysed from various tissues (blood, brain, eye, lung).
+
+Give here statistics about how many there are unassigned reads per sample, i.e. why it is significant.
+
+Also here goes the clustering using only intergenic regions.
+
 for each  intergenic regions were found that contained sufficient amount of unassigned reads,
 as described in method section (threashold was set at 5 CPM).
 'Intergenic' is used here in a strand specific manner, i.e. the 'intergenic' region can be located on opposite strand of known gene.
 The lists of regions from all samples were combined and filtered by the number of samples in which they were detected,
 resulting in a list of 2590 intergenic regions.
 Of them 147 were not on the opposite strand of known genes, and will be refered from now on as 'isolated'.
+Those that are on the other strand of known genes, will be refered as 'antisense'.
 
-\paragraph{Isolated intergenic regions}
+\subsection{Isolated intergenic regions}
 
 The intergenic regions that are far from known genes and contain reads might indicate novel genes.
 To check whether they are not artifacts, several aspects were considered:
@@ -26,12 +32,12 @@ To check whether they are not artifacts, several aspects were considered:
 To check whether an intergenic region is differentially expressed, firstly all datasamples were clustered.
 For \textit{PBMC\_10x} samples, it was done using CellTypist (which as well annotates cells),
 and for other samples, it was done with 'leiden' algorithm, parameters were chosen manually,
-such that overall number of clusters would be similar between similar datasets (i.e. in all \textit{lung} samples there were 5-6 clusters achieved),
+such that overall number of clusters would be similar between similar datasets (i.e. in all \textit{lung} samples there were 5 clusters achieved),
 and would visually approximatelly coincide with structures that can be seen in the umaps.
 All UMAPs colored by the clusters can be seen in the appendix \ref{fig:clusterings}.
 
 After filtering those regions that were differentially expressed (tresholds were used 0.01 for adjusted p-value and 0.5 for 'logfoldchange'),
-the 32 differentially expressed isolated intergenic regions were found.
+the 29 differentially expressed isolated intergenic regions were found.
 Some examples can be seen in Figure \ref{fig:isolatedDGE}.
 
 \begin{figure}[htbp]
@@ -49,16 +55,39 @@ Some examples can be seen in Figure \ref{fig:isolatedDGE}.
 \paragraph{AT-rich regions}
 
 AT-rich regions (here defined as 10 consecutive A's or T's, allowing one 'error', i.e. other nuucleotide)
-were looked upstream of the isolated intergenic regions, and the first hits were reported.
+were looked upstream from the 3' ends of the isolated intergenic regions, and the first hits were reported.
 
-34 of the intergenic regions overlapped such AT rich regions, the distances from other isolated intergenic regions to such AT-rich regions varied,
-with mean 748 and median 283, the histogram can be seen in the Figure \ref{fig:distancesATrich}.
+The distances from isolated intergenic regions to such AT-rich regions varied,
+with mean 938.537 and median 508, the histogram can be seen in the Figure \ref{fig:distancesATrich}.
+To check how these numbers support the claim that those locations are not noise,
+distances to AT-rich regions were found from 10000 random locations in the genome and from 10000 3' ends of randomly selected genes.
+The results can be seen in the Table \ref{tab:distancesATrich}.
+As can be noticed, distances are larger for both the randomly selected genes and randomly selected genes.
+Interestingly, distances from random locations to AT-rich regions are on average smaller than from the 3' end of randomly selected genes.
+This could be explained by the fact that we are looking for these AT-rich regions upstream from the 3' ends,
+meaning that all gene bodies (which typically should not contain AT-rich sequences) are added to those distances.
+Also, one could conclude, that if there are genes in between those isolated intergenic regions,
+they are potentially small (assuming that AT rich sequences should be found near the 5' ends).
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{l|cc}
+    \toprule
+     & mean & median  \\
+    \midrule
+    intergenic & 938.537 & 508 \\
+    random 3' ends & 1391.019 & 849 \\
+    random locations & 1123.194 & 682 \\
+    \bottomrule
+  \end{tabular}
+  \caption{The distances to the closest AT-rich regions.}
+  \label{tab:distancesATrich}
+\end{table}
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/histogramATrich.png}
-  \caption{Distances from isolated intergenic regions to closest AT-rich region upstream
-  (if intergenic regions overlaps with AT-rich region, distance is set to 0)}
+  \caption{Distances from 3' ends of isolated intergenic regions to closest AT-rich region upstream.}
   \label{fig:distancesATrich}
 \end{figure}
 
@@ -69,7 +98,51 @@ However, to be more specific, distances to the closest genes should also be foun
 as those open chromatin sites upstream not necessarily are related to our intergenic regions, if there are other genes upstream,
 they could be the cause for this.
 
-The distances to open chromatin sites was found for each intergenic regions 
+The distances to open chromatin sites was found for each intergenic regions as well as distances to the closest gene upstream (not strand specific).
+Out of 147 isolated intergenic regions, 66 had open chromatin regions closer than any know genes upstream.
+However, these could be related to the gene that lay down further upstream,
+hence stricter filtering was applied, requiring that the distance between closest open chromatin region and closest gene would be at least 2000bp.
+This led to 40 such intergenic regions.
+
+Additionally, if we expect these open chromatin regions to be related to the promoter regions of the isolated intergenic regions,
+they also should contain AT-rich regions as described above.
+It was checked, and out of the 40 intergenic regions closest open chromatin regions, 38 had AT-rich segment within them.
+
+\paragraph{Conservation scores}
+
+High conservation score of an intergenic region could suggest that it might have some function, i.e. provide additional evidence.
+Therefore, a group of possibly biologically meaningful locations were extracted by filtering those genes that have high conservation score
+(threshold was set to 0.6) and do not overlap with any known genes (from the ncbi or genecode references). given in the Table \ref{tab:conservedIntergenic}.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        Name & Genomic coordinates & Conservation score & Found in samples \\
+        \midrule
+        INT1216 & 1:72282700-72282900 & 0.7534172617 & brain, eye\\
+	INT1829 & 1:77772950-77773050 & 0.6863111111 & lung \\
+	INT2199 & 6:148122550-148122750 & 0.6364459652 & brain, eye \\
+	INT2208 & 5:18162950-18163100 & 0.6138651685 & PBMC (indrops) \\
+	INT3636 & X:129412750-129413050 & 0.7218984354 & brain \\
+        \bottomrule
+    \end{tabular}
+    \caption{Conserved intergenic regions not overlapping with known genes from ncbi and gencode annotations.}
+    \label{tab:conservedIntergenic}
+\end{table}
+
+
+\paragraph{Wrap-up}
+
+\subsection{Antisense intergenic regions}
+
+
+
+
+
+
+
+
 
 
 
