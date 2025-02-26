@@ -592,5 +592,5 @@ data/downstream/intergenic/gene_distances_upstream_isolated.bed: data/downstream
 # rule to clean working directory (mainly from the latex intermediates)
 clean:
 	latexmk -c
-	rm *.bbl
-	rm *.bib.bak$
+	rm -f *.bbl
+	rm -f *.bib.bak$
