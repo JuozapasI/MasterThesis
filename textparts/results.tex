@@ -1,40 +1,109 @@
 \section{Intergenic regions}
 
-14 datasets were analysed from various tissues (blood, brain, eye, lung).
+Fourteen datasets from various tissues (blood, brain, eye, and lung) were analyzed.
+These datasets contained between 11\% and 29\% unassigned uniquely mapped reads (as shown in Table \ref{tab:countStats})
+when using the 10x reference.
+Additionally, 6\% to 18\% of total reads were intergenic, meaning they did not overlap with any reference used.
+Given the size of the datasets, such a proportion of reads could potentially contain biologically relevant information.
 
-Give here statistics about how many there are unassigned reads per sample, i.e. why it is significant.
+\begin{table}[h]
+    \centering
+    \begin{tabular}{l|rrr}
+        \toprule
+        Sample & Total Reads & Unassigned reads & Intergenic reads \\
+        \midrule
+        PBMC\_10x & 182330834 & 15.95\% & 11.37\% \\
+        PBMC\_10x\_2 & 496387931 & 18.52\% & 14.26\% \\
+        PBMC\_10x\_3 & 368640939 & 18.59\% & 14.34\% \\
+        PBMC\_indrops & 112932507 & 11.12\% & 6.5\% \\
+        PBMC\_indrops\_2 & 471705924 & 14.87\% & 8.36\% \\
+        brain & 206360627 & 16.87\% & 10.67\% \\
+        brain\_2 & 122556503 & 22.32\% & 15.98\% \\
+        eye & 375397270 & 28.02\% & 18.97\% \\
+        eye\_2 & 140981808 & 29.35\% & 14.85\% \\
+        eye\_3 & 161261977 & 29.46\% & 18.86\% \\
+        lung\_2 & 511080104 & 15.99\% & 12.07\% \\
+        lung\_5 & 452105505 & 14.49\% & 10.74\% \\
+        lung\_7 & 524095146 & 18.41\% & 14.34\% \\
+        lung\_8 & 342092138 & 14.53\% & 10.66\% \\
+        \bottomrule
+    \end{tabular}
+    \caption{Statistics of unassigned and intergenic reads per sample.
+    Unassigned reads were counted after mapping with 10x reference.
+    Intergenic reads here are those that do not intersect with any reference used.}
+    \label{tab:countStats}
+\end{table}
 
-Also here goes the clustering using only intergenic regions.
+For each sample, intergenic regions containing a sufficient number of unassigned reads were identified,
+as described in the methods section (with a threshold set at 5 CPM).
+The term "intergenic" is used here in a strand-specific manner,
+meaning an "intergenic" region may be located on the opposite strand of a known gene.
 
-for each  intergenic regions were found that contained sufficient amount of unassigned reads,
-as described in method section (threashold was set at 5 CPM).
-'Intergenic' is used here in a strand specific manner, i.e. the 'intergenic' region can be located on opposite strand of known gene.
-The lists of regions from all samples were combined and filtered by the number of samples in which they were detected,
-resulting in a list of 2590 intergenic regions.
-Of them 147 were not on the opposite strand of known genes, and will be refered from now on as 'isolated'.
-Those that are on the other strand of known genes, will be refered as 'antisense'.
+To determine whether these intergenic regions contain biologically meaningful information,
+cells in each sample were clustered based solely on reads from these regions.
+As shown in selected examples in Figure \ref{fig:intergenicClustering},
+clustering was observed and roughly corresponded to clustering based on the standard ("10x") annotation.
+This indicates that biologically meaningful information is indeed present in these intergenic regions.
+Consequently, further analyses were performed on these regions.
+
+The lists of intergenic regions from all samples were combined and filtered based on the number of samples in which they were detected,
+resulting in a final set of 2,590 intergenic regions.
+Of these, 147 did not overlap known genes on the opposite strand and will be referred to as "isolated".
+Those located on the opposite strand of known genes will be referred to as "antisense".
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_pbmc10x3.png}
+        \caption{10x PBMC 3}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_pbmc10x2.png}
+        \caption{10x PBMC 2}
+    \end{subfigure}
+    \vspace{0.5em}
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_eye.png}
+        \caption{eye}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_brain_2.png}
+        \caption{10x Brain 2}
+    \end{subfigure}
+    \caption{Comparison of clustering using standard annotation ('10x' reference) and using only defined intergenic regions.
+    As can be seen, for some samples intergenic regions are sufficient for rough clustering, for others (e.g. 'brain\_2' sample), 
+    noise gives some clustering artefacts.
+    Nevertheless, this rough clustering implies that these unassigned read contain biological information.}
+    \label{fig:intergenicClustering}
+\end{figure}
 
 \subsection{Isolated intergenic regions}
 
-The intergenic regions that are far from known genes and contain reads might indicate novel genes.
-To check whether they are not artifacts, several aspects were considered:
+The intergenic regions that are distant from known genes and contain reads may indicate novel genes.
+To determine whether these are genuine signals rather than artifacts, several aspects were considered:
 \begin{enumerate}
-  \item Whether they are differentially expressed on any samples, i.e. are they specific to some cell types.
-  If yes, then it strongly suggests, that they have biological origin and are not artifacts.
-  \item Whether there are AT-rich sequences (10 consecutive A/Ts) nearby (checked up to 500 bp upstream).
-  This could explain polymerase binding (however, not explain if this is a valid gene, or just an error).
-  \item Whether there are open chromatin regions upstream (which is often the case if the gene is actively transcribed).
-  \item Conservation score – coding regions tend to be more evolutionary conserved than non-coding regions.
+  \item Differential expression: Are these regions differentially expressed in any samples, i.e., are they specific to certain cell types?
+  If so, this strongly suggests a biological origin rather than an artifact.
+  \item AT-rich sequences: Do nearby sequences contain 10 consecutive A/Ts?
+  This could explain polymerase binding but does not necessarily confirm whether the region represents a valid gene or an error.
+  \item Open chromatin: Are open chromatin regions present upstream? Such regions often indicate active transcription.
+  \item Conservation score: Coding regions tend to be more evolutionarily conserved than non-coding regions.
+  \item Gene predictions: Do these regions overlap with predicted genes identified by computational tools?
 \end{enumerate}
 
 \paragraph{Differential expression analysis}
 
-To check whether an intergenic region is differentially expressed, firstly all datasamples were clustered.
-For \textit{PBMC\_10x} samples, it was done using CellTypist (which as well annotates cells),
-and for other samples, it was done with 'leiden' algorithm, parameters were chosen manually,
-such that overall number of clusters would be similar between similar datasets (i.e. in all \textit{lung} samples there were 5 clusters achieved),
-and would visually approximatelly coincide with structures that can be seen in the umaps.
-All UMAPs colored by the clusters can be seen in the appendix \ref{fig:clusterings}.
+To assess differential expression, all data samples were first clustered.
+For \textit{PBMC\_10x} samples, clustering and cell annotation were performed using CellTypist.
+For other samples, the Leiden algorithm was used, with manually chosen parameters to ensure a comparable number of clusters across similar datasets.
+For instance, all \textit{lung} samples were clustered into five groups, aligning approximately with visible UMAP structures.
+The UMAP visualizations, colored by clusters, can be found in Appendix \ref{fig:clusterings}.
 
 After filtering those regions that were differentially expressed (tresholds were used 0.01 for adjusted p-value and 0.5 for 'logfoldchange'),
 the 29 differentially expressed isolated intergenic regions were found.
@@ -54,20 +123,19 @@ Some examples can be seen in Figure \ref{fig:isolatedDGE}.
 
 \paragraph{AT-rich regions}
 
-AT-rich regions (here defined as 10 consecutive A's or T's, allowing one 'error', i.e. other nuucleotide)
-were looked upstream from the 3' ends of the isolated intergenic regions, and the first hits were reported.
+AT-rich regions (defined as 10 consecutive A/Ts, allowing one mismatch) were identified upstream of the 3' ends of isolated intergenic regions,
+with the first occurrence recorded.
 
-The distances from isolated intergenic regions to such AT-rich regions varied,
-with mean 938.537 and median 508, the histogram can be seen in the Figure \ref{fig:distancesATrich}.
-To check how these numbers support the claim that those locations are not noise,
-distances to AT-rich regions were found from 10000 random locations in the genome and from 10000 3' ends of randomly selected genes.
-The results can be seen in the Table \ref{tab:distancesATrich}.
-As can be noticed, distances are larger for both the randomly selected genes and randomly selected genes.
-Interestingly, distances from random locations to AT-rich regions are on average smaller than from the 3' end of randomly selected genes.
-This could be explained by the fact that we are looking for these AT-rich regions upstream from the 3' ends,
-meaning that all gene bodies (which typically should not contain AT-rich sequences) are added to those distances.
-Also, one could conclude, that if there are genes in between those isolated intergenic regions,
-they are potentially small (assuming that AT rich sequences should be found near the 5' ends).
+The distances from isolated intergenic regions to the nearest AT-rich sequences varied, with a mean of 938.537 and a median of 508.
+The distribution is shown in Figure \ref{fig:distancesATrich}.
+To determine whether these distances support the hypothesis that these locations are not random noise,
+comparisons were made against 10,000 random genomic locations and 10,000 randomly selected gene 3' ends.
+The results, summarized in Table \ref{tab:distancesATrich},
+indicate that distances are larger for both randomly selected genes and random genomic locations.
+Notably, distances from random locations to AT-rich sequences are shorter on average than those from randomly selected gene 3' ends.
+This may be due to the fact that gene bodies, which typically lack AT-rich sequences, contribute to these distances.
+Additionally, these results suggest that if small genes are indeed present between these isolated intergenic regions,
+they should be relatively short.
 
 \begin{table}[htbp]
   \centering
@@ -93,26 +161,24 @@ they are potentially small (assuming that AT rich sequences should be found near
 
 \paragraph{Open chromatin}
 
-Open chromatin regions could provide additional evidence of transcriptional activity, if found in the upstream regions.
-However, to be more specific, distances to the closest genes should also be found and compared, 
-as those open chromatin sites upstream not necessarily are related to our intergenic regions, if there are other genes upstream,
-they could be the cause for this.
+Open chromatin regions may provide further evidence of transcriptional activity when located upstream.
+However, distances to the nearest known genes must also be considered,
+as upstream open chromatin sites may not be associated with the intergenic regions but rather with other genes.
 
-The distances to open chromatin sites was found for each intergenic regions as well as distances to the closest gene upstream (not strand specific).
-Out of 147 isolated intergenic regions, 66 had open chromatin regions closer than any know genes upstream.
-However, these could be related to the gene that lay down further upstream,
-hence stricter filtering was applied, requiring that the distance between closest open chromatin region and closest gene would be at least 2000bp.
-This led to 40 such intergenic regions.
+For each intergenic region, distances to the nearest open chromatin sites and upstream genes (strand-unspecific) were calculated.
+Of the 147 isolated intergenic regions, 66 had open chromatin regions closer than any known upstream genes.
+To ensure that these sites were not merely associated with distant genes, an additional filter was applied, 
+requiring that the closest open chromatin region be at least 2,000 bp from the nearest gene.
+This yielded 40 intergenic regions.
 
-Additionally, if we expect these open chromatin regions to be related to the promoter regions of the isolated intergenic regions,
-they also should contain AT-rich regions as described above.
-It was checked, and out of the 40 intergenic regions closest open chromatin regions, 38 had AT-rich segment within them.
+Furthermore, if these open chromatin regions function as promoters for the isolated intergenic regions, they should also contain AT-rich sequences.
+This was confirmed: 38 of the 40 intergenic region-associated open chromatin sites contained AT-rich segments.
 
 \paragraph{Conservation scores}
 
-High conservation score of an intergenic region could suggest that it might have some function, i.e. provide additional evidence.
-Therefore, a group of possibly biologically meaningful locations were extracted by filtering those genes that have high conservation score
-(threshold was set to 0.6) and do not overlap with any known genes (from the ncbi or genecode references). given in the Table \ref{tab:conservedIntergenic}.
+A high conservation score in an intergenic region suggests potential functionality, providing additional evidence for biological relevance.
+To identify such regions, those with conservation scores above 0.6 that did not overlap with known genes from references used were selected.
+The resulting regions are presented in Table \ref{tab:conservedIntergenic}.
 
 \begin{table}[h]
     \centering
@@ -131,13 +197,146 @@ Therefore, a group of possibly biologically meaningful locations were extracted 
     \label{tab:conservedIntergenic}
 \end{table}
 
+\paragraph{Gene predictions}
 
-\paragraph{Wrap-up}
+To assess whether isolated intergenic regions overlap with predicted genes, UCSC gene prediction archives were examined,
+focusing on overlaps with 3' ends of predicted genes.
+
+Of the identified regions, 12 overlapped with predicted genes.
+However, three of these did not overlap with the 3' ends of predicted genes,
+which would be expected given that the data was generated using 3' end sequencing methods.
+Five predicted genes were extensions of known genes,
+while the remaining four corresponded to genes absent from RefSeq and NCBI references but supported by our data.
+Table \ref{tab:predictedIsolated} summarizes these findings.
+Only regions overlapping the 3' ends of predicted genes were considered as supported by gene prediction tools.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{llll}
+        \toprule
+        Name & Genomic coordinates & Prediction tool & Overlaps with 3' region of predicted gene \\
+        \midrule
+	INT196 & 6:89086200-89086500 & SIB & Yes (PNRC1) \\
+	INT827 & 9:94111950-94112200 & SIB & Yes \\
+	INT1216 & 1:72282700-72282900 & SIB & No (5' end) \\
+	INT1387 & 11:63570800-63571050 & SIB & No \\
+	INT1525 & 8:11842200-11842350 & SIB & Yes (CTSB) \\
+	INT1801 & 5:151272550-151272700 & SIB & Yes (GM2A) \\
+	INT2044 & 19:4041150-4041400 & SIB & Yes (ZBTB7A) \\
+	INT4070 & 4:47430500-47430700 & SIB & Yes \\
+	INT4147 & 1:34861500-34861700 & SIB & Yes (DLGAP3)\\
+	INT4577 & 5:702050-702300 & SIB & Yes \\
+	INT4948 & 5:703250-703450 & SIB & Yes \\
+	INT5710 & 4:47428500-47428700 & SIB & No \\
+        \bottomrule
+    \end{tabular}
+    \caption{Isolated intergenic regions overlapping with predicted genes from UCSC gene prediction archive.
+    The gene in the brackets shows if the predicted gene is extended version of already annotated genes.}
+    \label{tab:predictedIsolated}
+\end{table}
+
+\paragraph{Combining supporting features}
+
+In total, five features were examined as supportive evidence for the biological significance of these intergenic regions:
+conservation, AT-rich/open chromatin presence, differential expression, and gene predictions.
+Based on these, four sublists of isolated intergenic regions were generated:
+
+\begin{itemize}
+  \item Conserved regions
+  \item Regions associated with AT-rich sequences and open chromatin
+  \item Differentially expressed regions
+  \item Regions overlapping predicted genes
+\end{itemize}
+
+Notably, the list of conserved regions did not intersect with the other three.
+The predicted gene list had two regions in common with the differential expression list (INT196, INT1525)
+and one in common with the open chromatin list (INT4147).
+All three of these predicted genes were extended versions of already annotated genes.
+The differential expression and open chromatin lists had 11 regions in common
+(INT1312, INT1426, INT1492, INT1554, INT1609, INT1993, INT2209, INT349, INT368, INT4216, INT6013).
+No regions appeared in more than two lists.
 
 \subsection{Antisense intergenic regions}
 
+Interpretation of antisense intergenic regions is more complicated.
+The features such as open chromatin, AT-richness or conservativness are not strand specific,
+meaning that if they would be present, they could not be attributed with certainty for our intergenic regions.
 
+The differential expression can be checked, however, even if the antisense intergenic region is differentially expressed,
+it still can be an artifact, originating, for example, from template switch (\cite{Kebschull2015}).
 
+Hence the only real supporting evidence would be computational gene prediction.
+
+\paragraph{Gene predictions}
+
+As in the case of isolated intergenic regions,
+antisense intergenic regions were checked for overlaps with predicted genes from UCSC prediction archive.
+There were 49 such regions found, out of them 35 were in the 3' ends of predicted genes.
+9 of those 35 predicted genes were longer version of already annotated genes in RefSeq or GENCODE references.
+The all list can be seen in the Table \ref{tab:predictionsAntisense}.
+
+\begin{table}[h]
+    \small
+    \centering
+    \begin{tabular}{llll}
+        \toprule
+        Name & Genomic coordinates & Prediction tool & Overlaps with 3' region of predicted gene \\
+        \midrule
+	INT7 & 6:24718850-24719100 & SIB & Yes \\
+	INT33 & 5:172767250-172767500 & SIB & Yes (DUSP1) \\
+	INT134 & 15:41280550-41280800 & SIB & Yes (extends a bit after) \\
+	INT218 & 5:61409150-61409400 & SPG & No (5' end) \\
+	INT285 & 10:110898200-110898550 & SIB & Yes (BBIP1) \\
+	INT327 & 1:169132100-169132350 & SIB & Yes (NME7) \\
+	INT347 & 14:75277700-75278000 & Gescan & No \\
+	INT382 & 12:11892250-11892500 & Gescan & Yes \\
+	INT386 & 6:26215200-26215450 & SIB & Yes (H2BCB?) \\
+	INT438 & 4:39713300-39713600 & SIB & Yes (almost all (short) gene spanned) \\
+	INT533 & 8:130110900-130111150 & SIB & Yes \\
+	INT617 & 15:85733950-85734200 & SIB & Yes \\
+	INT621 & 9:75148850-75149400 & SIB & Yes (OSTF1) \\
+	INT651 & 1:28579100-28579350 & SIB & Yes (TRNAU1AP) \\
+	INT654 & 6:34382850-34383050 & SIB & No (but short gene)\\
+	INT828 & 8:133035800-133036050 & SIB & Yes (SLA) \\
+	INT859 & 2:71373500-71373750 & SIB & No (slight overlap on 5' end) \\
+	INT898 & 17:51190400-51190700 & SIB & Yes (extends after)\\
+	INT903 & 8:22613400-22613650 & SIB & Yes \\
+	INT949 & 9:111693050-111693400 & SIB & Yes \\
+	INT972 & 15:64954800-64955350 & SIB & Yes \\
+	INT984 & 18:63291900-63292200 & Geneid & Yes \\
+	INT1028 & 5:50414200-50414500 & SIB & Yes \\
+	INT1155 & 1:36296050-36296300 & SIB & No (5' end) \\
+	INT1231 & 10:19890700-19891050 & Gescan & Yes \\
+	INT1402 & 5:142786700-142786950 & SIB & No (5' end) \\
+	INT1440 & 2:235746450-235746700 & SIB & Yes \\
+	INT1445 & 9:40885650-40885900 & SIB & Yes \\
+	INT1548 & 7:50342700-50342950 & Gescan & No (exon in the middle) \\
+	INT1616 & 17:30895450-30895700 & SIB & No (5' end) \\
+	INT1749 & 3:172333550-172333750 & SIB & No (5' end) \\
+	INT1931 & 17:82522100-82522350 & SIB & Yes \\
+	INT2065 & 10:103606150-103606400 & SIB & Yes \\
+	INT2158 & 14:49636100-49636350 & SIB & No (5' end, DNAAF2) \\
+	INT2194 & 7:130521250-130521500 & SIB & No (but gene is short) \\
+	INT2371 & 1:14632650-14632900 & Geneid & No (middle exon) \\
+	INT2380 & 22:33853900-33854150 & Geneid & Yes \\
+	INT2825 & 13:45300050-45300300 & Geneid & No (middle exon) \\
+	INT2979 & 4:98929350-98929600 & SIB & No (5' end, EIF4E) \\
+	INT3328 & 2:184604250-184604500 & SIB & Yes \\
+	INT3429 & 17:48172750-48173150 & Augustus & Yes \\
+	INT3504 & 15:25332950-25333150 & SIB & Yes (UBE3A) \\
+	INT3849 & 3:121432200-121432400 & SIB & Yes \\
+	INT3868 & 17:31448500-31448700 & SIB & Yes \\
+	INT4458 & 5:44820700-44820900 & SIB & Yes (MRP530) \\
+	INT4743 & 20:3188900-3189050 & SIB & Yes (DDRGK1) \\
+	INT5002 & 11:92232750-92232950 & SIB & Yes \\
+	INT5315 & 20:3183750-3184050 & SIB & Yes \\
+	INT5329 & 13:95603000-95603200 & SIB & Yes (extends after) \\
+        \bottomrule
+    \end{tabular}
+    \caption{Antisense intergenic regions overlapping with predicted genes from UCSC gene prediction archive.
+    The gene in the brackets shows if the predicted gene is extended version of already annotated genes.}
+    \label{tab:predictionsAntisense}
+\end{table}
 
 
 
