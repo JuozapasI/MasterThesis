@@ -581,13 +581,53 @@ data/downstream/intergenic/AT_distances_isolated.tsv: data/downstream/intergenic
 data/downstream/intergenic/ATAC_distances_isolated.bed: data/downstream/intergenic/isolated.bed data/genome/ATAC/PBMC/ATAC.bed
 	bedtools closest -t first -D a -id -a <(sort -k1,1 -k2,2n $<) \
 	-b <( grep -f <( cut -f 1 data/downstream/intergenic/isolated.bed | sort | uniq | awk '{print "^" $$1 "\t"}' ) \
-	data/genome/ATAC/PBMC/ATAC.bed) | awk -F '\t' '{print $$4, $$22 * -1}' > $@
+	data/genome/ATAC/PBMC/ATAC.bed) | awk -F '\t' 'BEGIN {OFS = FS} {print $$4, $$22 * -1}' > $@
 	
 data/downstream/intergenic/gene_distances_upstream_isolated.bed: data/downstream/intergenic/isolated.bed
 	bedtools closest -mdb all -t first -D a -id -a <(sort -k1,1 -k2,2n $<) \
 	-b data/genome/references/gencode.gene_ranges_sorted.bed \
 	data/genome/references/ncbi.gene_ranges_sorted.bed data/genome/references/lnc.gene_ranges_sorted.bed -names gencode ncbi lnc | \
 	cut -f 4,16,20,22,27 | awk -F '\t' 'BEGIN{OFS=FS} {print $$1, $$2, $$3, $$4, $$5 * -1}' > $@
+	
+# rule to find distances from 3' ends of random 10000 genes to open chromatin upstream
+data/downstream/intergenic/ATrich_distances_from_random_genes.bed: data/genome/references/gencode.gene_ranges_sorted.bed 
+	shuf $< | head -10000 | cut -f 1-6 > $@_tmp
+	awk -F '\t' 'BEGIN {OFS = FS} function max(a, b) { return (a > b) ? a : b } {if($$6 == "+") {print $$1, max(0, $$2 - 10000), $$3, $$4} \
+	else {print $$1, $$2, $$3 + 10000, $$4}}' $@_tmp | \
+	bedtools getfasta -nameOnly -tab -fi $(fasta) -bed stdin > $@_sequences
+	python scripts/python/find_ATrich_upstream.py $@_sequences $@_tmp $@
+	rm $@_sequences $@_tmp
+	
+# rule to find distances from 10000 random locations to open chromatin upstream
+data/downstream/intergenic/ATrich_distances_from_random_locs.bed:
+	bash scripts/bash/generate_random_locations.sh $@_random_loc 
+	awk -F '\t' 'BEGIN {OFS = FS} {print $$1, $$2, $$3, "RAND" NR, ".", (rand() < 0.5 ? "-" : "+")}' $@_random_loc > $@_rand_bed
+	awk -F '\t' 'BEGIN {OFS = FS} function max(a, b) { return (a > b) ? a : b } {if($$6 == "+") {print $$1, max(0, $$2 - 10000), $$3, $$4} \
+	else {print $$1, $$2, $$3 + 10000, $$4}}' $@_rand_bed | \
+	bedtools getfasta -nameOnly -tab -fi $(fasta) -bed stdin > $@_sequences
+	python scripts/python/find_ATrich_upstream.py $@_sequences $@_rand_bed $@
+	rm $@_sequences $@_rand_bed $@_random_loc
+	
+data/downstream/intergenic/isolated_distance_combined.tsv: data/downstream/intergenic/gene_distances_upstream_isolated.bed \
+data/downstream/intergenic/ATAC_distances_isolated.bed \
+data/downstream/intergenic/AT_distances_isolated.tsv \
+data/downstream/intergenic/isolated.bed
+	paste <(sort -k1,1 $<) <(sort -k1,1 data/downstream/intergenic/ATAC_distances_isolated.bed) \
+	<(sort -k4,4 data/downstream/intergenic/isolated.bed) | \
+	cut -f 1,5,7-13 | awk -F '\t' '$$2 > $$3 + 2000' > $@
+	
+data/downstream/intergenic/isolated_distance_combined_closest_ATAC.bed: data/downstream/intergenic/isolated_distance_combined.tsv
+	cut -f 4- $< | sort -k1,1 -k2,2n | bedtools closest -wa -wb -D a -id -t first -a stdin \
+	-b <( grep -f <( cut -f 4 $< | uniq | awk '{print "^" $$1 "\t"}' ) data/genome/ATAC/PBMC/ATAC.bed) > $@
+	
+data/downstream/intergenic/isolated_distance_combined_closest_ATAC_sequences.tsv: data/downstream/intergenic/isolated_distance_combined_closest_ATAC.bed
+	awk -F '\t' 'BEGIN {OFS = FS} {print $$7, $$8, $$9, $$4}' $< | \
+	bedtools getfasta -tab -nameOnly -fi $(fasta) -bed stdin > $@
+	
+data/downstream/intergenic/isolated_distance_combined_closest_ATAC_sequences_ATcheck.tsv: data/downstream/intergenic/isolated_distance_combined_closest_ATAC_sequences.tsv
+	python scripts/python/check_if_AT_rich.py $< > $@
+
+
 
 # rule to clean working directory (mainly from the latex intermediates)
 clean:
