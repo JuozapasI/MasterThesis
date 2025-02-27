@@ -6,33 +6,57 @@ when using the 10x reference.
 Additionally, 6\% to 18\% of total reads were intergenic, meaning they did not overlap with any reference used.
 Given the size of the datasets, such a proportion of reads could potentially contain biologically relevant information.
 
+??????????????????????????????????????????
+
+Also, one can observe that the proportions of unassigned and intergenic reads are higher when samples are first demultiplexed by UMIs.
+This suggests that unassigned transcripts are present in lower amounts than assigned ones.
+If all unassigned transcripts originated from unannotated genes,
+one would expect amplification to occur similarly for both assigned and unassigned transcripts.
+However, this is not the case, which suggests that additional factors contribute to the discrepancy.
+One possible explanation is polymerase error, particularly template switching.
+
+\textcite{Kebschull2015} demonstrated that template switching occurs during PCR amplification, albeit rarely.
+Notably, these events are more common in the later cycles of PCR (\cite{Kebschull2015}),
+meaning that the resulting chimeric transcripts undergo fewer amplification cycles and thus appear at lower abundances in the data.
+While this could partially account for the reduced amplification of unassigned transcripts, it is unlikely to be the sole explanation.
+
+?????????????????????????????
+
+
+
 \begin{table}[h]
     \centering
-    \begin{tabular}{l|rrr}
-        \toprule
-        Sample & Total Reads & Unassigned reads & Intergenic reads \\
-        \midrule
-        PBMC\_10x & 182330834 & 15.95\% & 11.37\% \\
-        PBMC\_10x\_2 & 496387931 & 18.52\% & 14.26\% \\
-        PBMC\_10x\_3 & 368640939 & 18.59\% & 14.34\% \\
-        PBMC\_indrops & 112932507 & 11.12\% & 6.5\% \\
-        PBMC\_indrops\_2 & 471705924 & 14.87\% & 8.36\% \\
-        brain & 206360627 & 16.87\% & 10.67\% \\
-        brain\_2 & 122556503 & 22.32\% & 15.98\% \\
-        eye & 375397270 & 28.02\% & 18.97\% \\
-        eye\_2 & 140981808 & 29.35\% & 14.85\% \\
-        eye\_3 & 161261977 & 29.46\% & 18.86\% \\
-        lung\_2 & 511080104 & 15.99\% & 12.07\% \\
-        lung\_5 & 452105505 & 14.49\% & 10.74\% \\
-        lung\_7 & 524095146 & 18.41\% & 14.34\% \\
-        lung\_8 & 342092138 & 14.53\% & 10.66\% \\
-        \bottomrule
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{l|rrr|rrr}
+    \toprule
+    Sample & Total Reads & Unassigned & Intergenic & Demultiplexed & Unassigned & Intergenic \\
+    \midrule
+    PBMC\_10x & 182330834 & 15.95\% & 11.37\% & 70305137 & 18.51\% & 12.86\% \\
+    PBMC\_10x\_2 & 496387931 & 18.52\% & 14.26\% & 195948926 & 21.29\% & 16.32\% \\
+    PBMC\_10x\_3 & 368640939 & 18.59\% & 14.34\% & 167804193 & 20.99\% & 16.17\% \\
+    PBMC\_indrops & 112932507 & 11.12\% & 6.5\% & 8176578 & 22.86\% & 10.25\% \\
+    PBMC\_indrops\_2 & 471705924 & 14.87\% & 8.36\% & 98063027 & 25.52\% & 13.73\% \\
+    brain & 206360627 & 16.87\% & 10.67\% & 143916177 & 19.02\% & 12.07\% \\
+    brain\_2 & 122556503 & 22.32\% & 15.98\% & 95031864 & 23.77\% & 17.00\% \\
+    eye & 375397270 & 28.02\% & 18.97\% & 161882445 & 31.87\% & 21.60\% \\
+    eye\_2 & 140981808 & 29.35\% & 14.85\% & 69146995 & 31.43\% & 15.99\% \\
+    eye\_3 & 161261977 & 29.46\% & 18.86\% & 68157696 & 32.11\% & 20.58\% \\
+    lung\_2 & 511080104 & 15.99\% & 12.07\% & 269118747 & 17.98\% & 13.33\% \\
+    lung\_5 & 452105505 & 14.49\% & 10.74\% & 256353198 & 16.19\% & 11.83\% \\
+    lung\_7 & 524095146 & 18.41\% & 14.34\% & 236157103 & 20.64\% & 15.79\% \\
+    lung\_8 & 342092138 & 14.53\% & 10.66\% & 217801055 & 16.07\% & 11.67\% \\
+    \bottomrule
     \end{tabular}
+    }
     \caption{Statistics of unassigned and intergenic reads per sample.
     Unassigned reads were counted after mapping with 10x reference.
-    Intergenic reads here are those that do not intersect with any reference used.}
+    Intergenic reads here are those that do not intersect with any reference used.
+    'Demultiplexed' column shows number of total reads after demultiplexing using UMIs,
+    and following 'unassigned' and 'intergenic' percentages were computed compared to this number.}
     \label{tab:countStats}
 \end{table}
+
+\paragraph{Analysing integenic regions}
 
 For each sample, intergenic regions containing a sufficient number of unassigned reads were identified,
 as described in the methods section (with a threshold set at 5 CPM).
@@ -143,8 +167,8 @@ they should be relatively short.
     \toprule
      & mean & median  \\
     \midrule
-    intergenic & 938.537 & 508 \\
-    random 3' ends & 1391.019 & 849 \\
+    isolated intergenic 3' ends & 938.537 & 508 \\
+    3' ends of random genes & 1391.019 & 849 \\
     random locations & 1123.194 & 682 \\
     \bottomrule
   \end{tabular}
