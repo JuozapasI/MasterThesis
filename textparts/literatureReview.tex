@@ -85,6 +85,40 @@ Depending on the method, reverse transcription may occur within the droplets
 (as in inDrops and 10X Genomics) or after demulsification (as in Drop-seq).
 Subsequent steps typically include RNA fragmentation, PCR amplification, and next-generation sequencing (NGS).
 
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/primer.png}
+  \caption{Example of primer design (inDrops).
+  The image above shows schematic view, while below is given example with sequences.
+  The geometry of primers varies between the protocols, the main parts (UMI site, barcodes, poly-T's)
+  are found in most of them.
+  Here also present are promoter region for RNA polymerase (red), sequencing primer (blue), synthesis adaptor (dark brown).
+  Figure taken from \textcite{Klein2015}.}
+  \label{fig:inDropsPrimer}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/scAnalysisPipeline.jpg}
+  \caption{The schematic presentation of droplet-based scRNAseq
+  (particularly inDrops, however main steps are shared between most of the droplet based protocols.
+  Figure taken from \textcite{Klein2015}.}
+  \label{fig:inDropsPipeline}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/indropsDevice.jpg}
+  \caption{An example of microfluidics device for droplet generation (inDrops).
+  A) Schematic view of the device.
+  B) Snapshots of droplet generation and colection.
+  C) Scheme of droplet generation.
+  Figure taken from \textcite{Klein2015}.}
+  \label{fig:inDropsDevice}
+\end{figure}
+
+
 \subsection{scRNAseq data analysis}
 
 \paragraph{Raw data processing}
