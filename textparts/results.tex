@@ -107,6 +107,81 @@ Those located on the opposite strand of known genes will be referred to as "anti
     \label{fig:intergenicClustering}
 \end{figure}
 
+\paragraph{A-rich sequences near the intergenic regions 3' end}
+
+If there is poly-A region near the 3' end of the intergenic region, then the presence of those peaks can be explained by mis-priming,
+i.e. that would suggest that our intergenic region is not necessarily the actual 3' end of the novel transcript, but may be in the middle of it.
+
+This is indeed the case for the most of reported intergenic regions,
+see Figure \ref{fig:polyAdistances} for histogram and Table \ref{tab:polyAstats} for some statistics.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\linewidth]{images/poly-A-distances.png}
+  \caption{Distances from 3' ends to closest A-rich region downstream.
+  From all the intergenic regions, only 40 do not have such region within 1kb from the 3' end.}
+  \label{fig:polyAdistances}
+\end{figure}
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{l|ccc}
+    \toprule
+     & isolated & antisense & total  \\
+    \midrule
+    mean distance & 54.8768 & 52.3499 & 52.4867 \\
+    mean A-rich region length & 14.8333 & 16.755 & 16.651 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Summary of stats.}
+  \label{tab:polyAstats}
+\end{table}
+
+
+\paragraph{Correlations}
+
+Another aspect to check is whether expression of those intergenic regions correlate with the expression of nearby genes.
+If it does, it might indicate several things:
+\begin{itemize}
+  \item If the region correlates with gene on the same strand:
+  \begin{itemize}
+    \item There might exist longer unannotated transcripts that involve those intergenic regions.
+    \item The intergenic genes are involved in the same processes as the gene.
+    \item They both can be transcribed by the same polymerases.
+  \end{itemize}
+  \item If the region correlates with gene on the oposite strand:
+  \begin{itemize}
+    \item The intergenic gene is involved in the same processes as the gene on the oposite strand.
+    \item There happens some transcription errors that cause transcription from the opposite strand.
+    \item There happens some errors in the library preparation/sequencing steps that cause template switch.
+  \end{itemize}
+\end{itemize}
+
+Which of those are the case in our samples, is hard to tell.
+Out of all defined intergenic regions, 86 showed Spearman correlation \textgreater 0.5 (p \textless 0.05) in at least 1 sample
+(80 correlated with genes on the opposite strand, 10 with gene on the same strand, 4 with both).
+Some examples can be seen in Figure \ref{fig:correlationUmaps}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/correlationUmaps/PBMC_10x_2_DUSP1.png}
+        \caption{Umaps of INT33 and DUSP1 (Spearman correlation 0.68) of the PBMC\_10x\_2 sample, both of them are on the same strand.}
+    \end{subfigure}
+    \vspace{0.5em}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/correlationUmaps/eye_3_SAMD5.png}
+        \caption{Umaps of INT978 and SAMD5 (Spearman correlation 0.85) of the eye\_3 sample,
+        intergenic region is on the opposite strand of the gene.}
+    \end{subfigure}
+    \caption{Correlation can be seen visually in UMAPs (colored by the normalized expression of the genes), here couple of examples given.}
+    \label{fig:correlationUmaps}
+\end{figure}
+
+
+
 \subsection{Isolated intergenic regions}
 
 The intergenic regions that are distant from known genes and contain reads may indicate novel genes.
@@ -114,12 +189,15 @@ To determine whether these are genuine signals rather than artifacts, several as
 \begin{enumerate}
   \item Differential expression: Are these regions differentially expressed in any samples, i.e., are they specific to certain cell types?
   If so, this strongly suggests a biological origin rather than an artifact.
-  \item AT-rich sequences: Do nearby sequences contain 10 consecutive A/Ts?
-  This could explain polymerase binding but does not necessarily confirm whether the region represents a valid gene or an error.
+  %\item AT-rich sequences: Do nearby sequences contain 10 consecutive A/Ts?
+  %Since primers bind to poly-A tails, such sequences found nearby could suggest
+  %that observed peak of reads result from mispriming in longer unannotated gene.
   \item Open chromatin: Are open chromatin regions present upstream? Such regions often indicate active transcription.
   \item Conservation score: Coding regions tend to be more evolutionarily conserved than non-coding regions.
   \item Gene predictions: Do these regions overlap with predicted genes identified by computational tools?
 \end{enumerate}
+
+mention something about correlation and poly A segments.
 
 \paragraph{Differential expression analysis}
 
@@ -145,9 +223,10 @@ Some examples can be seen in Figure \ref{fig:isolatedDGE}.
 \label{fig:isolatedDGE}
 \end{figure}
 
+\iffalse
 \paragraph{AT-rich regions}
 
-AT-rich regions (defined as 10 consecutive A/Ts, allowing one mismatch) were identified upstream of the 3' ends of isolated intergenic regions,
+AT-rich regions (here defined as 10 consecutive A/Ts, allowing one mismatch) were identified upstream of the 3' ends of isolated intergenic regions,
 with the first occurrence recorded.
 
 The distances from isolated intergenic regions to the nearest AT-rich sequences varied, with a mean of 938.537 and a median of 508.
@@ -182,6 +261,7 @@ they should be relatively short.
   \caption{Distances from 3' ends of isolated intergenic regions to closest AT-rich region upstream.}
   \label{fig:distancesATrich}
 \end{figure}
+\fi
 
 \paragraph{Open chromatin}
 
@@ -194,9 +274,6 @@ Of the 147 isolated intergenic regions, 66 had open chromatin regions closer tha
 To ensure that these sites were not merely associated with distant genes, an additional filter was applied, 
 requiring that the closest open chromatin region be at least 2,000 bp from the nearest gene.
 This yielded 40 intergenic regions.
-
-Furthermore, if these open chromatin regions function as promoters for the isolated intergenic regions, they should also contain AT-rich sequences.
-This was confirmed: 38 of the 40 intergenic region-associated open chromatin sites contained AT-rich segments.
 
 \paragraph{Conservation scores}
 
@@ -267,7 +344,7 @@ Based on these, four sublists of isolated intergenic regions were generated:
 
 \begin{itemize}
   \item Conserved regions
-  \item Regions associated with AT-rich sequences and open chromatin
+  \item Regions associated with open chromatin
   \item Differentially expressed regions
   \item Regions overlapping predicted genes
 \end{itemize}
@@ -275,21 +352,28 @@ Based on these, four sublists of isolated intergenic regions were generated:
 Notably, the list of conserved regions did not intersect with the other three.
 The predicted gene list had two regions in common with the differential expression list (INT196, INT1525)
 and one in common with the open chromatin list (INT4147).
-All three of these predicted genes were extended versions of already annotated genes.
+All three of these predicted genes were extended versions of already annotated genes (see example in Figure \ref{fig:predictedExtension}).
 The differential expression and open chromatin lists had 11 regions in common
 (INT1312, INT1426, INT1492, INT1554, INT1609, INT1993, INT2209, INT349, INT368, INT4216, INT6013).
 No regions appeared in more than two lists.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/igv/INT1525.png}
+  \caption{Example of gene which is predicted to have some longer transcripts than are present in the gencode and ncbi annotations.
+  The intergenic region is located after the 3' end of gene CTSB, however,
+  SIB prediction tool suggest that longer transcripts should be included in the annotation of this gene.}
+  \label{fig:predictedExtension}
+\end{figure}
 
 \subsection{Antisense intergenic regions}
 
 Interpretation of antisense intergenic regions is more complicated.
 The features such as open chromatin, AT-richness or conservativness are not strand specific,
 meaning that if they would be present, they could not be attributed with certainty for our intergenic regions.
-
 The differential expression can be checked, however, even if the antisense intergenic region is differentially expressed,
-it still can be an artifact, originating, for example, from template switch (\cite{Kebschull2015}).
-
-Hence the only real supporting evidence would be computational gene prediction.
+it still can be an artifact, originating from differentially expressed transcripts.
+Hence from the features checked for the isolated intergenic regions, only real supporting evidence would be computational gene prediction.
 
 \paragraph{Gene predictions}
 
@@ -361,6 +445,17 @@ The all list can be seen in the Table \ref{tab:predictionsAntisense}.
     The gene in the brackets shows if the predicted gene is extended version of already annotated genes.}
     \label{tab:predictionsAntisense}
 \end{table}
+
+\paragraph{Poly-A segments}
+
+Having in mind that majority of the antisense intergenic regions have poly-A stretch after 3' end,
+and some of them strongly correlates with genes on the opposite strands,
+it is possible that they are artefacts from the library preparation.
+Particularly, it could happen that poly-T primer binds to poly-A stretch of cDNA produced by other primer,
+and in such way inversed trnascripts are produced,
+which are later mapped to antisense strands of a known gene (see Figure \ref{RTtemplateswitch}).
+
+
 
 
 
