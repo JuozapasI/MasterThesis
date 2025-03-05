@@ -1,14 +1,13 @@
 \paragraph{\textbf{Aim}}
 
-The aim of this project is to improve scRNA-seq analysis
-by investigating unassigned reads to enhance transcriptomic reference and identify potential new gene candidates.
+The aim of this project is to investigate whether it is possible to improve scRNA-seq analysis
+by including unassigned reads in the downstream analysis.
 
 \paragraph{\textbf{Tasks}}
 
 \begin{enumerate}
   \item Identify genomic regions containing unassigned reads, and classiffy them as either intersecting with genes or intergenic.
-  \item Identify reasons why there are unassigned reads in the gene regions, and if possible,
-  resolve the transcriptomic reference such that those reads would be assigned to genes.
-  \item Identify possible genomic regions containing unannotated genes, based on the unassigned intergenic reads,
-  and check if there are any other evidence supporting existence of those genes.
+  \item For intergenic regions, check if there is evidence that would confirm them being noise or unannotated genes.
+  \item For intersecting regions, check if it possible to resolve problems related to the transcriptomic reference,
+  which lead to reads being unassigned.
 \end{enumerate}

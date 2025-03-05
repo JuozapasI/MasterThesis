@@ -31,21 +31,22 @@ For references that do not have 'gene' entries, such entries were added
 Gene predictions (tracks 'AUGUSTUS', 'Geneid genes', 'Gescan genes', 'SGP genes', 'SIB genes') and 
 genome conservation scores ('phastCons100way' track) were downloaded from \href{https://genome.ucsc.edu/}{UCSC genome browser}.
 
+\paragraph{ATAC data}
+
+The open chromatin regions (bed format) in PBMCs was downloaded from \href{https://www.10xgenomics.com/datasets/10k-human-pbmcs-atac-v2-chromium-controller-2-standard}{10x website}.
+
 \section{Computational Tools and Environment}
 
 All analyses were performed on a high-performance computing (HPC) cluster running a Linux environment.
 Software packages and tools were managed using Conda.
-The main tools and their versions are listed in Table ??? (is it needed) % \ref{tab:tools}.
 The exact Conda environment specifications (YAML file) can be found on [GitHub](GIVE LINK).
 Besides tools managed by conda, also basic command line tools were used (e.g. \textit{awk, wc, grep, sed, uniq, sort} and similar).
 The specific functions and parameters used are described in the following sections, where the general analysis pipeline will be explained.
 
-%\input{"textparts/tables/tools.tex"}
-
-\section{Enhancing transcriptomic reference}
+\section{Data processing pipeline}
 
 The full scripts are available on the GITHUBLINK, here only general description of the workflow and used tools provided.
-Here is provided general description of the pipeline:
+Below is provided general description of the pipeline, used both for extracting intergenic regions and enhancing trnascriptomic reference:
 
 \begin{enumerate}
     \item Map reads with initial transcriptomic reference.
@@ -54,7 +55,7 @@ Here is provided general description of the pipeline:
     \begin{enumerate}
         \item For intersecting:
         \begin{enumerate}
-            \item Resolve overlapping genes that have unassigned reads.
+            \item Resolve overlapping genes that have unassigned reads (if possible).
             \item From the second reference and further: add genes to the original GTF that contain unassigned reads
             and do not overlap with entries from the original one.
         \end{enumerate}
@@ -114,13 +115,13 @@ Cluster locations were adjusted using deeptools (to compute coverage) and custom
 to avoid reads containing long introns making the intergenic clusters very wide.
 To accomplish this, for each intergenic region the maximum coverage location was found and extended to include neighbouring regions that had
 at least $max\_value / 2$ coverage.
-In such way, intergenic regions were reduced to include 'peaks' of reads.
+In such way, intergenic regions were adjusted to cover only 'peaks' of reads.
 
 The lists acquired from all samples were then merged using \textit{bedtools merge} function.
 This combined filter then was filtered to contain only regions detected in sufficient number of samples
 (i.e. in all 'eye', 'lung', 'brain', 'PBMC\_10x' or 'PBMC\_indrops' samples).
 Additionally, for each entry it was determined whether it overlaps with predicted genes from UCSC gene prediction archive
-(using \textit{bedtools merge}) and distances to the closest GENCODE or RefSec genes were found (\textit{bedtools closest}).
+(using \textit{bedtools merge}) and distances to the closest genes were found (\textit{bedtools closest}).
 
 This filtered combined list were then converted into GTF format and unassigned reads from each sample were mapped using this
 combined intergenic annotation.
