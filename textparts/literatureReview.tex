@@ -9,7 +9,7 @@ and the development of the conceptual framework for genetic information transfer
 scientists have made significant efforts to sequence the genomes of various organisms.
 This led to the development of the first sequencing methods, such as Sanger sequencing in 1975,
 which laid the foundation for next-generation sequencing (NGS) technologies in use today,
-including the widely used Illumina platform (\cite{Heather2016}).
+such as the widely used Illumina platform (\cite{Heather2016}).
 Current sequencing methods allow us to obtain the complete genetic sequence of any organism.
 However, the genome alone cannot explain the full diversity of cells in multicellular organisms,
 as all cells share the same genome but exhibit significant variation in shape, size, and function.
@@ -36,7 +36,8 @@ exploring cell differentiation and developmental processes (\cite{Skinner2024}),
 
 \section{scRNAseq data generation and analysis}
 
-Something here
+To better understand this project, it is important to first understand how scRNA-seq  and its data analysis work,
+which will be introduced in this section
 
 \subsection{Overview of scRNAseq protocols}
 
@@ -139,7 +140,7 @@ columns represent genes, and each entry indicates the number of captured RNAs fo
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/rawdata.png}
-  \caption{Pipeline of processing raw data.}
+  \caption{Inputs and outputs of mapping software.}
   \label{fig:rawData}
 \end{figure}
 
@@ -297,7 +298,7 @@ Additionally, the classification systems used in genome annotations may be parti
 For example, some pseudogenes, generally considered non-functional copies of functional genes,
 are transcribed and may have biological functions (\cite{Pei2012}).
 Similarly, the distinction between protein-coding and non-coding genes is debated, as many protein-coding loci generate both coding
-and non-coding transcripts, and numerous long non-coding RNAs (lncRNAs) contain potentially coding ORFs (\cite{Salzberg2019}).
+and non-coding transcripts, and numerous long non-coding RNAs (lncRNAs) contain potentially coding  open reading frames (ORFs) (\cite{Salzberg2019}).
 
 \paragraph{Future perspectives of annotating genomes}
 

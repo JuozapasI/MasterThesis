@@ -1,17 +1,27 @@
-The single cell RNA sequencing becomes more and more popular tool for analysis of cellular systems.
-This technology enables to sequence thousands of cells in a single experiment and provides huge amount of data.
-The typicall workflow of the anaysis of such data is to map reads to the known transcriptome and and construct cell-gene matrices,
-which are used in the downstream analysis.
-However, there are several problems regarding mapping to the known transcriptome:
+Single-cell RNA sequencing (scRNA-seq) is becoming an increasingly popular tool for analyzing cellular systems.
+This technology enables the sequencing of thousands of cells in a single experiment, generating a vast amount of data.
+The typical workflow for analyzing such data involves mapping reads to a known transcriptome and constructing cell-gene matrices,
+which are then used in downstream analyses.
+However, some reads are always mapped to the genome but remain unassigned to any known gene.
+Such reads are typically excluded from downstream analysis.
+
+Since these unassigned reads can constitute a significant fraction of the total reads (often up to 30\%),
+understanding the reasons behind them could help improve scRNA-seq technologies and data analysis.
+
+There are two potential sources of unassigned reads: either they are sequencing artifacts,
+or they originate from real transcripts that remain unassigned due to issues related to transcriptomic references.
+
+The two main challenges with transcriptomic references are:
 
 \begin{enumerate}
-  \item The transcriptomes used are not fully comprehensive.
-  Even though there are given great efforts to annotate all genes, it is very likelly that not all genes are annotated,
+  \item Incomplete transcriptome annotations –
+  even though there are given great efforts to annotate all genes, it is very likelly that not all genes are annotated,
   and many remains to be found.
   Such yet undefined genes are missed in the typical scRNAseq analysis.
-  \item The human (and many other species) transcriptome is very complex, with many overlapping features.
-  This prevents mapping algorithms to assign short reads to a single feature, usually resulting in discarding such reads from analysis.
+  \item Complexity and overlaps in transcriptomic features – the human (and many other species) transcriptome is very complex,
+   with many overlapping features.
+  This prevents mapping algorithms to assign some short reads to a single feature, usually resulting in discarding such reads from analysis.
 \end{enumerate}
 
-Addressing such problems, particularly focusing on mapped, but unassigned reads, could reveal some biologically significant information,
-that is currently disregarded in the most current scRNAseq data analysis.
+This project focuses on these unassigned reads, aiming to uncover their origins and, if possible,
+enhance scRNA-seq data analysis by incorporating biologically meaningful data that is typically disregarded.

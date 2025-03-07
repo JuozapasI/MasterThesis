@@ -6,10 +6,11 @@ when using the 10x reference.
 Additionally, 6\% to 18\% of total reads were intergenic, meaning they did not overlap with any reference used.
 Given the size of the datasets, such a proportion of reads could potentially contain biologically relevant information.
 
-??????????????????????????????????????????
+\iffalse
+???????????????????????????????
 
 Also, one can observe that the proportions of unassigned and intergenic reads are higher when samples are first demultiplexed by UMIs.
-This suggests that unassigned transcripts are present in lower amounts than assigned ones.
+This suggests that unassigned transcripts are amplified in lower amounts than assigned ones.
 If all unassigned transcripts originated from unannotated genes,
 one would expect amplification to occur similarly for both assigned and unassigned transcripts.
 However, this is not the case, which suggests that additional factors contribute to the discrepancy.
@@ -21,7 +22,7 @@ meaning that the resulting chimeric transcripts undergo fewer amplification cycl
 While this could partially account for the reduced amplification of unassigned transcripts, it is unlikely to be the sole explanation.
 
 ?????????????????????????????
-
+\fi
 
 
 \begin{table}[h]
@@ -158,29 +159,29 @@ If it does, it might indicate several things:
 \end{itemize}
 
 Which of those are the case in our samples, is hard to tell.
-Out of all defined intergenic regions, 86 showed Spearman correlation \textgreater 0.5 (p \textless 0.05) in at least 1 sample
-(80 correlated with genes on the opposite strand, 10 with gene on the same strand, 4 with both).
+Out of all defined intergenic regions, 97 showed Spearman correlation \textgreater 0.5 (p \textless 0.05) in at least 1 sample
+(83 correlated with genes on the opposite strand, 19 with gene on the same strand, 5 with both).
 Some examples can be seen in Figure \ref{fig:correlationUmaps}.
+
+In the following subsections isolated and antisense intergenic regions will be discussed separatelly.
 
 \begin{figure}[htbp]
     \centering
     \begin{subfigure}{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/correlationUmaps/PBMC_10x_2_DUSP1.png}
-        \caption{Umaps of INT33 and DUSP1 (Spearman correlation 0.68) of the PBMC\_10x\_2 sample, both of them are on the same strand.}
+        \caption{Umaps of INT33 and DUSP1 normalized expressions (Spearman correlation 0.68) of the PBMC\_10x\_2 sample, both of them are on the same strand.}
     \end{subfigure}
     \vspace{0.5em}
     \begin{subfigure}{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/correlationUmaps/eye_3_SAMD5.png}
-        \caption{Umaps of INT978 and SAMD5 (Spearman correlation 0.85) of the eye\_3 sample,
+        \caption{Umaps of INT978 and SAMD5 normalized expressions (Spearman correlation 0.85) of the eye\_3 sample,
         intergenic region is on the opposite strand of the gene.}
     \end{subfigure}
     \caption{Correlation can be seen visually in UMAPs (colored by the normalized expression of the genes), here couple of examples given.}
     \label{fig:correlationUmaps}
 \end{figure}
-
-
 
 \subsection{Isolated intergenic regions}
 
@@ -189,15 +190,10 @@ To determine whether these are genuine signals rather than artifacts, several as
 \begin{enumerate}
   \item Differential expression: Are these regions differentially expressed in any samples, i.e., are they specific to certain cell types?
   If so, this strongly suggests a biological origin rather than an artifact.
-  %\item AT-rich sequences: Do nearby sequences contain 10 consecutive A/Ts?
-  %Since primers bind to poly-A tails, such sequences found nearby could suggest
-  %that observed peak of reads result from mispriming in longer unannotated gene.
   \item Open chromatin: Are open chromatin regions present upstream? Such regions often indicate active transcription.
   \item Conservation score: Coding regions tend to be more evolutionarily conserved than non-coding regions.
   \item Gene predictions: Do these regions overlap with predicted genes identified by computational tools?
 \end{enumerate}
-
-mention something about correlation and poly A segments.
 
 \paragraph{Differential expression analysis}
 
@@ -274,6 +270,9 @@ Of the 147 isolated intergenic regions, 66 had open chromatin regions closer tha
 To ensure that these sites were not merely associated with distant genes, an additional filter was applied, 
 requiring that the closest open chromatin region be at least 2,000 bp from the nearest gene.
 This yielded 40 intergenic regions.
+
+It should be noted, that PBMC ATAC data was used for open chromatine regions,
+thus this feature should be taken with precaution for regions derived from other datasets.
 
 \paragraph{Conservation scores}
 
@@ -356,6 +355,7 @@ All three of these predicted genes were extended versions of already annotated g
 The differential expression and open chromatin lists had 11 regions in common
 (INT1312, INT1426, INT1492, INT1554, INT1609, INT1993, INT2209, INT349, INT368, INT4216, INT6013).
 No regions appeared in more than two lists.
+The full list of isolated regions can be found in Appendix \ref{tab:isolated}.
 
 \begin{figure}
   \centering
@@ -453,10 +453,19 @@ and some of them strongly correlates with genes on the opposite strands,
 it is possible that they are artefacts from the library preparation.
 Particularly, it could happen that poly-T primer binds to poly-A stretch of cDNA produced by other primer,
 and in such way inversed trnascripts are produced,
-which are later mapped to antisense strands of a known gene (see Figure \ref{RTtemplateswitch}).
+which are later mapped to antisense strands of a known gene (see Figure \ref{fig:mispriming}).
 
 
-
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\linewidth]{images/mispriming.jpg}
+  \caption{Scheme of poly-A mispriming resulting in reads mapped to the opposite strand compared to the original gene.
+  a) RNA is captured by a poly-A tail with a primer containing a poly-T sequence.
+  b) Reverse transcriptase attaches to the primer and synthesizes cDNA from the RNA template.
+  c) If the RNA-cDNA complex becomes unstable and dissociates, another primer may bind to the poly-A stretches on the cDNA,
+  if present. This would result in reversed cDNA, causing the reads to be mapped to the antisense strand.}
+  \label{fig:mispriming}
+\end{figure}
 
 
 
