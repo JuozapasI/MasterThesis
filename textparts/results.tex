@@ -308,7 +308,6 @@ which would be expected given that the data was generated using 3' end sequencin
 Five predicted genes were extensions of known genes,
 while the remaining four corresponded to genes absent from RefSeq and NCBI references but supported by our data.
 Table \ref{tab:predictedIsolated} summarizes these findings.
-Only regions overlapping the 3' ends of predicted genes were considered as supported by gene prediction tools.
 
 \begin{table}[h]
     \centering
@@ -348,7 +347,7 @@ Based on these, four sublists of isolated intergenic regions were generated:
   \item Regions overlapping predicted genes
 \end{itemize}
 
-Notably, the list of conserved regions did not intersect with the other three.
+Notably, the list of conserved regions had only one element (INT1216) in common with the other lists (particularly, prediction list).
 The predicted gene list had two regions in common with the differential expression list (INT196, INT1525)
 and one in common with the open chromatin list (INT4147).
 All three of these predicted genes were extended versions of already annotated genes (see example in Figure \ref{fig:predictedExtension}).
@@ -452,8 +451,8 @@ Having in mind that majority of the antisense intergenic regions have poly-A str
 and some of them strongly correlates with genes on the opposite strands,
 it is possible that they are artefacts from the library preparation.
 Particularly, it could happen that poly-T primer binds to poly-A stretch of cDNA produced by other primer,
-and in such way inversed trnascripts are produced,
-which are later mapped to antisense strands of a known gene (see Figure \ref{fig:mispriming}).
+and in such way inversed transcripts are produced,
+which are later mapped to antisense strands of known genes (see Figure \ref{fig:mispriming}).
 
 
 \begin{figure}
@@ -467,220 +466,6 @@ which are later mapped to antisense strands of a known gene (see Figure \ref{fig
   \label{fig:mispriming}
 \end{figure}
 
-
-
-
-
-
-
-
-\iffalse
-
-Firstly, to check if the intergenic regions contain any biologically meaningfull information,
-for each sample cells were clustered based only on those intergenic samples.
-As can be seen in some provided examples in Figure \ref{fig:intergenicClustering},
-clustering can be seen in this case and it roughly corresponds to the clustering using standard ('10x') annotation.
-This shows that biologically meaningful information is indeed present in those intergenic regions,
-Hence, further analysis were performed on those intergenic regions.
-
-The intergenic regions from all samples were combined into one list, resulting in a list of 13667 entries.
-For each region several metrics were calculated, including mean CPM (counts per million) per sample,
-the number of samples in which this region was detected, conservation score.
-Additionally it was checked if those regions overalap with any genes predicted by gene predictions tools,
-also, closest genes on the same and opposite strands (and distances from them) were found.
-The list was filtered based on the numer of samples the region was detected, allowing only those regions that are detected in all
-blood, brain, eye, or lung samples (with the exception for PBMC samples,
-for them more permissive filtering was applied, allowing those entries that were detected only by one sequencing protocol as well,
-i.e. it could be detected in all 'PBMC\_10x samples' or all 'PBMC\_indrops samples').
-This resulted in a filtered list of 2590 intergenic regions.
-
-Since the filtered list still remained huge, additional filtering criterions were applied:
-\begin{itemize}
-  \item \textbf{Conservation scores.} Since the conservation scores are not strand specific,
-  it makes no sense to filter out directly by the conservation score, because in the case there is other gene on the opposite strand
-  of defined region, the high conservation score could be induced by this other gene.
-  However, if there are no overlapping genes, high conservation score of an intergenic region could suggest that it might have some function.
-  Therefore, a group of possibly biologically meaningful locations were extracted by filtering those genes that have high conservation score
-  (threshold was set to 0.6) and do not overlap with any known genes (from the ncbi or genecode references).
-  \item \textbf{Gene predictions tools.} There are tools that predict genes based on the genomic sequence.
-  Such predictions (if overlapping with defined intergenic regions) would support the claim that
-  those (overlapping) intergenic regions are not noise, especially if the intergenic peaks would overlap with 3' ends of predicted genes.
-  \item \textbf{Intergenic region specificity.} In the case the reads from specific regions are present only in one cell group,
-  the biological origin of these reads are very likelly.
-  Such specific regions can be noticed using differential gene expression analysis,
-  i.e. checking how gene (or in our case, intergenic region) expression varies between different cell types.
-  \item \textbf{ATAC data.} ATAC data can show open chromatin regions, which are typically associated with active transcription.
-  If the intergenic regions overlap with open chromatin regions, this could provide additional evidence that reads from this region is not noise.
-  \item \textbf{Correlations with nearby genes.} If there exist correlations between the expression of the intergenic regions
-  and expression of nearby genes, that could suggest that those regions are not noise and are involved in the same pathways as their neighbours.
-\end{itemize}
-
-In the following subsections I will explore genes filtered by those strategies separatelly.
-
-\begin{figure}[htbp]
-    \centering
-    \begin{subfigure}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_pbmc10x3.png}
-        \caption{10x PBMC 3}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_pbmc10x2.png}
-        \caption{10x PBMC 2}
-    \end{subfigure}
-    \vspace{0.5em}
-    \begin{subfigure}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_eye.png}
-        \caption{eye}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_brain_2.png}
-        \caption{10x Brain 2}
-    \end{subfigure}
-    \caption{Comparison of clustering using standard annotation ('10x' reference) and using only defined intergenic regions.
-    As can be seen, for some samples intergenic regions are sufficient for rough clustering, for others (e.g. 'brain\_2' sample), 
-    noise gives some clustering artefacts.
-    Nevertheless, the clustering can be seen even in those noisy samples.}
-    \label{fig:intergenicClustering}
-\end{figure}
-
-\subsection{Intergenic regions with high conservation score}
-
-The filtering based on the conservation as described above left five intergenic regions, given in the Table \ref{tab:conservedIntergenic}.
-
-\begin{table}[h]
-    \centering
-    \begin{tabular}{lccc}
-        \toprule
-        Name & Genomic coordinates & Conservation score & Found in samples \\
-        \midrule
-        INT1216 & 1:72282700-72282900 & 0.7534172617 & brain, eye\\
-	INT1829 & 1:77772950-77773050 & 0.6863111111 & lung \\
-	INT2199 & 6:148122550-148122750 & 0.6364459652 & brain, eye \\
-	INT2208 & 5:18162950-18163100 & 0.6138651685 & PBMC (indrops) \\
-	INT3636 & X:129412750-129413050 & 0.7218984354 & brain \\
-        \bottomrule
-    \end{tabular}
-    \caption{Conserved intergenic regions not overlapping with known genes from ncbi and gencode annotations.}
-    \label{tab:conservedIntergenic}
-\end{table}
-
-\subsection{Gene Predictions Tools}
-
-61 intergenic regions overlap with predicted genes from UCSC gene prediction archive, given in the Table \ref{tab:predictionToolsIntergenic}.
-Of them 44 are in the 3' end of predicted gene (good, as our datasets are generated using 3' end sequencing protocols).
-Out of those 44 predicted genes, 15 are extended versions of genes present in gencode/ncbi references,
-you can see an example in Figure \ref{fig:predictedExtention}.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]{images/igv/INT33.png}
-  \caption{Example of gene which is predicted to have some longer transcripts than are present in the gencode and ncbi annotations.
-  The intergenic region is located after the 3' end of gene DUSP1, however,
-  SIB prediction tool suggest that longer transcripts should be included in the annotation of this gene.}
-  \label{fig:predictedExtention}
-\end{figure}
-
-
-\input{"textparts/tables/predictionToolsIntergenic.tex"}
-
-\subsection{Intergenic regions specific to some cell types}
-
-If reads from specific intergenic region are specific for only subset of cell types present in the sample,
-it is strong indication that those reads are not sequencing artefacts.
-Examples of such regions can be seen in the Figure \ref{fig:intergenicSpecific}.
-
-\begin{figure}[htbp]
-    \centering
-    \begin{subfigure}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/intergenicSpecificExamples/INT1429_lung_5.png}
-        \caption{Lung 5 (INT1429)}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/intergenicSpecificExamples/INT1524_PBMC_10x_2.png}
-        \caption{PBMC 10x 2 (INT1524)}
-    \end{subfigure}
-    \vspace{0.5em}
-    \begin{subfigure}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/intergenicSpecificExamples/INT2214_brain_2.png}
-        \caption{Brain 2 (INT2214)}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/intergenicSpecificExamples/INT2328_eye_3.png}
-        \caption{Eye 3 (INT2328)}
-    \end{subfigure}
-    \caption{Some examples of specificly expressed intergenic regions in various samples.}
-    \label{fig:intergenicSpecific}
-\end{figure}
-
-\subsection{ATAC data}
-
-ATAC sequencing shows open chromatin sites, which could potentially indicate that some transcription activity is happening at those sites.
-Hence, checking if there are overlaps between open chromatine regions and dewfined intergenic regions could provide additional evidence of
-those regions being not noise.
-However, there are some caveats in this 'evidence'.
-Firstly, open chromatin is mostly expected at the transcription start sites, promoter or other regulatory elements,
-which are typically located in the 5' end of the gene.
-Another problem is that majority of our defined regions lay on the opposite strands of known genes, while ATAC sequencing is not strand specific.
-In such cases, open chromatine could be present due to the transcription of those known genes.
-
-Out of 2590 intergenic regions, 309 intersected with ATAC intervals found from 10x PBMC ATAC data.
-Out of those 309 regions, only 20 were not overlapping with genes from GENCODE or RefSeq annotations.
-
-\subsection{Correlations}
-
-Another aspect to check is whether expression of those intergenic regions correlate with the expression of nearby genes.
-If it does, it might indicate several things:
-\begin{itemize}
-  \item If the region correlates with gene on the same strand:
-  \begin{itemize}
-    \item There might exist longer unannotated transcripts that involve those intergenic regions.
-    \item The intergenic genes are involved in the same processes as the gene.
-    \item They both can be transcribed by the same polymerases.
-  \end{itemize}
-  \item If the region correlates with gene on the oposite strand:
-  \begin{itemize}
-    \item The intergenic gene is involved in the same processes as the gene on the oposite strand.
-    \item There happens some transcription errors that cause transcription from the opposite strand.
-    \item There happens some errors in the library preparation/sequencing steps that cause template switch.
-  \end{itemize}
-\end{itemize}
-
-Which of those are the case in our samples, is hard to tell.
-Out of all defined intergenic regions, 86 showed Spearman correlation \textgreater 0.5 (p \textless 0.05) in at least 1 sample
-(80 correlated with genes on the opposite strand, 10 with gene on the same strand, 4 with both).
-Some examples can be seen in Figure \ref{fig:correlationUmaps}.
-
-\begin{figure}[htbp]
-    \centering
-    \begin{subfigure}{\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/correlationUmaps/PBMC_10x_2_DUSP1.png}
-        \caption{Umaps of INT33 and DUSP1 (Spearman correlation 0.68) of the PBMC\_10x\_2 sample, both of them are on the same strand.}
-    \end{subfigure}
-    \vspace{0.5em}
-    \begin{subfigure}{\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/correlationUmaps/eye_3_SAMD5.png}
-        \caption{Umaps of INT978 and SAMD5 (Spearman correlation 0.85) of the eye\_3 sample,
-        intergenic region is on the opposite strand of the gene.}
-    \end{subfigure}
-    \caption{Correlation can be seen visually in UMAPs (colored by the normalized expression of the genes), here couple of examples given.}
-    \label{fig:correlationUmaps}
-\end{figure}
-
-\fi
 
 
 
