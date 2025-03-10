@@ -202,6 +202,54 @@ for(gene in overlappers$gene){
 }
 
 genome_annotation <- genome_annotation[genome_annotation$start <= genome_annotation$end, ]
+
+for (gene in overlappers$gene) {
+  if (is.na(gene) | gene == "") next
+  
+  gene_entries <- which(genome_annotation$gene_id == gene)
+  gene_entry <- genome_annotation[gene_entries, ][genome_annotation$type[gene_entries] == "gene", ]
+  strand <- gene_entry$strand
+  gene_start <- gene_entry$start
+  gene_end <- gene_entry$end
+  
+  # Get exons for this gene
+  exon_indices <- which(genome_annotation$gene_id == gene & genome_annotation$type == "exon")
+  exon_starts <- genome_annotation[exon_indices, "start"]
+  exon_ends <- genome_annotation[exon_indices, "end"]
+  
+  # Check if start exon exists
+  if (!(gene_start %in% exon_starts)) {
+    new_exon <- data.frame(
+      seqnames = gene_entry$seqnames,
+      source = "added",
+      type = "exon",
+      start = gene_start,
+      end = gene_start + 29,
+      score = ".",
+      strand = strand,
+      phase = ".",
+      gene_id = gene
+    )
+    genome_annotation <- rbind(genome_annotation, new_exon)
+  }
+  
+  # Check if end exon exists
+  if (!(gene_end %in% exon_ends)) {
+    new_exon <- data.frame(
+      seqnames = gene_entry$seqnames,
+      source = "added",
+      type = "exon",
+      start = gene_end - 29,
+      end = gene_end,
+      score = ".",
+      strand = strand,
+      phase = ".",
+      gene_id = gene
+    )
+    genome_annotation <- rbind(genome_annotation, new_exon)
+  }
+}
+
 genome_annotation <- genome_annotation[order(genome_annotation$seqnames, genome_annotation$start), ]
 
 genome_annotation <- GenomicRanges::makeGRangesFromDataFrame(genome_annotation, keep.extra.columns=TRUE, na.rm=TRUE)

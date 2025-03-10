@@ -3,8 +3,8 @@ SHELL := /bin/bash
 
 umi = 12
 barcode = 16
-# for indrops umi = 10 barcode = 28
-# for indrops_2 umi=8 barcode=17
+# for PBMC_indrops umi = 10 barcode = 28
+# for PBMC_indrops_2 umi=8 barcode=17
 # for eye umi=12 barcode=19
 clusterThreshold = 100
 fasta = data/genome/fasta/GRCh38.dna.primary_assembly.fa
@@ -55,6 +55,8 @@ lung_2_seq_depth = 511080104
 lung_5_seq_depth = 452105505
 lung_7_seq_depth = 524095146
 lung_8_seq_depth = 342092138
+PBMC_diabetes_1_seq_depth = 107430657
+PBMC_diabetes_2_seq_depth = 75410796
 
 PBMC_10x_extensionCountThreshold = 182
 PBMC_10x_2_extensionCountThreshold = 496
@@ -70,6 +72,8 @@ lung_2_extensionCountThreshold = 511
 lung_5_extensionCountThreshold = 452
 lung_7_extensionCountThreshold = 524
 lung_8_extensionCountThreshold = 342
+PBMC_diabetes_1_extensionCountThreshold = 107
+PBMC_diabetes_2_extensionCountThreshold = 75
 
 PBMC_10x_newGeneCountThreshold = 911
 PBMC_10x_2_newGeneCountThreshold = 2481
@@ -85,6 +89,8 @@ lung_2_newGeneCountThreshold = 2555
 lung_5_newGeneCountThreshold = 2261
 lung_7_newGeneCountThreshold = 2620
 lung_8_newGeneCountThreshold = 1710
+PBMC_diabetes_1_newGeneCountThreshold = 535
+PBMC_diabetes_2_newGeneCountThreshold = 375
 
 debug:
 	echo $(references_paths)
@@ -296,7 +302,8 @@ data/datasets/%/unassigned_reads/final.new_gene_list.bed: data/datasets/%/unassi
 	{if ($$7 >= threshold) {i += 1; print $$1, $$2, $$3, "INTERGENIC" i, $$7 * 1000000 / depth, $$6}}' $< > $@
 
 # rule to assemble final gtf (modified entries + intergenic genes)
-%/final.gtf: %/$(order_last).modified.gtf %/final.extension_candidates.csv %/final.new_gene_list.bed
+# %/final.gtf: %/$(order_last).modified.gtf %/final.extension_candidates.csv %/final.new_gene_list.bed
+%/final.gtf: %/$(order_last).modified.gtf %/final.extension_candidates.csv
 	Rscript scripts/R/final_gtf.R $^ $@
 
 # rule to make final genome index
@@ -568,8 +575,13 @@ data/downstream/intergenic/filtered.bed: data/downstream/intergenic/augustus.bed
 	awk '{if (gsub(/lung/, "&") == 4 || gsub(/eye/, "&") == 3 || gsub(/brain/, "&") == 2 || \
 	gsub(/PBMC_indrops/, "&") == 2 || gsub(/PBMC_10x/, "&") == 3) {print $$0}}' $< > $@
 	
-data/downstream/intergenic/isolated.bed: data/downstream/intergenic/filtered.bed
-	awk -F '\t' '$$13 > 0' $< > $@
+data/downstream/intergenic/isolated/isolated.bed: data/downstream/intergenic/filtered.bed
+	mkdir -p data/downstream/intergenic/isolated/
+	awk -F '\t' '$$13 != 0' $< > $@
+	
+data/downstream/intergenic/antisense/antisense.bed: data/downstream/intergenic/filtered.bed
+	mkdir -p data/downstream/intergenic/antisense/
+	awk -F '\t' '$$13 == 0' $< > $@
 	
 data/downstream/intergenic/isolated_sequences.tsv: data/downstream/intergenic/isolated.bed
 	awk -F '\t' 'BEGIN {OFS = FS} {if($$6 == "+") {print $$1, $$2 - 10000, $$3, $$4} else {print $$1, $$2, $$3 + 10000, $$4}}' $< | \
@@ -627,8 +639,47 @@ data/downstream/intergenic/isolated_distance_combined_closest_ATAC_sequences.tsv
 data/downstream/intergenic/isolated_distance_combined_closest_ATAC_sequences_ATcheck.tsv: data/downstream/intergenic/isolated_distance_combined_closest_ATAC_sequences.tsv
 	python scripts/python/check_if_AT_rich.py $< > $@
 
+data/downstream/intergenic/sequences_downstream.tsv: data/downstream/intergenic/filtered.bed
+	bedtools getfasta -nameOnly -tab -fi $(fasta) -bed <(awk -F '\t' 'BEGIN {OFS = FS} {if ($$6 == "+") {print $$1, $$3, $$3 + 100, $$4} \
+	else {print $$1, $$2 - 100, $$2, $$4}}' $< ) > $@
+	
+data/downstream/intergenic/sequences_upstream.tsv: data/downstream/intergenic/filtered.bed
+	bedtools getfasta -nameOnly -tab -fi $(fasta) -bed <(awk -F '\t' 'BEGIN {OFS = FS} {if ($$6 == "+") {print $$1, $$2 - 100, $$2, $$4} \
+	else {print $$1, $$3, $$3 + 100, $$4}}' $< ) > $@
+	
+data/downstream/intergenic/sequences.tsv: data/downstream/intergenic/filtered.bed
+	bedtools getfasta -nameOnly -tab -fi $(fasta) -bed $< > $@
+	
+data/downstream/intergenic/sequences_downstream_ATcheck.tsv: data/downstream/intergenic/sequences_downstream.tsv
+	python scripts/python/check_if_AT_rich.py $< > $@
+	
+data/downstream/intergenic/sequences_upstream_ATcheck.tsv: data/downstream/intergenic/sequences_upstream.tsv
+	python scripts/python/check_if_AT_rich.py $< > $@
+	
+data/downstream/intergenic/sequences_ATcheck.tsv: data/downstream/intergenic/sequences.tsv
+	python scripts/python/check_if_AT_rich.py $< > $@
 
+data/downstream/intergenic/closest_antisense_not_intersecting.bed: data/downstream/intergenic/filtered.bed
+	sort -k1,1 -k2,2n $< | \
+	bedtools closest -mdb all -t first -d -S -io -a stdin -b data/genome/references/gencode.gene_ranges_sorted.bed \
+	data/genome/references/ncbi.gene_ranges_sorted.bed data/genome/references/lnc.gene_ranges_sorted.bed -names gencode ncbi lnc > $@
 
+data/downstream/intergenic/sequences_extended_with_strands.tsv: data/downstream/intergenic/filtered.bed
+	bedtools getfasta -nameOnly -tab -fi $(fasta) \
+	-bed <(awk -F '\t' 'BEGIN {OFS=FS} {print $$1, $$2 - 1000, $$3 + 1000, $$4, ".", $$6}' $< | sort -k1,1 -k2,2n) > $@.tmp
+	paste <(sort -k1,1 $@.tmp) <(cut -f 4,6 $< | sort -k1,1 | cut -f 2) | awk -F'\t' 'BEGIN {OFS = FS} {print $$1, $$3, $$2}' > $@
+	rm $@.tmp
+	
+	
+data/downstream/intergenic/TATA_AT.tsv: data/downstream/intergenic/sequences_extended_with_strands.tsv
+	python scripts/python/TATA_AT.py $< $@
+	
+data/downstream/intergenic/isolated/TATA_AT.tsv: data/downstream/intergenic/TATA_AT.tsv data/downstream/intergenic/isolated/isolated.bed
+	awk -F '\t' 'NR==FNR {keys[$$4]; next} $$1 in keys' data/downstream/intergenic/isolated/isolated.bed $< > $@
+	
+data/downstream/intergenic/antisense/TATA_AT.tsv: data/downstream/intergenic/TATA_AT.tsv data/downstream/intergenic/antisense/antisense.bed
+	awk -F '\t' 'NR==FNR {keys[$$4]; next} $$1 in keys' data/downstream/intergenic/antisense/antisense.bed $< > $@
+	
 # rule to clean working directory (mainly from the latex intermediates)
 clean:
 	latexmk -c

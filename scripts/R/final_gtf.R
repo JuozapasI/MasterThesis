@@ -4,23 +4,23 @@ args <- commandArgs(trailingOnly = TRUE)
 
 gtf_file <- args[1]
 extension_candidates_file <- args[2]
-new_gene_candidates_file <- args[3]
-output <- args[4]
+# new_gene_candidates_file <- args[3]
+output <- args[3]
 
 gtf <- rtracklayer::import(con = gtf_file, format = "gtf")
 gtf <- as.data.frame(gtf)
 extension_candidates <- read.csv(extension_candidates_file, header = FALSE, sep = "\t")
 colnames(extension_candidates) <- c("chrom", "start", "end", "strand", "gene_id")
-new_gene_candidates <- read.csv(new_gene_candidates_file, header = FALSE,  sep = "\t")
-colnames(new_gene_candidates) <- c("seqnames", "start", "end", "gene_name", "score", "strand")
-new_gene_candidates$start = new_gene_candidates$start - 100
-new_gene_candidates$end = new_gene_candidates$end + 100
-new_gene_candidates$source <- "bam_reads"
-new_gene_candidates$type <- "gene"
-new_gene_candidates$phase <- NA
-new_gene_candidates$width <- new_gene_candidates$end - new_gene_candidates$start + 1
-new_gene_candidates$gene_id <- new_gene_candidates$gene_name
-new_gene_candidates$gene_type <- "INTERGENIC"
+#new_gene_candidates <- read.csv(new_gene_candidates_file, header = FALSE,  sep = "\t")
+#colnames(new_gene_candidates) <- c("seqnames", "start", "end", "gene_name", "score", "strand")
+#new_gene_candidates$start = new_gene_candidates$start - 100
+#new_gene_candidates$end = new_gene_candidates$end + 100
+#new_gene_candidates$source <- "bam_reads"
+#new_gene_candidates$type <- "gene"
+#new_gene_candidates$phase <- NA
+#new_gene_candidates$width <- new_gene_candidates$end - new_gene_candidates$start + 1
+#new_gene_candidates$gene_id <- new_gene_candidates$gene_name
+#new_gene_candidates$gene_type <- "INTERGENIC"
 
 
 
@@ -58,18 +58,18 @@ for(i in 1:nrow(extension_candidates)){
 
 
 # Ensure the same columns
-cols_to_add <- setdiff(colnames(gtf), colnames(new_gene_candidates))
-for (col in cols_to_add) {
-  new_gene_candidates[[col]] <- NA
-}
+#cols_to_add <- setdiff(colnames(gtf), colnames(new_gene_candidates))
+#for (col in cols_to_add) {
+#  new_gene_candidates[[col]] <- NA
+#}
 
-new_gene_candidates_exons <- new_gene_candidates
-new_gene_candidates_exons$transcript_id <- new_gene_candidates_exons$gene_id
-new_gene_candidates_exons$type <- "exon"
+#new_gene_candidates_exons <- new_gene_candidates
+#new_gene_candidates_exons$transcript_id <- new_gene_candidates_exons$gene_id
+#new_gene_candidates_exons$type <- "exon"
 
 # Add new genes
-gtf <- rbind(gtf, new_gene_candidates)
-gtf <- rbind(gtf, new_gene_candidates_exons)
+#gtf <- rbind(gtf, new_gene_candidates)
+#gtf <- rbind(gtf, new_gene_candidates_exons)
 
 # Save modified gft :
 gtf <- GenomicRanges::makeGRangesFromDataFrame(gtf, keep.extra.columns=TRUE, na.rm=TRUE)
