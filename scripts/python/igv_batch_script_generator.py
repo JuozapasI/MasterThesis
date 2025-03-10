@@ -30,8 +30,8 @@ with open(bed_file, "r") as bed, open(batch_script, "w") as script:
     
     # Write commands for each region in the BED file
     for line in bed:
-        chrom, start, end = line.strip().split()[:3]
+        chrom, start, end, name = line.strip().split()[:4]
         script.write(f"goto {chrom}:{int(start) - 1000}-{int(end) + 1000}\n")
-        script.write(f"snapshot {chrom}_{start}_{end}.png\n\n")
+        script.write(f"snapshot {name}/{chrom}_{start}_{end}.png\n\n")
 
 print(f"Batch script saved to {batch_script}")

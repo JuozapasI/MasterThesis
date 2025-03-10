@@ -2,7 +2,7 @@ import scanpy as sc
 import scipy.stats as stats
 import numpy as np
 
-intergenic_list_path = '../../data/downstream/manualwork/filtered.bed'
+intergenic_list_path = '../../data/downstream/intergenic/filtered_for_correlations.bed'
 
 samples = [
     "PBMC_10x", "PBMC_10x_2", "PBMC_10x_3", "PBMC_indrops", "PBMC_indrops_2", 
