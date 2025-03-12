@@ -5,14 +5,14 @@
 We analyzed datasets from four different tissues: brain, blood, lung, and eye.
 All samples, except for two Peripheral Blood Mononuclear Cell (PBMC) datasets, were generated using the 10x Genomics v3.1 protocol.
 The two exceptions were prepared using the inDrops2 and inDrops protocols.
-All protocols capture short reads from the 3' ends of RNA molecules.
+All protocols capture 3' ends of RNA molecules and uses short-read sequencing.
 The datasets are publicly available, with sources and additional details provided in Table \ref{tab:datasets}.
 
 \input{"textparts/tables/datasets.tex"}
 
 \paragraph{\textbf{Genome and Transcriptomic references}}
 
-The human genome GRCh38 was used in this project, downloaded from the \href{https://ftp.ensembl.org/pub/release-113/fasta/homo_sapiens/dna/}{Ensembl website}.
+The human genome assembly GRCh38 was used in this project, downloaded from the \href{https://ftp.ensembl.org/pub/release-113/fasta/homo_sapiens/dna/}{Ensembl website}.
 
 Four transcriptomic references were analyzed (see Table \ref{tab:references} for details).
 To ensure compatibility with the genome FASTA file, chromosome name prefixes ('chr') were removed from references that included them,
@@ -45,7 +45,7 @@ The specific functions and parameters used are described in the following sectio
 
 \section{Data processing pipeline}
 
-The full scripts are available on the \href{https://github.com/JuozapasI/MasterThesis/}{GitHub}, here only general description of the workflow and used tools provided.
+The full scripts are available on the \href{https://github.com/JuozapasI/MasterThesis/}{GitHub}, here only general description of the workflow and used tools is provided.
 Below is provided general description of the pipeline, used both for extracting intergenic regions and enhancing trnascriptomic reference:
 
 \begin{enumerate}
@@ -75,7 +75,9 @@ Below is provided general description of the pipeline, used both for extracting 
 
 \paragraph{Mapping and filtering bam files}
 Reads were mapped using STARsolo (\cite{Kaminow2021}), both in the case of mapping from fastq and bam input files.
-Parameters were used the same for all samples (see \href{https://github.com/JuozapasI/MasterThesis/}{GitHub repository}), except the ones regarding barcode geometries.
+Parameters were used the same for all samples (see \href{https://github.com/JuozapasI/MasterThesis/}{GitHub repository}),
+except the ones regarding barcode structures
+(differences include number of barcodes, lengths of barcode/UMI sequences, and their positions in the primer).
 Filtering unassigned reads was done using \textit{awk}, taking those that have valid barcode
 (i.e. filtering out those reads that have barcode length not equal to the defined length)
 and were not assigned to any gene (i.e. had 'GN:Z:-' tag).
@@ -84,7 +86,8 @@ Also, only uniquelly mapped reads were taken (tag 'NH:i:1').
 \paragraph{Classifying reads as 'intergenic' or 'intersecting' and reads clustering}
 Intersections of unassigned reads with references were checked using \textit{bedtools intersect} command.
 Those that intersect with genes were classified as 'intersecting', and those that do not – as 'intergenic'.
-Intersections were check in strand-specific manner (bedtools '-s' flag).
+Intersections were check in strand-specific manner (bedtools '-s' flag), i.e. regions on different strands were treated as not intersecting,
+even if they share overlapping genomic coordinates.
 The intergenic reads were clustered using \textit{bedtools merge}, again in a strand-specific manner.
 
 \paragraph{Manipulating transcriptomic references}
@@ -93,13 +96,13 @@ particularly \textit{rtracklayer} library.
 The criterions for the resolving of overlapping genes are following:
 \begin{enumerate}
   \item \textbf{Gene type}: prefer protein coding genes over other types, lncRNA over remaining (e.g. pseudogenes).
-  \item \textbf{Level}: some annotations have 'level' field, indicating if the the is verified (score 1), manually annotated (score 2)
+  \item \textbf{Level}: some annotations have 'level' field, indicating if the gene is verified (score 1), manually annotated (score 2)
   or automatically annotated (score 3). Lower 'level' score was preffered.
   \item \textbf{Intersection types}: if 5' end gene is overlapping with 3' end of gene, 5' end of gene was shortened,
   as data we were using is generated using 3' end method, suggesting that reads in the 5' end regions of genes were not expected.
 \end{enumerate}
 
-This is rough description of the usage of various tools in the pipeline given above, the pipeline itself was implemented using GNU MAKE.
+Provided here is short description of the usage of various tools in the pipeline given above, the pipeline itself was implemented using GNU MAKE.
 
 \section{Intergenic regions}
 
@@ -107,8 +110,9 @@ This is rough description of the usage of various tools in the pipeline given ab
 
 The intergenic reads were extracted as described in the previous section (i.e. taked unassigned reads that do not overlap with any reference used)
 and merged into clusters using \textit{bedtools merge} command.
-Clusters were filtered based on cluster size, to include at least 5 reads per million (CPM)
-(computed from the totol number of primary reads in the datasets).
+Clusters were filtered based on cluster size, requiring at least 5 reads per million (CPM),
+where CPM represents the normalized read count per million of total primary reads in the dataset
+(e.g. if the dataset contains 100 million reads, 5 CPM would correspond to 500 reads).
 The filtering was done using \textit{awk}.
 
 Cluster locations were adjusted using deeptools (to compute coverage) and custom python script,
@@ -118,19 +122,21 @@ at least $max\_value / 2$ coverage.
 In such way, intergenic regions were adjusted to cover only 'peaks' of reads.
 
 The lists acquired from all samples were then merged using \textit{bedtools merge} function.
-This combined filter then was filtered to contain only regions detected in sufficient number of samples
-(i.e. in all 'eye', 'lung', 'brain', 'PBMC\_10x' or 'PBMC\_indrops' samples).
+This combined list then was filtered to contain only regions detected at least
+in all samples of one group ('eye', 'lung', 'brain', 'PBMC\_10x' or 'PBMC\_indrops')
+Such filtering still allows to include tissue-specific regions in the combined list,
+while removing those that are not persistent across the same type of samples.
 Additionally, for each entry it was determined whether it overlaps with predicted genes from UCSC gene prediction archive
 (using \textit{bedtools merge}) and distances to the closest genes were found (\textit{bedtools closest}).
 
-This filtered combined list were then converted into GTF format and unassigned reads from each sample were mapped using this
+This filtered combined list was then converted into GTF format and unassigned reads from each sample were mapped using this
 combined intergenic annotation.
 
 \paragraph{Analysis of cell-gene matrices}
 
 The matrices produced by STAR were filtered, allowing cells that have sufficient number of reads (thresholds selected manually),
 and only genes that were expressed in at least 3 cells.
-Also cells were filtered based on mitochondrial gene count (allowing up to 10\% of mitochondrial gene in a cell).
+Also cells were filtered based on mitochondrial gene count (allowing up to 10\% of mitochondrial gene counts in a cell).
 Doublets were filtered using \textit{scrublet}.
 Afterwards, matrices were normalized (using \textit{normalize\_total} function from \textit{scanpy} package) and log-transformaed
 (i.e. for each entry $x = log(x+1)$, \textit{log1p} function from \textit{scanpy}).

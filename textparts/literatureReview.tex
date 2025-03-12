@@ -1,13 +1,11 @@
-In this chapter I will provide general review of single cell transcriptomics and related challenges.
-
 \section{Introduction to single cell transcriptomics}
 
 Cells are the fundamental units of life, forming the basis of all living organisms.
 One of the major goals of biology is to understand cellular systems and the processes occurring within cells.
 Since the discovery of the DNA structure in 1953
-and the development of the conceptual framework for genetic information transfer,
+and the development of the conceptual framework for genetic information transfer (\cite{Watson1953}),
 scientists have made significant efforts to sequence the genomes of various organisms.
-This led to the development of the first sequencing methods, such as Sanger sequencing in 1975,
+This led to the development of the first sequencing methods, such as Sanger sequencing in 1975 (\cite{Sanger1977}),
 which laid the foundation for next-generation sequencing (NGS) technologies in use today,
 such as the widely used Illumina platform (\cite{Heather2016}).
 Current sequencing methods allow us to obtain the complete genetic sequence of any organism.
@@ -35,9 +33,6 @@ understanding disease mechanisms (\cite{Zhang2024}),
 exploring cell differentiation and developmental processes (\cite{Skinner2024}), among many other applications.
 
 \section{scRNAseq data generation and analysis}
-
-To better understand this project, it is important to first understand how scRNA-seq  and its data analysis work,
-which will be introduced in this section
 
 \subsection{Overview of scRNAseq protocols}
 
@@ -68,45 +63,9 @@ such as replication-dependent histone mRNAs (\cite{Brouze2022}).
 
 Despite differences between scRNA-seq protocols, they share key steps:
 single-cell isolation, library preparation, and sequencing (\cite{Andrews2018}).
-In droplet-based methods, single cells are encapsulated in individual droplets containing hydrogel primers
+In droplet-based methods, single cells are encapsulated in individual droplets containing hydrogel-attached barcoding primers
 and a lysis mix (an example of a droplet generation device is shown in Figure \ref{fig:inDropsDevice}).
 Primers used in these protocols typically share a common structure, including:
-
-\begin{itemize}
-  \item \textbf{Cell barcodes:} Unique sequences that identify the cell from which a particular read originates (since all droplets are pooled and sequenced together).
-  \item \textbf{Unique molecular identifiers (UMIs):} Short sequences used to quantify the original number of RNA molecules, helping to eliminate amplification bias.
-  \item \textbf{PCR handles:} Sequences that facilitate amplification.
-  \item \textbf{Poly-T sequences}: In 3' end sequencing methods are used to selectively capture polyadenylated RNAs (\cite{Zhang2019}).
-\end{itemize}
-An example of primer design is shown in Figure \ref{fig:inDropsPrimer}.
-Once cells are encapsulated in droplets, lysis occurs, releasing RNA, which is then captured by the primers.
-A schematic overview of library preparation is provided in Figure \ref{fig:inDropsPipeline}.
-
-Depending on the method, reverse transcription may occur within the droplets
-(as in inDrops and 10X Genomics) or after demulsification (as in Drop-seq).
-Subsequent steps typically include RNA fragmentation, PCR amplification, and next-generation sequencing (NGS).
-
-\begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]{images/primer.png}
-  \caption{Example of primer design (inDrops).
-  The image above shows schematic view, while below is given example with sequences.
-  The geometry of primers varies between the protocols, the main parts (UMI site, barcodes, poly-T's)
-  are found in most of them.
-  Here also present are promoter region for RNA polymerase (red), sequencing primer (blue), synthesis adaptor (dark brown).
-  Figure taken from \textcite{Klein2015}.}
-  \label{fig:inDropsPrimer}
-\end{figure}
-
-
-\begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]{images/scAnalysisPipeline.jpg}
-  \caption{The schematic presentation of droplet-based scRNAseq
-  particularly inDrops, however main steps are shared between most of the droplet based protocols.
-  Figure taken from \textcite{Klein2015}.}
-  \label{fig:inDropsPipeline}
-\end{figure}
 
 \begin{figure}
   \centering
@@ -119,15 +78,50 @@ Subsequent steps typically include RNA fragmentation, PCR amplification, and nex
   \label{fig:inDropsDevice}
 \end{figure}
 
+\begin{itemize}
+  \item \textbf{Cell barcodes:} Unique sequences that identify the cell from which a particular read originates (since all droplets are pooled and sequenced together).
+  \item \textbf{Unique molecular identifiers (UMIs):} Short sequences used to quantify the original number of RNA molecules, helping to eliminate amplification bias.
+  \item \textbf{PCR handles:} Sequences that facilitate amplification.
+  \item \textbf{Poly-T sequences}: In 3' end sequencing methods are used to selectively capture polyadenylated RNAs (\cite{Zhang2019}).
+\end{itemize}
+An example of primer design is shown in Figure \ref{fig:inDropsPrimer}.
+Once cells are encapsulated in droplets, lysis occurs, releasing RNA, which is then captured by the primers.
+A schematic overview of library preparation is provided in Figure \ref{fig:inDropsPipeline}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/primer.png}
+  \caption{Example of primer design (inDrops).
+  The image above shows schematic view, while below is given example with sequences.
+  The structure of primers varies between the protocols, the main parts (UMI site, barcodes, poly-T's)
+  are found in most of them.
+  Here also present are promoter region for RNA polymerase (red), sequencing primer (blue), synthesis adaptor (dark brown).
+  Figure taken from \textcite{Klein2015}.}
+  \label{fig:inDropsPrimer}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/scAnalysisPipeline.jpg}
+  \caption{The schematic presentation of droplet-based scRNAseq
+  particularly inDrops, however main steps are shared between most of the droplet based protocols.
+  Figure taken from \textcite{Klein2015}.}
+  \label{fig:inDropsPipeline}
+\end{figure}
+
+Depending on the method, reverse transcription may occur within the droplets
+(as in inDrops and 10X Genomics) or in bulk (as in Drop-seq).
+Subsequent steps typically include RNA fragmentation, PCR amplification, and next-generation sequencing (NGS).	
+
 
 \subsection{scRNAseq data analysis}
 
 \paragraph{Raw data processing}
 
-The output from NGS is typically FASTQ files, containing recorded sequences,
+The output from NGS machines is typically converted to FASTQ files, containing recorded sequences,
 as well as (depending on method) barcode and UMI sequences, and quality scores.
 The subsequent processing steps include quality control of FASTQ file (based on quality scores),
-filtering dublicate reads (using UMIs), mapping reads to the genome sequence, assigning the reads to the genes,
+filtering duplicate reads (using UMIs), mapping reads to the genome sequence, assigning the reads to the genes,
 and finally, counting gene expression per cell (barcode) (\cite{Heumos2023}) (see figure \ref{fig:rawData}).
 Usually, all these steps are performed with a single piece of dedicated software,
 such as STARsolo (\cite{Kaminow2021}), CellRanger (\cite{Zheng2017}) or other.
@@ -150,13 +144,14 @@ The next steps in the analysis of the scRNAseq data involves following steps:
 
 \begin{itemize}
   \item \textbf{Quality control}
-The quality of indidual cells (barcodes) can be evaluated based on several factors, such as mitochondrial gene content
-(apoptotic cells tend to have a higher proportion of mitochondrial genes (\cite{Heumos2023})) or
-total number of captured genes (very low numbers can be produced by empty droplets).
+The quality of indidual cells (represented as all reads harboring a unique barcode)
+can be evaluated based on several factors, such as mitochondrial gene content
+(apoptotic cells tend to have a higher proportion of mitochondrial transcripts (\cite{Heumos2023})) or
+total number of captured genes (very low numbers can be produced by ambient RNA entering empty droplets).
 In some cases, two cells can end up in one droplet,
 resulting in count matrix row corresponding to genes from  both cells.
 Such matrix entries (doublets) can be filtered by using specialized software
-such Scrublet (\cite{Wolock2019}) or scDblFinder (\cite{Germain2022}).
+such as Scrublet (\cite{Wolock2019}) or scDblFinder (\cite{Germain2022}).
 Another source of noise in scRNAseq data is ambient RNA,
 which consists of RNA that escapes individual droplets and spreads into the medium or other droplets,
 leading to background noise.
@@ -184,7 +179,7 @@ performs as well or better than more advanced methods.
 \item \textbf{Filtering genes}
 Once the data is normalized and cleaned, one can filter out non-informative genes.
 Initially, count matrices contain all the genes that are present in the transcriptome.
-However, not all of them are expressed in the sequenced data, or are expressed in negligable numbers (\cite{Heumos2023}).
+However, not all of them are expressed in the sequenced data, or are expressed in negligible numbers (\cite{Heumos2023}).
 Therefore, it is common practice to filter such genes (e.g., genes that are expressed in less than three cells).
 Moreover, some genes might be expressed in all the cells more or less evenly (housekeeping genes),
 which do not provide useful information that could be usefull in, for instance, grouping cells or determining cell types.
@@ -197,17 +192,18 @@ It is not feasible to visualize (and hard to interpret in general) data of such 
 dimensionality reduction is essential step of subsequent analysis.
 The idea of dimentionality reduction is simple:
 to reduce the dimentions of the data loosing as little information as possible.
-There are number dimensionality reduction methods based on different mathematical concepts,
+There are a number of dimensionality reduction methods based on different mathematical concepts,
 but the most widely used today include
 t-SNE (\cite{Hinton2002}), UMAP (\cite{McInnes2018}) and principal component analysis (PCA).
 Although the use of these algorithms are supported by some benchmarking studies
 (in the study of \textcite{Xiang2021}, t-SNE was showed best performance, while UMAP showed the highest stability),
 other benchmarking studies report different findings.
 The study of \textcite{Koch2021} suggested that such overlooked methods as
-latent Dirichlet alloacation (LDA) and PHATE show best performance.
+latent Dirichlet alloacation (LDA) and PHATE are among the best performing
+(metrics for comparison included clustering accuracy, structure preservation, efficiency and others).
 Meanwhile \textcite{Sun2019} provided guidelines for choosing dimensionality reduction method
 depending on downstream analysis tasks, and in their results UMAP and tSNE were not on the top choices.
-Thus, while UMAP and t-SNE remain the most popular methods in the field,
+Thus, while UMAP remains the gold standard method in the field (usually preceded by PCA for initial dimensionality reduction),
 it is worth considering alternative methods as well.
 \item \textbf{Clustering and other analyses}
 One of the most common tasks of scRNAseq data analysis is to identify and classify cell populations (\cite{Andrews2018}).
@@ -218,11 +214,12 @@ including k-means, hierarchical and consensus clustering (\cite{Peng2020}).
 Benchmarking studies suggest that "no individual scRNA-seq clustering algorithm can capture true clusters and achieve
 optimal performance in all situations" (\cite{Peng2020}).
 
-Clustering is usually followed by cell typing (i.e., assigning cell type to the identified clusters),
+Clustering is usually followed by cell annotation (i.e., assigning cell type to the identified clusters),
 which is done by finding cell type specific markers
 or using automatic (machine learning) tools such as CellTypist (\cite{Dom2022}).
 The subsequent steps in the analysis depend on the focus of the particular study and can include
-analysis of the dynamics of cellular systems (RNA velocity, pseudotime),
+differential gene expression (dge) analysis,
+investigation of the dynamics of cellular systems (RNA velocity, pseudotime),
 inferring gene regulatory networks (GRNs), and more.
 \end{itemize}
 
@@ -249,9 +246,8 @@ Currently, the two most widely used genome annotations are GENCODE (\cite{Mudge2
 Despite their status as mature genome references, they report different numbers of genes.
 For instance, RefSeq includes 20,078 protein-coding genes (\cite{ncbi}), whereas GENCODE contains 19,868 (\cite{ensembl}).
 This discrepancy highlights the ongoing challenge of accurately annotating genomes.
-To better understand these difficulties, the genome annotation process is first reviewed.
 
-\paragraph{Genome annotation proccess}
+\paragraph{Genome annotation process}
 
 RNA sequencing (RNA-seq) is the primary tool used in genome annotation.
 Full-length RNA sequencing allows for the capture of RNA molecules, which, when aligned to a reference genome,
@@ -278,7 +274,7 @@ leading to more experimental validation.
 Despite extensive efforts, a fully comprehensive human genome annotation has not yet been achieved.
 Several factors contribute to this challenge.
 
-First, the complexity of the human genome itself presents significant obstacles.
+Firstly, the complexity of the human genome itself presents significant obstacles.
 Compared to the total genome length, the number of genes is relatively low, and their sequences are interrupted by introns (\cite{Salzberg2019}).
 Additionally, bulk RNA sequencing often has relatively low sequencing depth,
 making it difficult to detect rare transcripts or those expressed in a cell-type-specific manner (\cite{Guigo2023}).
@@ -326,7 +322,9 @@ However, there are cases where assigning a read to a gene is not straightforward
 such as when a read maps to multiple locations or to a unique location where overlapping genes are annotated.
 
 \paragraph{Multimappers}
-Reads with ambiguous origins (commonly referred to as multimappers) are typically excluded from analysis (\cite{Paz2024}).
+There are two possible reasons for reads assigned to multiple genes: either they are mapped to multiple genome locations,
+or they are mapped to the genomic location containing overlapping features (genes).
+Such reads (commonly referred to as multimappers) are typically excluded from analysis (\cite{Paz2024}).
 However, as demonstrated by (\textcite{Paz2024}), this approach can introduce biases that affect downstream analyses.
 Currently, various methods exist to handle such cases (\cite{Francoeur2020}),
 yet no entirely satisfactory solution has been established (\cite{Paz2024}).
@@ -438,7 +436,7 @@ PCR handlers are used for the amplification, while poly-T sequences are used for
 An example of primer design can be seen in figure \ref{fig:primer}.
 Once cells are in the droplets, cell lysis takes place, RNAs escape the cells and are captured by the primers.
 Depending on method,
-reverse transcription either takes place directly in the droplets (inDrops, 10X) or after demulsification (Drop-seq).
+reverse transcription either takes place directly in the droplets (inDrops, 10X) or in bulk.
 The next steps usually include RNA fragmentation and PCR amplification, followed by NGS.
 
 Droplet-based methods are high-throughput

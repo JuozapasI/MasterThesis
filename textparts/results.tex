@@ -134,32 +134,31 @@ see Figure \ref{fig:polyAdistances} for histogram and Table \ref{tab:polyAstats}
     mean A-rich region length & 14.8333 & 16.755 & 16.651 \\
     \bottomrule
   \end{tabular}
-  \caption{Summary of stats.}
+  \caption{Distances from intergenic regions to closest A-rich segment upstream, and lengths of such segments, both measured in base pairs (bp).}
   \label{tab:polyAstats}
 \end{table}
 
 
 \paragraph{Correlations}
 
-Another aspect to check is whether expression of those intergenic regions correlate with the expression of nearby genes.
-If it does, it might indicate several things:
+Another aspect to assess is whether expression of those intergenic regions correlate with the expression of nearby genes.
+If so, this may be due to several factors:
 \begin{itemize}
   \item If the region correlates with gene on the same strand:
   \begin{itemize}
-    \item There might exist longer unannotated transcripts that involve those intergenic regions.
-    \item The intergenic genes are involved in the same processes as the gene.
-    \item They both can be transcribed by the same polymerases.
+    \item Technical issues – the genome annotation might be not comprehensive and not include some longer transcripts
+    (that would span intergenic region as well as the gene with which correlation is observed).
+    \item Biological reasons – genes in close proximity tend to be coexpressed due to the shared chromatin structure.
   \end{itemize}
   \item If the region correlates with gene on the oposite strand:
   \begin{itemize}
-    \item The intergenic gene is involved in the same processes as the gene on the oposite strand.
-    \item There happens some transcription errors that cause transcription from the opposite strand.
-    \item There happens some errors in the library preparation/sequencing steps that cause template switch.
+    \item Technical artefacts – errors during library preparation could produce inversed cDNA (will be discussed later).
+    \item Biological reasons – as mentioned before, genes in close proximity tend to be coexpressed.
   \end{itemize}
 \end{itemize}
 
 Which of those are the case in our samples, is hard to tell.
-Out of all defined intergenic regions, 97 showed Spearman correlation \textgreater 0.5 (p \textless 0.05) in at least 1 sample
+Out of all defined intergenic regions, 97 (3.74 \%) showed Spearman correlation \textgreater 0.5 (p \textless 0.05) in at least 1 sample
 (83 correlated with genes on the opposite strand, 19 with gene on the same strand, 5 with both).
 Some examples can be seen in Figure \ref{fig:correlationUmaps}.
 
@@ -336,8 +335,8 @@ Table \ref{tab:predictedIsolated} summarizes these findings.
 
 \paragraph{Combining supporting features}
 
-In total, five features were examined as supportive evidence for the biological significance of these intergenic regions:
-conservation, AT-rich/open chromatin presence, differential expression, and gene predictions.
+In total, four features were examined as supportive evidence for the biological significance of these intergenic regions:
+conservation, open chromatin presence, differential expression, and gene predictions.
 Based on these, four sublists of isolated intergenic regions were generated:
 
 \begin{itemize}
