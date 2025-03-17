@@ -680,6 +680,9 @@ data/downstream/intergenic/isolated/TATA_AT.tsv: data/downstream/intergenic/TATA
 data/downstream/intergenic/antisense/TATA_AT.tsv: data/downstream/intergenic/TATA_AT.tsv data/downstream/intergenic/antisense/antisense.bed
 	awk -F '\t' 'NR==FNR {keys[$$4]; next} $$1 in keys' data/downstream/intergenic/antisense/antisense.bed $< > $@
 	
+data/downstream/intergenic/isolated/ATAC_distances.bed: data/downstream/intergenic/isolated/isolated.bed
+	bedtools closest -D a -id -a $< -b data/genome/ATAC/PBMC/ATAC.bed > $@
+	
 # rule to clean working directory (mainly from the latex intermediates)
 clean:
 	latexmk -c
