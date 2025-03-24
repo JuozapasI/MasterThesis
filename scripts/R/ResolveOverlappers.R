@@ -214,6 +214,7 @@ for (gene in overlappers$gene) {
     strand <- genome_annotation$strand[gene_entries][1]
     
     add_gene <- data.frame(
+      gene_name = genome_annotation$gene_name[gene_entries][1],
       seqnames = genome_annotation$seqnames[gene_entries][1],
       source = genome_annotation$source[gene_entries][1],
       type = "gene",
@@ -227,53 +228,6 @@ for (gene in overlappers$gene) {
     missing_cols <- setdiff(names(genome_annotation), names(add_gene))
     add_gene[missing_cols] <- NA
     genome_annotation <- rbind(genome_annotation, add_gene)
-  }
-  else {
-    gene_entry <- genome_annotation[gene_entries, ][genome_annotation$type[gene_entries] == "gene", ]
-    strand <- gene_entry$strand
-    gene_start <- gene_entry$start
-    gene_end <- gene_entry$end
-  }
-  
-  # Get exons for this gene
-  exon_indices <- which(genome_annotation$gene_id == gene & genome_annotation$type == "exon")
-  exon_starts <- genome_annotation[exon_indices, "start"]
-  exon_ends <- genome_annotation[exon_indices, "end"]
-  
-  # Check if start exon exists
-  if (length(exon_starts) > 0 && !(gene_start %in% exon_starts)) {
-    new_exon <- data.frame(
-      seqnames = gene_entry$seqnames,
-      source = "added",
-      type = "exon",
-      start = gene_start,
-      end = gene_start + 29,
-      score = ".",
-      strand = strand,
-      phase = ".",
-      gene_id = gene
-    )
-    missing_cols <- setdiff(names(genome_annotation), names(new_exon))
-    new_exon[missing_cols] <- NA
-    genome_annotation <- rbind(genome_annotation, new_exon)
-  }
-  
-  # Check if end exon exists
-  if (length(exon_ends) > 0 && !(gene_end %in% exon_ends)) {
-    new_exon <- data.frame(
-      seqnames = gene_entry$seqnames,
-      source = "added",
-      type = "exon",
-      start = gene_end - 29,
-      end = gene_end,
-      score = ".",
-      strand = strand,
-      phase = ".",
-      gene_id = gene
-    )
-    missing_cols <- setdiff(names(genome_annotation), names(new_exon))
-    new_exon[missing_cols] <- NA
-    genome_annotation <- rbind(genome_annotation, new_exon)
   }
 }
 
