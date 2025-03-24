@@ -180,9 +180,9 @@ data/datasets/%/unassigned_reads/$(first).intergenic.bam data/datasets/%/unassig
 	bedtools intersect -s -v -abam $< -b data/genome/references/$(first).gene_ranges_sorted.bed > tmp_bam_$*
 	( samtools view -H tmp_bam_$* ; samtools view tmp_bam_$* | grep -E -v "A{60}|T{$(AT)}" ; ) | \
 	samtools view -h -b - > data/datasets/$*/unassigned_reads/$(first).intergenic.bam
-	bedtools intersect -s -v -abam $< -b data/genome/references/$(first).gene_ranges_sorted.bed > tmp_bam_$*
-	( samtools view -H tmp_bam_$* ; samtools view tmp_bam_$* | grep -E "A{60}|T{$(AT)}" ; ) | \
-	samtools view -h -b - > data/datasets/$*/unassigned_reads/AT_seq.bam
+	#bedtools intersect -s -v -abam $< -b data/genome/references/$(first).gene_ranges_sorted.bed > tmp_bam_$*
+	#( samtools view -H tmp_bam_$* ; samtools view tmp_bam_$* | grep -E "A{60}|T{$(AT)}" ; ) | \
+	#samtools view -h -b - > data/datasets/$*/unassigned_reads/AT_seq.bam
 	rm tmp_bam_$*
 
 # rule for clustering reads
