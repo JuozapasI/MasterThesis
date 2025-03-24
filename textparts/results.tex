@@ -114,29 +114,35 @@ If there is poly-A region near the 3' end of the intergenic region, then the pre
 i.e. that would suggest that our intergenic region is not necessarily the actual 3' end of the novel transcript, but may be in the middle of it.
 
 This is indeed the case for the most of reported intergenic regions,
-see Figure \ref{fig:polyAdistances} for histogram and Table \ref{tab:polyAstats} for some statistics.
+see Figure \ref{fig:poly-A} for visual example and some statistics.
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.5\linewidth]{images/poly-A-distances.png}
-  \caption{Distances from 3' ends to closest A-rich region downstream.
-  From all the intergenic regions, only 40 do not have such region within 1kb from the 3' end.}
-  \label{fig:polyAdistances}
+
+\begin{figure}[h]
+    \centering
+    % First subfigure spanning full text width
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/poly-A-example.png}
+        \caption{Example of poly-A segment after the 3' end of defined intergenic region.}
+    \end{subfigure}
+    
+    \vspace{1em} % Space between first and second row
+
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/poly-A-distances.png}
+        \caption{Distances from 3' ends to closest A-rich region downstream.
+  	From all the intergenic regions, only 40 do not have such region within 1kb from the 3' end.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/poly-A-lengths.png}
+        \caption{Lengths of closest poly-A segments downstream, measured in base pairs (bp).}
+    \end{subfigure}
+    \caption{Poly-A stretches (defined as at least 10 consecutive A's allowing one mismatch) are present near 3' ends of majority of defined intergenic regions.}
+    \label{fig:poly-A}
 \end{figure}
-
-\begin{table}[htbp]
-  \centering
-  \begin{tabular}{l|ccc}
-    \toprule
-     & isolated & antisense & total  \\
-    \midrule
-    mean distance & 54.8768 & 52.3499 & 52.4867 \\
-    mean A-rich region length & 14.8333 & 16.755 & 16.651 \\
-    \bottomrule
-  \end{tabular}
-  \caption{Distances from intergenic regions to closest A-rich segment upstream, and lengths of such segments, both measured in base pairs (bp).}
-  \label{tab:polyAstats}
-\end{table}
 
 
 \paragraph{Correlations}
@@ -160,26 +166,26 @@ If so, this may be due to several factors:
 Which of those are the case in our samples, is hard to tell.
 Out of all defined intergenic regions, 97 (3.74 \%) showed Spearman correlation \textgreater 0.5 (p \textless 0.05) in at least 1 sample
 (83 correlated with genes on the opposite strand, 19 with gene on the same strand, 5 with both).
-Some examples can be seen in Figure \ref{fig:correlationUmaps}.
+Some examples can be seen in Figure \ref{fig:correlationScatterplots}.
 
 In the following subsections isolated and antisense intergenic regions will be discussed separatelly.
 
 \begin{figure}[htbp]
     \centering
-    \begin{subfigure}{\textwidth}
+    \begin{subfigure}{0.4\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{images/correlationUmaps/PBMC_10x_2_DUSP1.png}
-        \caption{Umaps of INT33 and DUSP1 normalized expressions (Spearman correlation 0.68) of the PBMC\_10x\_2 sample, both of them are on the same strand.}
+        \includegraphics[width=\textwidth]{images/eye_3_INT978_SAMD5.png}
+        \caption{Correlation can be clearly seen in INT33 and DUSP1 normalized expressions (Spearman correlation 0.68) in the PBMC\_10x\_2 sample, both of them are on the same strand.}
     \end{subfigure}
-    \vspace{0.5em}
-    \begin{subfigure}{\textwidth}
+    \hspace{0.1\textwidth}
+    \begin{subfigure}{0.4\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{images/correlationUmaps/eye_3_SAMD5.png}
-        \caption{Umaps of INT978 and SAMD5 normalized expressions (Spearman correlation 0.85) of the eye\_3 sample,
+        \includegraphics[width=\textwidth]{images/PBMC_10x_2_INT33_DUSP1.png}
+        \caption{Correlation of INT978 and SAMD5 normalized expressions (Spearman correlation 0.85) in the eye\_3 sample,
         intergenic region is on the opposite strand of the gene.}
     \end{subfigure}
-    \caption{Correlation can be seen visually in UMAPs (colored by the normalized expression of the genes), here couple of examples given.}
-    \label{fig:correlationUmaps}
+    \caption{Examples showing correlations between intergenic regions and nearby genes.}
+    \label{fig:correlationScatterplots}
 \end{figure}
 
 \subsection{Isolated intergenic regions}
@@ -206,57 +212,12 @@ After filtering those regions that were differentially expressed (tresholds were
 the 29 differentially expressed isolated intergenic regions were found.
 Some examples can be seen in Figure \ref{fig:isolatedDGE}.
 
-\begin{figure}[htbp]
-\centering
-\begin{tabular}{cc}
-\includegraphics[width=0.45\textwidth]{images/isolatedDGEexamples/INT1492_PBMC_10x_3.png} &
-\includegraphics[width=0.45\textwidth]{images/isolatedDGEexamples/INT1554_lung_2.png} \\
-\includegraphics[width=0.45\textwidth]{images/isolatedDGEexamples/INT2456_eye_3.png} &
-\includegraphics[width=0.45\textwidth]{images/isolatedDGEexamples/INT6013_PBMC_10x_2.png} \\
-\end{tabular}
-\caption{Examples of differentially expressed isolated intergenic regions.}
-\label{fig:isolatedDGE}
-\end{figure}
-
-\iffalse
-\paragraph{AT-rich regions}
-
-AT-rich regions (here defined as 10 consecutive A/Ts, allowing one mismatch) were identified upstream of the 3' ends of isolated intergenic regions,
-with the first occurrence recorded.
-
-The distances from isolated intergenic regions to the nearest AT-rich sequences varied, with a mean of 938.537 and a median of 508.
-The distribution is shown in Figure \ref{fig:distancesATrich}.
-To determine whether these distances support the hypothesis that these locations are not random noise,
-comparisons were made against 10,000 random genomic locations and 10,000 randomly selected gene 3' ends.
-The results, summarized in Table \ref{tab:distancesATrich},
-indicate that distances are larger for both randomly selected genes and random genomic locations.
-Notably, distances from random locations to AT-rich sequences are shorter on average than those from randomly selected gene 3' ends.
-This may be due to the fact that gene bodies, which typically lack AT-rich sequences, contribute to these distances.
-Additionally, these results suggest that if small genes are indeed present between these isolated intergenic regions,
-they should be relatively short.
-
-\begin{table}[htbp]
-  \centering
-  \begin{tabular}{l|cc}
-    \toprule
-     & mean & median  \\
-    \midrule
-    isolated intergenic 3' ends & 938.537 & 508 \\
-    3' ends of random genes & 1391.019 & 849 \\
-    random locations & 1123.194 & 682 \\
-    \bottomrule
-  \end{tabular}
-  \caption{The distances to the closest AT-rich regions.}
-  \label{tab:distancesATrich}
-\end{table}
-
 \begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{images/histogramATrich.png}
-  \caption{Distances from 3' ends of isolated intergenic regions to closest AT-rich region upstream.}
-  \label{fig:distancesATrich}
+  \includegraphics[width=\linewidth]{images/PBMC_dge.png}
+  \caption{Examples of differentially expressed isolated intergenic regions in \textit{PBMC\_10x} samples.}
+  \label{fig:isolatedDGE}
 \end{figure}
-\fi
 
 \paragraph{Open chromatin}
 
@@ -306,8 +267,9 @@ However, three of these did not overlap with the 3' ends of predicted genes,
 which would be expected given that the data was generated using 3' end sequencing methods.
 Five predicted genes were extensions of known genes,
 while the remaining four corresponded to genes absent from RefSeq and NCBI references but supported by our data.
-Table \ref{tab:predictedIsolated} summarizes these findings.
+%Table \ref{tab:predictedIsolated} summarizes these findings.
 
+\iffalse
 \begin{table}[h]
     \centering
     \begin{tabular}{llll}
@@ -332,6 +294,7 @@ Table \ref{tab:predictedIsolated} summarizes these findings.
     The gene in the brackets shows if the predicted gene is extended version of already annotated genes.}
     \label{tab:predictedIsolated}
 \end{table}
+\fi
 
 \paragraph{Combining supporting features}
 
@@ -353,13 +316,13 @@ All three of these predicted genes were extended versions of already annotated g
 The differential expression and open chromatin lists had 11 regions in common
 (INT1312, INT1426, INT1492, INT1554, INT1609, INT1993, INT2209, INT349, INT368, INT4216, INT6013).
 No regions appeared in more than two lists.
-The full list of isolated regions can be found in Appendix \ref{tab:isolated}.
+%The full list of isolated regions can be found in Appendix \ref{tab:isolated}.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{images/igv/INT1525.png}
+  \includegraphics[width=\linewidth]{images/prediction_example.png}
   \caption{Example of gene which is predicted to have some longer transcripts than are present in the gencode and ncbi annotations.
-  The intergenic region is located after the 3' end of gene CTSB, however,
+  The intergenic region is located after the 3' end of gene GM2A, however,
   SIB prediction tool suggest that longer transcripts should be included in the annotation of this gene.}
   \label{fig:predictedExtension}
 \end{figure}
@@ -379,70 +342,7 @@ As in the case of isolated intergenic regions,
 antisense intergenic regions were checked for overlaps with predicted genes from UCSC prediction archive.
 There were 49 such regions found, out of them 35 were in the 3' ends of predicted genes.
 9 of those 35 predicted genes were longer version of already annotated genes in RefSeq or GENCODE references.
-The all list can be seen in the Table \ref{tab:predictionsAntisense}.
-
-\begin{table}[h]
-    \small
-    \centering
-    \begin{tabular}{llll}
-        \toprule
-        Name & Genomic coordinates & Prediction tool & Overlaps with 3' region of predicted gene \\
-        \midrule
-	INT7 & 6:24718850-24719100 & SIB & Yes \\
-	INT33 & 5:172767250-172767500 & SIB & Yes (DUSP1) \\
-	INT134 & 15:41280550-41280800 & SIB & Yes (extends a bit after) \\
-	INT218 & 5:61409150-61409400 & SPG & No (5' end) \\
-	INT285 & 10:110898200-110898550 & SIB & Yes (BBIP1) \\
-	INT327 & 1:169132100-169132350 & SIB & Yes (NME7) \\
-	INT347 & 14:75277700-75278000 & Gescan & No \\
-	INT382 & 12:11892250-11892500 & Gescan & Yes \\
-	INT386 & 6:26215200-26215450 & SIB & Yes (H2BCB?) \\
-	INT438 & 4:39713300-39713600 & SIB & Yes (almost all (short) gene spanned) \\
-	INT533 & 8:130110900-130111150 & SIB & Yes \\
-	INT617 & 15:85733950-85734200 & SIB & Yes \\
-	INT621 & 9:75148850-75149400 & SIB & Yes (OSTF1) \\
-	INT651 & 1:28579100-28579350 & SIB & Yes (TRNAU1AP) \\
-	INT654 & 6:34382850-34383050 & SIB & No (but short gene)\\
-	INT828 & 8:133035800-133036050 & SIB & Yes (SLA) \\
-	INT859 & 2:71373500-71373750 & SIB & No (slight overlap on 5' end) \\
-	INT898 & 17:51190400-51190700 & SIB & Yes (extends after)\\
-	INT903 & 8:22613400-22613650 & SIB & Yes \\
-	INT949 & 9:111693050-111693400 & SIB & Yes \\
-	INT972 & 15:64954800-64955350 & SIB & Yes \\
-	INT984 & 18:63291900-63292200 & Geneid & Yes \\
-	INT1028 & 5:50414200-50414500 & SIB & Yes \\
-	INT1155 & 1:36296050-36296300 & SIB & No (5' end) \\
-	INT1231 & 10:19890700-19891050 & Gescan & Yes \\
-	INT1402 & 5:142786700-142786950 & SIB & No (5' end) \\
-	INT1440 & 2:235746450-235746700 & SIB & Yes \\
-	INT1445 & 9:40885650-40885900 & SIB & Yes \\
-	INT1548 & 7:50342700-50342950 & Gescan & No (exon in the middle) \\
-	INT1616 & 17:30895450-30895700 & SIB & No (5' end) \\
-	INT1749 & 3:172333550-172333750 & SIB & No (5' end) \\
-	INT1931 & 17:82522100-82522350 & SIB & Yes \\
-	INT2065 & 10:103606150-103606400 & SIB & Yes \\
-	INT2158 & 14:49636100-49636350 & SIB & No (5' end, DNAAF2) \\
-	INT2194 & 7:130521250-130521500 & SIB & No (but gene is short) \\
-	INT2371 & 1:14632650-14632900 & Geneid & No (middle exon) \\
-	INT2380 & 22:33853900-33854150 & Geneid & Yes \\
-	INT2825 & 13:45300050-45300300 & Geneid & No (middle exon) \\
-	INT2979 & 4:98929350-98929600 & SIB & No (5' end, EIF4E) \\
-	INT3328 & 2:184604250-184604500 & SIB & Yes \\
-	INT3429 & 17:48172750-48173150 & Augustus & Yes \\
-	INT3504 & 15:25332950-25333150 & SIB & Yes (UBE3A) \\
-	INT3849 & 3:121432200-121432400 & SIB & Yes \\
-	INT3868 & 17:31448500-31448700 & SIB & Yes \\
-	INT4458 & 5:44820700-44820900 & SIB & Yes (MRP530) \\
-	INT4743 & 20:3188900-3189050 & SIB & Yes (DDRGK1) \\
-	INT5002 & 11:92232750-92232950 & SIB & Yes \\
-	INT5315 & 20:3183750-3184050 & SIB & Yes \\
-	INT5329 & 13:95603000-95603200 & SIB & Yes (extends after) \\
-        \bottomrule
-    \end{tabular}
-    \caption{Antisense intergenic regions overlapping with predicted genes from UCSC gene prediction archive.
-    The gene in the brackets shows if the predicted gene is extended version of already annotated genes.}
-    \label{tab:predictionsAntisense}
-\end{table}
+The all list can be found in the Appendix \ref{tab:predictionsAntisense}.
 
 \paragraph{Poly-A segments}
 
@@ -465,42 +365,13 @@ which are later mapped to antisense strands of known genes (see Figure \ref{fig:
   \label{fig:mispriming}
 \end{figure}
 
-
-
-
-\iffalse
-
 \section{Enhancing transcriptomic reference}
 
-The enhanced transcriptomic reference allows to include those reads into downstream analysis that otherwise would be discarded.
-To achieve this, we have combine data from several different transcriptomic annotations,
-and additionally included in the annotation intergenic regions that contained relativelly high number of reads.
+Having in mind that unassigned reads are present in the gene locations as well, we have tried to resolve overlapping genes in the annotations,
+such that reads from those regions could be included in the downstream analysis.
+For the overlap resolution, simple set of rules were applied, mainly prefering protein coding genes over others
+(more details can be found in the Methods \ref{sec:overlappers}).
 
-\input{"data/downstream/summaries/count_summaries/count_summary.tex"}
 
-\subsection{Exploring unassigned reads}
-Unassigned reads could come from several sources:
-sequencing artefacts, genes that are not included into transcriptomic reference used, or genes that are not annotated yet.
-To check, we have looked at intersections of those unassigned reads and more comprehensive annotations.
-As we can see, that there are plenty of genes from more comprehensive annotations which intersect with unassigned genes,
-and number of those intersecting genes correlates with sequencing depth.
 
-\input{"data/downstream/summaries/gene_summaries/intersecting_gene_summary.tex"}
 
-\subsection{Intergenic regions}
-
-Observed intergenic regions can be either artefacts or be biologically meaningfull.
-To check this, I have tried to cluster cells based only on the newly defined intergenic regions (see figure \ref{fig:umapComparisonIntergenic}).
-While for PBMC\_indrops sample it looks as noise, for the 10x indrops samples it provides quite good clustering,
-meaning that at least some of those captured intergenic regions are not sequencing artefacts.
-
-\subsection{Enhanced Reference}
-
-Using enhanced reference allowed us to have more captured genes in the data,
-however, no significant change in clustering can be seen.
-
-\input{"data/downstream/summaries/captured_gene_summaries/captured_gene_types_summary.tex"}
-
-\subsection{Captured genes}
-
-\fi
