@@ -4,7 +4,7 @@
 
 We analyzed datasets from four different tissues: brain, blood, lung, and eye.
 All samples, except for two Peripheral Blood Mononuclear Cell (PBMC) datasets, were generated using the 10x Genomics v3.1 protocol.
-The two exceptions were prepared using the inDrops2 and inDrops protocols.
+The two exceptions were prepared using the inDrops2 protocol.
 All protocols capture 3' ends of RNA molecules and uses short-read sequencing.
 The datasets are publicly available, with sources and additional details provided in Table \ref{tab:datasets}.
 
@@ -46,7 +46,8 @@ The specific functions and parameters used are described in the following sectio
 \section{Data processing pipeline}
 
 The full scripts are available on the \href{https://github.com/JuozapasI/MasterThesis/}{GitHub}, here only general description of the workflow and used tools is provided.
-Below is provided general description of the pipeline, used both for extracting intergenic regions and enhancing trnascriptomic reference:
+The general scheme of the pipeline (used both for extracting intergenic regions and enhancing transcriptomic reference)
+can be seen in Figure \ref{fig:pipeline}, while the description is given below:
 
 \begin{enumerate}
     \item Map reads with initial transcriptomic reference.
@@ -66,12 +67,18 @@ Below is provided general description of the pipeline, used both for extracting 
             \item For the first reference only: filter-out AT-rich reads.
             \item For reads that are left, repeat from the beginning with the next reference.
             \item For the last reference only: clusters that start just after 3' ends are assigned to genes (i.e., extend genes).
-            \item For the last reference only: add largest intergenic unexplained regions to GTF (INTERGENIC entries).
         \end{enumerate}
     \end{enumerate}
     \item Create final GTF and map initial sequences to it.
     \item Create list of large (\textgreater 5CPM) intergenic clusters.
 \end{enumerate}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/pipeline.png}
+  \caption{Scheme of the pipeline.}
+  \label{fig:pipeline}
+\end{figure}
 
 \paragraph{Mapping and filtering bam files}
 Reads were mapped using STARsolo (\cite{Kaminow2021}), both in the case of mapping from fastq and bam input files.
@@ -91,6 +98,7 @@ even if they share overlapping genomic coordinates.
 The intergenic reads were clustered using \textit{bedtools merge}, again in a strand-specific manner.
 
 \paragraph{Manipulating transcriptomic references}
+\label{sec:overlappers}
 The overlapping gene resolving and construction of enhanced transcriptomic reference was done using custom R script,
 particularly \textit{rtracklayer} library.
 The criterions for the resolving of overlapping genes are following:
@@ -98,9 +106,10 @@ The criterions for the resolving of overlapping genes are following:
   \item \textbf{Gene type}: prefer protein coding genes over other types, lncRNA over remaining (e.g. pseudogenes).
   \item \textbf{Level}: some annotations have 'level' field, indicating if the gene is verified (score 1), manually annotated (score 2)
   or automatically annotated (score 3). Lower 'level' score was preffered.
-  \item \textbf{Intersection types}: if 5' end gene is overlapping with 3' end of gene, 5' end of gene was shortened,
-  as data we were using is generated using 3' end method, suggesting that reads in the 5' end regions of genes were not expected.
+  \item \textbf{Intersection types}: if 5' end gene is overlapping with 3' end of gene, 5' end of gene was shortened.
 \end{enumerate}
+
+If possible, lower priority genes were shortened, otherwise they were deleted.
 
 Provided here is short description of the usage of various tools in the pipeline given above, the pipeline itself was implemented using GNU MAKE.
 
@@ -112,7 +121,7 @@ The intergenic reads were extracted as described in the previous section (i.e. t
 and merged into clusters using \textit{bedtools merge} command.
 Clusters were filtered based on cluster size, requiring at least 5 reads per million (CPM),
 where CPM represents the normalized read count per million of total primary reads in the dataset
-(e.g. if the dataset contains 100 million reads, 5 CPM would correspond to 500 reads).
+(i.e. $1 CPM = 1 \times sample\_size / 1000000$).
 The filtering was done using \textit{awk}.
 
 Cluster locations were adjusted using deeptools (to compute coverage) and custom python script,
