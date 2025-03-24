@@ -204,13 +204,36 @@ for(gene in overlappers$gene){
 genome_annotation <- genome_annotation[genome_annotation$start <= genome_annotation$end, ]
 
 for (gene in overlappers$gene) {
-  if (is.na(gene) | gene == "") next
+  if (is.na(gene) | gene == "" | !(gene %in% genome_annotation$gene_id)) next
   
   gene_entries <- which(genome_annotation$gene_id == gene)
-  gene_entry <- genome_annotation[gene_entries, ][genome_annotation$type[gene_entries] == "gene", ]
-  strand <- gene_entry$strand
-  gene_start <- gene_entry$start
-  gene_end <- gene_entry$end
+  
+  if (!any(genome_annotation$type[gene_entries] == "gene")) {
+    gene_start <- min(genome_annotation$start[gene_entries])
+    gene_end <- max(genome_annotation$end[gene_entries])
+    strand <- genome_annotation$strand[gene_entries][1]
+    
+    add_gene <- data.frame(
+      seqnames = genome_annotation$seqnames[gene_entries][1],
+      source = genome_annotation$source[gene_entries][1],
+      type = "gene",
+      start = gene_start,
+      end = gene_end,
+      score = ".",
+      strand = strand,
+      phase = ".",
+      gene_id = genome_annotation$gene_id[gene_entries][1]
+    )
+    missing_cols <- setdiff(names(genome_annotation), names(add_gene))
+    add_gene[missing_cols] <- NA
+    genome_annotation <- rbind(genome_annotation, add_gene)
+  }
+  else {
+    gene_entry <- genome_annotation[gene_entries, ][genome_annotation$type[gene_entries] == "gene", ]
+    strand <- gene_entry$strand
+    gene_start <- gene_entry$start
+    gene_end <- gene_entry$end
+  }
   
   # Get exons for this gene
   exon_indices <- which(genome_annotation$gene_id == gene & genome_annotation$type == "exon")
@@ -218,7 +241,7 @@ for (gene in overlappers$gene) {
   exon_ends <- genome_annotation[exon_indices, "end"]
   
   # Check if start exon exists
-  if (!(gene_start %in% exon_starts)) {
+  if (length(exon_starts) > 0 && !(gene_start %in% exon_starts)) {
     new_exon <- data.frame(
       seqnames = gene_entry$seqnames,
       source = "added",
@@ -230,11 +253,13 @@ for (gene in overlappers$gene) {
       phase = ".",
       gene_id = gene
     )
+    missing_cols <- setdiff(names(genome_annotation), names(new_exon))
+    new_exon[missing_cols] <- NA
     genome_annotation <- rbind(genome_annotation, new_exon)
   }
   
   # Check if end exon exists
-  if (!(gene_end %in% exon_ends)) {
+  if (length(exon_ends) > 0 && !(gene_end %in% exon_ends)) {
     new_exon <- data.frame(
       seqnames = gene_entry$seqnames,
       source = "added",
@@ -246,6 +271,8 @@ for (gene in overlappers$gene) {
       phase = ".",
       gene_id = gene
     )
+    missing_cols <- setdiff(names(genome_annotation), names(new_exon))
+    new_exon[missing_cols] <- NA
     genome_annotation <- rbind(genome_annotation, new_exon)
   }
 }
