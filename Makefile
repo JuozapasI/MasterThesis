@@ -223,13 +223,14 @@ data/datasets/%/unassigned_reads/$(f).overlappers.csv; \
 Rscript scripts/R/ResolveOverlappers.R $$^ $(ends_dist) $$@))
 
 # Assemble modified gtf for the first reference (i.e. with resolved overlaps)
-data/datasets/%/unassigned_reads/$(first).modified.gtf: data/datasets/%/unassigned_reads/$(first).intersecting_gene_list.tsv \
+data/datasets/%/unassigned_reads/$(first).modified.gtf: data/datasets/%/unassigned_reads/$(first).overlappers.csv \
 data/genome/references/$(first).gtf data/datasets/%/unassigned_reads/$(first).overlaps_modified.gtf
-	( grep -v -f $< data/genome/references/$(first).gtf; cat data/datasets/$*/unassigned_reads/$(first).overlaps_modified.gtf ; ) | \
+	( grep -v -f <(cut -d ',' -f 2 $< | tail -n +2 | awk '{print "gene_id " $$1}') data/genome/references/$(first).gtf; \
+	cat data/datasets/$*/unassigned_reads/$(first).overlaps_modified.gtf ; ) | \
 	sort -k1,1 -k4,4n > $@
 
 # Assembling adjusted gtf for second and on
-# In this case, we need to make sure that appended entries doesn't overlap with previous gtf
+# In this case, we need to make sure that appended entries don't overlap with previous gtf
 $(foreach f, $(order_without_first), $(eval \
 data/datasets/%/unassigned_reads/$(f).new_entries.gtf: data/datasets/%/unassigned_reads/$(basename $(f)).modified.gtf \
 data/datasets/%/unassigned_reads/$(f).overlaps_modified.gtf; \
@@ -680,8 +681,13 @@ data/downstream/intergenic/isolated/TATA_AT.tsv: data/downstream/intergenic/TATA
 data/downstream/intergenic/antisense/TATA_AT.tsv: data/downstream/intergenic/TATA_AT.tsv data/downstream/intergenic/antisense/antisense.bed
 	awk -F '\t' 'NR==FNR {keys[$$4]; next} $$1 in keys' data/downstream/intergenic/antisense/antisense.bed $< > $@
 	
-data/downstream/intergenic/isolated/ATAC_distances.bed: data/downstream/intergenic/isolated/isolated.bed
-	bedtools closest -D a -id -a $< -b data/genome/ATAC/PBMC/ATAC.bed > $@
+data/downstream/intergenic/isolated/ATAC_distances.tsv: data/downstream/intergenic/isolated/isolated.bed
+	bedtools closest -D a -id -a <(sort -k1,1 -k2,2n $<) -b <(awk -F '\t' 'FNR == NR {seen[$$1]; next} $$1 in seen' $< data/genome/ATAC/PBMC/ATAC.bed) | awk -F '\t' 'BEGIN {OFS = FS} {print $$4, $$16, $$17, $$18, $$22 * -1}' > $@
+	
+#data/imageGeneration/: data/downstream/manualwork/isolated/dge.list data/downstream/intergenic/isolated/isolated.bed
+#	mkdir -p $@
+#	awk -F '\t' 'FNR == NR {seen[$$1]; next} $$4 in seen {system("bash ../../../../scripts/bash/coverage.sh " $$1 ":" $$2 - 1000 ":" $$3 + 1000 " " $$6 " " $$4)}' $<
+#	awk -F ',' 'FNR == NR {ss[$$1] = $$2; next} BEGIN {FS = "\t"} {$$4 = $$4 / [
 	
 # rule to clean working directory (mainly from the latex intermediates)
 clean:
