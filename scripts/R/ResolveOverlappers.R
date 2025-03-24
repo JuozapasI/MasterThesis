@@ -11,7 +11,7 @@ resolved_pair <-function(gene1, gene2){
 resolve_overlaps_pos <- function(gene1, gene2, gene1loc, gene2loc){
   # case gene1_end > gene2_end on positive strand
   if(gene1loc[2] - gene2loc[2] > ends_dist){
-    if(overlappers[gene1, "ATrich"] == 1 & overlappers[gene1, "priority"] < overlappers[gene2, "priority"]){
+    if(overlappers[gene1, "priority"] < overlappers[gene2, "priority"]){
       # Shorten gene2
       overlappers[gene2, "delete_start"] <<- paste(overlappers[gene2, "delete_start"], gene1loc[1])
       overlappers[gene2, "delete_end"] <<- paste(overlappers[gene2, "delete_end"], gene2loc[2])
@@ -43,7 +43,7 @@ resolve_overlaps_pos <- function(gene1, gene2, gene1loc, gene2loc){
 resolve_overlaps_neg <- function(gene1, gene2, gene1loc, gene2loc){
   # case gene1_end > gene2_end on negative strand 
   if(gene1loc[1] - gene2loc[1] > ends_dist){
-    if(overlappers[gene2, "ATrich"] == 1 & overlappers[gene1, "priority"] > overlappers[gene2, "priority"]){
+    if(overlappers[gene1, "priority"] > overlappers[gene2, "priority"]){
       # Shorten gene1
       overlappers[gene1, "delete_start"] <<- paste(overlappers[gene1, "delete_start"], gene1loc[1])
       overlappers[gene1, "delete_end"] <<- paste(overlappers[gene1, "delete_end"], gene2loc[2])
