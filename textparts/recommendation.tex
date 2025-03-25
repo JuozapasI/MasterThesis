@@ -1,0 +1,10 @@
+The unassigned reads are present in the scRNA-seq datasets, and some of them contain biologically meaningful information.
+Hence it is recommended not to discard those unassigned reads completely.
+Particularly, those that are located in isolated regions
+(not on the oposite strand of known genes) might be unannotated genes.
+This should especially be important in the case when new or less explored organizms are studied,
+as their transcriptomic annotation might be not comprehensive.
+
+Also, resolving overlapps in the genome annotation might help to have more genes in the downstream analysis.
+Therefore, if one wants to have as much information as possible about the sample of the study,
+one should consider resolving overlaps in the transcriptomic references.
