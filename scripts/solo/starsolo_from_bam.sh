@@ -12,7 +12,7 @@ samtools collate -u -o ${bam}.shuffled.bam $1
 STAR \
     --genomeDir $index \
     --readFilesIn  ${bam}.shuffled.bam --readFilesType SAM SE \
-    --soloInputSAMattrBarcodeSeq CR UR \
+    --soloInputSAMattrBarcodeSeq CB UB \
     --runThreadN 14 \
     --outFileNamePrefix $outdir \
     --readFilesCommand samtools view -F 0x100 \
@@ -24,7 +24,6 @@ STAR \
     --soloMultiMappers PropUnique \
     --soloFeatures GeneFull \
     --soloType CB_UMI_Simple \
-    --soloCBmatchWLtype 1MM \
     --soloUMIdedup Exact \
     --soloCBtype String \
     --soloCBwhitelist None \
