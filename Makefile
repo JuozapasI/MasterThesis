@@ -10,7 +10,7 @@ clusterThreshold = 100
 fasta = data/genome/fasta/GRCh38.dna.primary_assembly.fa
 ATrichThreshold = 70
 AT = 60
-ends_dist = 1000
+ends_dist = 10000
 closeEndThreshold = 100
 cpmThreshold = 5
 
