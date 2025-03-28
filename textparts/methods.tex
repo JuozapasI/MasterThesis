@@ -2,7 +2,7 @@
 
 \paragraph{\textbf{scRNAseq datasets}}
 
-We analyzed datasets from four different tissues: brain, blood, lung, and eye.
+We analyzed datasets from four different human tissues: brain, blood, lung, and eye.
 All samples, except for two Peripheral Blood Mononuclear Cell (PBMC) datasets, were generated using the 10x Genomics v3.1 protocol.
 The two exceptions were prepared using the inDrops2 protocol.
 All protocols capture 3' ends of RNA molecules and uses short-read sequencing.
@@ -45,7 +45,8 @@ The specific functions and parameters used are described in the following sectio
 
 \section{Data processing pipeline}
 
-The full scripts are available on the \href{https://github.com/JuozapasI/MasterThesis/}{GitHub}, here only general description of the workflow and used tools is provided.
+The pipeline was implemented using GNU MAKE and the full scripts are available on the \href{https://github.com/JuozapasI/MasterThesis/}{GitHub},
+here only general description of the workflow and used tools is provided.
 The general scheme of the pipeline (used both for extracting intergenic regions and enhancing transcriptomic reference)
 can be seen in Figure \ref{fig:pipeline}, while the description is given below:
 
@@ -76,7 +77,8 @@ can be seen in Figure \ref{fig:pipeline}, while the description is given below:
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/pipeline.png}
-  \caption{Scheme of the pipeline.}
+  \caption{Scheme of the pipeline. This sheme provides only general logic and main tools of data processing.
+  The pipeline itself is more complex, e.g., using multiple transcriptomic references required looping over some of those steps.}
   \label{fig:pipeline}
 \end{figure}
 
@@ -94,8 +96,17 @@ Also, only uniquelly mapped reads were taken (tag 'NH:i:1').
 Intersections of unassigned reads with references were checked using \textit{bedtools intersect} command.
 Those that intersect with genes were classified as 'intersecting', and those that do not – as 'intergenic'.
 Intersections were check in strand-specific manner (bedtools '-s' flag), i.e. regions on different strands were treated as not intersecting,
-even if they share overlapping genomic coordinates.
+even if they share overlapping genomic coordinates (see Figure \ref{fig:intergenicIntersecting}).
 The intergenic reads were clustered using \textit{bedtools merge}, again in a strand-specific manner.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{"images/intergenic_intersecting.png"}
+  \caption{Unassigned read classification as intergenic or intersecting.
+  Reads are defined as intersecting if they overlap with known genes and are on the same strand.
+  Remaining reads are defined as intergenic.}
+  \label{fig:intergenicIntersecting}
+\end{figure}
 
 \paragraph{Manipulating transcriptomic references}
 \label{sec:overlappers}
@@ -109,9 +120,36 @@ The criterions for the resolving of overlapping genes are following:
   \item \textbf{Intersection types}: if 5' end gene is overlapping with 3' end of gene, 5' end of gene was shortened.
 \end{enumerate}
 
+Particularly, genes types was devided into three groups: protein coding, long non-coding RNAs and other,
+and each class was assigned score (see Table \ref{tab:geneTypes}).
+The overall priority score was defined as sum of this gene type score and 'level' field.
+The lower this score is, the higher priority gene has.
+The intersection type (whether 3' end is overlapping or not) was taken into account only in cases when priority scores were equal,
+and distances between 3' ends of overlapping genes were greater than 1kb (see Figure \ref{fig:overlappers} for graphical explanation).
 If possible, lower priority genes were shortened, otherwise they were deleted.
 
-Provided here is short description of the usage of various tools in the pipeline given above, the pipeline itself was implemented using GNU MAKE.
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lcl}
+        \toprule
+        Class & Score & Gene Types \\
+        \midrule
+        protein coding & 0 & protein\_coding, IG\_C\_gene, IG\_D\_gene, etc. \\
+	long non-coding RNA & 10 & lncRNA, lincRNA \\
+	other & 20 & snRNA, scRNA, pseudogene, etc. \\
+        \bottomrule
+    \end{tabular}
+    \caption{Priority scores assigned based on gene type.}
+    \label{tab:geneTypes}
+\end{table}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{"images/overlappers.png"}
+  \caption{Strategy for resolving overlaps. \textit{p1} and \textit{p2} are priority scores of \textit{gene1} and \textit{gene2}
+  (lower score means higher priority), while \textit{d} is distance between 3' ends of those genes.}
+  \label{fig:overlappers}
+\end{figure}
 
 \section{Intergenic regions}
 
@@ -132,11 +170,20 @@ In such way, intergenic regions were adjusted to cover only 'peaks' of reads.
 
 The lists acquired from all samples were then merged using \textit{bedtools merge} function.
 This combined list then was filtered to contain only regions detected at least
-in all samples of one group ('eye', 'lung', 'brain', 'PBMC\_10x' or 'PBMC\_indrops')
+in all samples of one group ('eye', 'lung', 'brain', 'PBMC\_10x' or 'PBMC\_indrops').
 Such filtering still allows to include tissue-specific regions in the combined list,
 while removing those that are not persistent across the same type of samples.
 Additionally, for each entry it was determined whether it overlaps with predicted genes from UCSC gene prediction archive
 (using \textit{bedtools merge}) and distances to the closest genes were found (\textit{bedtools closest}).
+Intergenic regions that were located on the opposite strand of known genes, were classified as \textit{antisense},
+while those that were not were classified as \textit{isolated} (see Figure \ref{fig:antisenseIsolated} for illustration).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{"images/antisenseIsolated.png"}
+  \caption{Classification of intergenic regions as antisense or isolated.}
+  \label{fig:antisenseIsolated}
+\end{figure}
 
 This filtered combined list was then converted into GTF format and unassigned reads from each sample were mapped using this
 combined intergenic annotation.
