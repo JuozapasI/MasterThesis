@@ -236,10 +236,21 @@ thus this feature should be taken with precaution for regions derived from other
 
 \paragraph{Conservation scores}
 
+The conservation score shows evolutionary conservation and is computed comparing genomic sequences from different species.
 A high conservation score in an intergenic region suggests potential functionality, providing additional evidence for biological relevance.
-To identify such regions, those with conservation scores above 0.6 that did not overlap with known genes from references used were selected.
-The resulting regions are presented in Table \ref{tab:conservedIntergenic}.
+To identify such regions, those with conservation scores above 0.6 was defined as conserved (there were 5 of such isolated regions).
+The overall conservation scores were quite low, suggesting that if the isolated intergenic genes originate from unannotated genes,
+they are probably human specific.
+The histogram showing conservation scores in isolated regions is given in the Figure \ref{fig:conservations}.
 
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\linewidth]{"images/conservationScores.png"}
+  \caption{Histogram showing conservation scores in the isolated regions.}
+  \label{fig:conservations}
+\end{figure}
+
+\iffalse
 \begin{table}[h]
     \centering
     \begin{tabular}{lccc}
@@ -256,6 +267,7 @@ The resulting regions are presented in Table \ref{tab:conservedIntergenic}.
     \caption{Conserved intergenic regions not overlapping with known genes from ncbi and gencode annotations.}
     \label{tab:conservedIntergenic}
 \end{table}
+\fi
 
 \paragraph{Gene predictions}
 
@@ -371,3 +383,13 @@ Having in mind that unassigned reads are present in the gene locations as well, 
 such that reads from those regions could be included in the downstream analysis.
 For the overlap resolution, simple set of rules were applied, mainly prefering protein coding genes over others
 (more details can be found in the Methods \ref{sec:overlappers}).
+
+Such enhanced reference allowed to have on average 1.2\% more reads in the cell-gene matrices.
+While this amount is not big, it allowed to capture approximatelly 350 genes, that were undetected using standard transcriptomic reference.
+However, approximatelly 13 genes were lost for each dataset using this enhanced transcriptomic reference.
+Even though the amount of data increased, it is not straightforward that data quality increased,
+since overlap handling rules can be debatable, whether they should be applicable in all cases.
+
+Overall, the improvements 
+
+
