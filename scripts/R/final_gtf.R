@@ -40,8 +40,10 @@ for(i in 1:nrow(extension_candidates)){
     gene_start = gtf[gene_entry, "start"]
     gene_end = gtf[gene_entry, "end"]
 
-    if(extension_candidates[i, "start"] < gene_start) {extension_limit = extension_candidates[i, "start"] - 100 ; extend = "start"}
-    else {extension_limit = extension_candidates[i, "end"] + 100; extend = "end"}
+    if(extension_candidates[i, "start"] < gene_start) {extension_limit = extension_candidates[i, "start"] - 100 ;
+      extend = "start"; gtf[gene_entry, "start"] = extension_limit}
+    else {extension_limit = extension_candidates[i, "end"] + 100; extend = "end";
+      gtf[gene_entry, "end"] = extension_limit}
 
     exon_start <- min(gtf$start[exon_entries])
     exon_end <- max(gtf$end[exon_entries])

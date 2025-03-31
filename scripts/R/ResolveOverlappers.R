@@ -208,6 +208,7 @@ for (gene in overlappers$gene) {
   
   gene_entries <- which(genome_annotation$gene_id == gene)
   
+  # If 'gene' entry was deleted while some others remained, add it back
   if (!any(genome_annotation$type[gene_entries] == "gene")) {
     gene_start <- min(genome_annotation$start[gene_entries])
     gene_end <- max(genome_annotation$end[gene_entries])
@@ -229,6 +230,49 @@ for (gene in overlappers$gene) {
     add_gene[missing_cols] <- NA
     genome_annotation <- rbind(genome_annotation, add_gene)
   }
+   else {
+     gene_entry <- genome_annotation[gene_entries, ][genome_annotation$type[gene_entries] == "gene", ]
+     strand <- gene_entry$strand
+     gene_start <- gene_entry$start
+     gene_end <- gene_entry$end
+   }
+   
+   # Add exon spanning all the gene and corresponding transcript
+   add_exon <- data.frame(
+      gene_name = genome_annotation$gene_name[gene_entries][1],
+      seqnames = genome_annotation$seqnames[gene_entries][1],
+      source = genome_annotation$source[gene_entries][1],
+      type = "exon",
+      start = gene_start,
+      end = gene_end,
+      score = ".",
+      strand = strand,
+      phase = ".",
+      gene_id = genome_annotation$gene_id[gene_entries][1],
+      transcript_id = paste("SPAN", genome_annotation$gene_id[gene_entries][1], sep = "_"),
+      exon_number = 1
+    )
+    missing_cols <- setdiff(names(genome_annotation), names(add_exon))
+    add_exon[missing_cols] <- NA
+    genome_annotation <- rbind(genome_annotation, add_exon)
+    
+    add_transcript <- data.frame(
+      gene_name = genome_annotation$gene_name[gene_entries][1],
+      seqnames = genome_annotation$seqnames[gene_entries][1],
+      source = genome_annotation$source[gene_entries][1],
+      type = "transcript",
+      start = gene_start,
+      end = gene_end,
+      score = ".",
+      strand = strand,
+      phase = ".",
+      gene_id = genome_annotation$gene_id[gene_entries][1],
+      transcript_id = paste("SPAN", genome_annotation$gene_id[gene_entries][1], sep = "_")
+    )
+    missing_cols <- setdiff(names(genome_annotation), names(add_transcript))
+    add_transcript[missing_cols] <- NA
+    genome_annotation <- rbind(genome_annotation, add_transcript)
+   
 }
 
 genome_annotation <- genome_annotation[order(genome_annotation$seqnames, genome_annotation$start), ]
