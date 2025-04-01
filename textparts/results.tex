@@ -379,17 +379,41 @@ which are later mapped to antisense strands of known genes (see Figure \ref{fig:
 
 \section{Enhancing transcriptomic reference}
 
-Having in mind that unassigned reads are present in the gene locations as well, we have tried to resolve overlapping genes in the annotations,
-such that reads from those regions could be included in the downstream analysis.
-For the overlap resolution, simple set of rules were applied, mainly prefering protein coding genes over others
-(more details can be found in the Methods \ref{sec:overlappers}).
+Keeping in mind that unassigned reads are also present in gene locations,
+we attempted to resolve overlapping genes in the annotations
+so that reads from these regions could be included in the downstream analysis.
+For overlap resolution, a simple set of rules was applied,
+primarily favoring protein-coding genes over others and considering the level field in the transcriptomic annotations
+(more details can be found in Methods \ref{sec:overlappers}).
 
-Such enhanced reference allowed to have on average 1.2\% more reads in the cell-gene matrices.
-While this amount is not big, it allowed to capture approximatelly 350 genes, that were undetected using standard transcriptomic reference.
-However, approximatelly 13 genes were lost for each dataset using this enhanced transcriptomic reference.
-Even though the amount of data increased, it is not straightforward that data quality increased,
-since overlap handling rules can be debatable, whether they should be applicable in all cases.
+In addition to resolving overlaps, the initial transcriptomic reference (taken from 10x Genomics)
+was enriched with entries from other transcriptomic references (RefSeq, GENCODE, lncRNApedia),
+ensuring that new entries did not overlap those already present.
+Finally, gene entries with reads near their 3' ends were extended.
 
-Overall, the improvements 
+This enhanced reference resulted in an average increase of 1.2\% more reads in the cell-gene matrices.
+While this increase is relatively small, it enabled the detection of approximately 350 additional genes
+that were undetected using the standard transcriptomic reference.
+However, an average of 13 genes per dataset were lost when using this enhanced reference.
+
+Although the overall data volume increased, it is not straightforward to conclude that data quality improved.
+Overlap-handling rules can be debated, particularly regarding their applicability in all cases.
+
+For example, genes are expressed in certain cell types or states regardless of their level classification
+(whether verified, manually annotated, or automatically annotated).
+While, in general, verified or manually annotated genes are more frequently expressed than automatically annotated ones
+(which are likely less explored and detected at lower rates overall),
+this pattern does not hold in all situations.
+The same consideration applies to gene classification by type.
+
+Regarding the gene extensions, in most cases they increase the gene expression by relativelly small fraction of counts.
+
+Overall, while statistical differences are evident,
+their impact on biological interpretations remains uncertain and likely depends on the specific downstream analysis.
+For instance, cell clustering is generally unaffected, and a visual inspection of UMAPs
+does not reveal significant differences between datasets generated using the enhanced and standard references.
+However, in certain cases, even a small number of additional genes could significantly influence the analysis,
+meaning that this enhanced reference could help uncover relevant biological processes.
+
 
 
