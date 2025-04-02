@@ -393,8 +393,18 @@ Finally, gene entries with reads near their 3' ends were extended.
 
 This enhanced reference resulted in an average increase of 1.2\% more reads in the cell-gene matrices.
 While this increase is relatively small, it enabled the detection of approximately 350 additional genes
-that were undetected using the standard transcriptomic reference.
-However, an average of 13 genes per dataset were lost when using this enhanced reference.
+that were undetected using the standard transcriptomic reference (an example is given in Figure \ref{fig:overlapResolved}).
+%However, an average of 13 genes per dataset were lost when using this enhanced reference.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/TYMP.png}
+  \caption{Example of successful resolution of overlapping genes TYMP and SCO2.
+  Both genes are protein coding, however TYMP is preffered since it has lower \textit{level} value.
+  Based on the exon structures, it can clearly be seen that those reads in the overlapping area indeed originate from TYMP gene.
+  The 10x annotation track is expanded to highlight exon structures.}
+  \label{fig:overlapResolved}
+\end{figure}
 
 Although the overall data volume increased, it is not straightforward to conclude that data quality improved.
 Overlap-handling rules can be debated, particularly regarding their applicability in all cases.
@@ -406,7 +416,20 @@ While, in general, verified or manually annotated genes are more frequently expr
 this pattern does not hold in all situations.
 The same consideration applies to gene classification by type.
 
-Regarding the gene extensions, in most cases they increase the gene expression by relativelly small fraction of counts.
+Regarding the gene extensions, in most cases they increase the gene expression by relatively small fraction of counts
+(see Figure \ref{fig:extension} for example).
+Even though some additional information is gained, when compared with the total amount of data, this gain is very small
+(e.g., in \textit{PBMC\_10x\_2} sample, it constituted only 1.76\% of gained reads, or 0.017\% of total reads).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/extension_FBX042.png}
+  \caption{Example of gene extension (coverage shown is from \textit{PBMC\_10x\_2} dataset).
+  In this case gene FBX042 is extended to include reads close to its 3' end.
+  However, the amount of reads gained is tinywhen compared with total count of this gene
+  (the number of counts of this gene increased approximatelly by 3\% in the \textit{PBMC\_10x\_2} dataset).}
+  \label{fig:extension}
+\end{figure}
 
 Overall, while statistical differences are evident,
 their impact on biological interpretations remains uncertain and likely depends on the specific downstream analysis.
@@ -414,6 +437,3 @@ For instance, cell clustering is generally unaffected, and a visual inspection o
 does not reveal significant differences between datasets generated using the enhanced and standard references.
 However, in certain cases, even a small number of additional genes could significantly influence the analysis,
 meaning that this enhanced reference could help uncover relevant biological processes.
-
-
-
