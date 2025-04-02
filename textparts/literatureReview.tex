@@ -86,7 +86,7 @@ Primers used in these protocols typically share a common structure, including:
 \end{itemize}
 An example of primer design is shown in Figure \ref{fig:inDropsPrimer}.
 Once cells are encapsulated in droplets, lysis occurs, releasing RNA, which is then captured by the primers.
-A schematic overview of library preparation is provided in Figure \ref{fig:inDropsPipeline}.
+%A schematic overview of library preparation is provided in Figure \ref{fig:inDropsPipeline}.
 
 \begin{figure}
   \centering
@@ -100,6 +100,7 @@ A schematic overview of library preparation is provided in Figure \ref{fig:inDro
   \label{fig:inDropsPrimer}
 \end{figure}
 
+\iffalse
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/scAnalysisPipeline.jpg}
@@ -108,6 +109,7 @@ A schematic overview of library preparation is provided in Figure \ref{fig:inDro
   Figure taken from \textcite{Klein2015}.}
   \label{fig:inDropsPipeline}
 \end{figure}
+\fi
 
 Depending on the method, reverse transcription may occur within the droplets
 (as in inDrops and 10X Genomics) or in bulk (as in Drop-seq).
@@ -140,7 +142,18 @@ columns represent genes, and each entry indicates the number of captured RNAs fo
 
 \paragraph{Cell-gene matrix processing}
 
-The next steps in the analysis of the scRNAseq data involves following steps:
+The next steps in the analysis of the scRNAseq data involves following steps (see Figure \ref{fig:dataAnalysis} for graphical summary):
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\linewidth]{images/dataAnalysis.png}
+  \caption{The typical data analysis pipeline.
+  Firstly data is cleaned and normalized, then (to reduce dimensionality) non-informative genes are filtered out and dimensionality
+  reduction methods are applied.
+  Final steps depends on the focus of study, but often include cell clustering, annotation, differential gene expression analysis or
+  gene regulatory network inference.}
+  \label{fig:dataAnalysis}
+\end{figure}
 
 \begin{itemize}
   \item \textbf{Quality control}
