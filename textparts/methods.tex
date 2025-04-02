@@ -109,47 +109,9 @@ The intergenic reads were clustered using \textit{bedtools merge}, again in a st
 \end{figure}
 
 \paragraph{Manipulating transcriptomic references}
-\label{sec:overlappers}
+
 The overlapping gene resolving and construction of enhanced transcriptomic reference was done using custom R script,
 particularly \textit{rtracklayer} library.
-The criterions for the resolving of overlapping genes are following:
-\begin{enumerate}
-  \item \textbf{Gene type}: prefer protein coding genes over other types, lncRNA over remaining (e.g. pseudogenes).
-  \item \textbf{Level}: some annotations have 'level' field, indicating if the gene is verified (score 1), manually annotated (score 2)
-  or automatically annotated (score 3). Lower 'level' score was preffered.
-  \item \textbf{Intersection types}: if 5' end gene is overlapping with 3' end of gene, 5' end of gene was shortened.
-\end{enumerate}
-
-Particularly, genes types was devided into three groups: protein coding, long non-coding RNAs and other,
-and each class was assigned score (see Table \ref{tab:geneTypes}).
-The overall priority score was defined as sum of this gene type score and 'level' field.
-The lower this score is, the higher priority gene has.
-The intersection type (whether 3' end is overlapping or not) was taken into account only in cases when priority scores were equal,
-and distances between 3' ends of overlapping genes were greater than 1kb (see Figure \ref{fig:overlappers} for graphical explanation).
-If possible, lower priority genes were shortened, otherwise they were deleted.
-
-\begin{table}[h]
-    \centering
-    \begin{tabular}{lcl}
-        \toprule
-        Class & Score & Gene Types \\
-        \midrule
-        protein coding & 0 & protein\_coding, IG\_C\_gene, IG\_D\_gene, etc. \\
-	long non-coding RNA & 10 & lncRNA, lincRNA \\
-	other & 20 & snRNA, scRNA, pseudogene, etc. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Priority scores assigned based on gene type.}
-    \label{tab:geneTypes}
-\end{table}
-
-\begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]{"images/overlappers.png"}
-  \caption{Strategy for resolving overlaps. \textit{p1} and \textit{p2} are priority scores of \textit{gene1} and \textit{gene2}
-  (lower score means higher priority), while \textit{d} is distance between 3' ends of those genes.}
-  \label{fig:overlappers}
-\end{figure}
 
 \section{Intergenic regions}
 
@@ -213,3 +175,70 @@ Formula for Spearman's correlation is given by:
 $$\rho = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)}$$
 
 where $d_i$ is the difference between the ranks of corresponding values and $n$ is the number of observations.
+
+\section{Enhancing transcriptomic reference}
+\label{sec:overlappers}
+
+Three aspects were considered while enhancing trnascriptomic reference:
+\begin{itemize}
+  \item \textbf{Gene overlaps} – some of genes are overlapping, resulting in unassigned reads from those overlapping regions.
+  \item \textbf{3' end extensions} – for some genes, there are clusters of reads just after their 3' ends,
+  and \textcite{Pool2023} suggested to include those reads by extending 3' ends for some genes.
+  \item \textbf{Different annotations} – while most of the annotations agree on most genes,
+  there are small fraction of genes that are present in some references but not in others.
+  Hence, for the enhancing trnascriptomic reference, several transcriptomic references were used.
+\end{itemize}
+
+\paragraph{Overlaps}
+
+The criterions for the resolving of overlapping genes are following:
+\begin{enumerate}
+  \item \textbf{Gene type}: prefer protein coding genes over other types, lncRNA over remaining (e.g. pseudogenes).
+  \item \textbf{Level}: some annotations have 'level' field, indicating if the gene is verified (score 1), manually annotated (score 2)
+  or automatically annotated (score 3). Lower 'level' score was preffered.
+  \item \textbf{Intersection types}: if 5' end gene is overlapping with 3' end of gene, 5' end of gene was shortened.
+\end{enumerate}
+
+Particularly, genes types was devided into three groups: protein coding, long non-coding RNAs and other,
+and each class was assigned score (see Table \ref{tab:geneTypes}).
+The overall priority score was defined as sum of this gene type score and 'level' field.
+The lower this score is, the higher priority gene has.
+The intersection type (whether 3' end is overlapping or not) was taken into account only in cases when priority scores were equal,
+and distances between 3' ends of overlapping genes were greater than 1kb (see Figure \ref{fig:overlappers} for graphical explanation).
+If possible, lower priority genes were shortened, otherwise they were deleted.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lcl}
+        \toprule
+        Class & Score & Gene Types \\
+        \midrule
+        protein coding & 0 & protein\_coding, IG\_C\_gene, IG\_D\_gene, etc. \\
+	long non-coding RNA & 10 & lncRNA, lincRNA \\
+	other & 20 & snRNA, snoRNA, pseudogene, etc. \\
+        \bottomrule
+    \end{tabular}
+    \caption{Priority scores assigned based on gene type.}
+    \label{tab:geneTypes}
+\end{table}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{"images/overlappers.png"}
+  \caption{Strategy for resolving overlaps. \textit{p1} and \textit{p2} are priority scores of \textit{gene1} and \textit{gene2}
+  (lower score means higher priority), while \textit{d} is distance between 3' ends of those genes.}
+  \label{fig:overlappers}
+\end{figure}
+
+\paragraph{3' end extensions}
+
+Unassigned reads clusters (of size at least 1CPM) that were close to the 3' of genes (closer than 100bp) were assumed to originate from those genes.
+Hence annotations for those genes were expanded to cover those clusters.
+
+\paragraph{Multiple annotations}
+
+The initial transcriptomic reference (taken from 10x Genomics website) was enriched with entries from other annotations.
+Particularly entries from GENCODE, RefSeq and lncpedia transcriptomic references were added to the initial reference,
+if they overlapped with unassigned reads and did not overlapped with genes already present in the reference.
+This enrichment was done sequentially, i.e. firstly the reference was updated with entries from GENCODE annotation,
+then resulting reference was updated with entries from RefSeq annotation and finally from lncpedia annotation.
