@@ -1,6 +1,14 @@
 In the results chapter was shown that the unassigned reads constitute significant part of total scRNAseq data.
 Such reads could roughly be categorized into two classes: overlapping with genes in the genome annotation and not.
 
+Those that are not overlapping with genes, where clustered and classified either as antisense
+(located on the opposite strand of the known genes) or isolated (remaining ones).
+Antisense regions constituted absolute majority of defined intergenic regions.
+The observations about correlations and poly-A stretches allowed us to make hypothesis
+that those antisense reads are artifacts generated during reverse transcription reaction.
+Isolated reads, on the other hand, can originate from unannotated genes, especially those,
+that were supported by some additional evidence, such as differential expression or ATAC-seq data.
+
 For those overlapping with known genes, the main reason for the being unassigned is ovelaps between genes
 (i.e. if a read maps to the region where two genes are present, mapping algorith does not know, for which to assign).
 The suggested pipeline to resolve these overlaps (mainly based on gene type) allowed to have up to ????\% more genes in
@@ -10,14 +18,6 @@ there are genes with decreased total counts after resolving overlaps.
 This highlights the fact that human genome is very complex, and there is no simple method to resolve overlaps when mapping short reads.
 There are other tools (!!!!!!!give examples!!!!!!!!).
 None of them are agreed to be gold standards, though.
-
-Those that are not overlapping with genes, where clustered and classified either as antisense
-(located on the opposite strand of the known genes) or isolated (remaining ones).
-Antisense regions constituted absolute majority of defined intergenic regions.
-The observations about correlations and poly-A stretches allowed us to make hypothesis
-that those antisense reads are artifacts generated during reverse transcription reaction.
-Isolated reads, on the other hand, can originate from unannotated genes, especially those,
-that were supported by some additional evidence, such as differential expression or ATAC-seq data.
 
 It should be noted, that datasets used were generated using \textbf{short-read 3' end} protocols.
 Therefore, datasets prepared using different methods might have different artifacts present.
