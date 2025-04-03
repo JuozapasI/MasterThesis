@@ -8,6 +8,7 @@
 \usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{longtable}
+\usepackage[T1]{fontenc}
 
 \usepackage[style=authoryear, backend=biber, defernumbers=true]{biblatex}
 \addbibresource{references.bib}
@@ -99,8 +100,10 @@
 \printbibliography[heading=none]
 
 \chapter{SUMMARY}
+\input{"textparts/summary.tex"}
 
 \chapter{SUMMARY IN LITHUANIAN}
+\input{"textparts/summaryLithuanian.tex"}
 
 \chapter{APPENDICES}
 \input{"textparts/appendices.tex"}
