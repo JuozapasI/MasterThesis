@@ -1,3 +1,36 @@
+\begin{table}[h]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{l|rrr|rrr}
+    \toprule
+    Sample & Total Reads & Unassigned & Intergenic & Demultiplexed & Unassigned & Intergenic \\
+    \midrule
+    PBMC\_10x & 182330834 & 15.95\% & 11.37\% & 70305137 & 18.51\% & 12.86\% \\
+    PBMC\_10x\_2 & 496387931 & 18.52\% & 14.26\% & 195948926 & 21.29\% & 16.32\% \\
+    PBMC\_10x\_3 & 368640939 & 18.59\% & 14.34\% & 167804193 & 20.99\% & 16.17\% \\
+    PBMC\_indrops & 112932507 & 11.12\% & 6.5\% & 8176578 & 22.86\% & 10.25\% \\
+    PBMC\_indrops\_2 & 471705924 & 14.87\% & 8.36\% & 98063027 & 25.52\% & 13.73\% \\
+    brain & 206360627 & 16.87\% & 10.67\% & 143916177 & 19.02\% & 12.07\% \\
+    brain\_2 & 122556503 & 22.32\% & 15.98\% & 95031864 & 23.77\% & 17.00\% \\
+    eye & 375397270 & 28.02\% & 18.97\% & 161882445 & 31.87\% & 21.60\% \\
+    eye\_2 & 140981808 & 29.35\% & 14.85\% & 69146995 & 31.43\% & 15.99\% \\
+    eye\_3 & 161261977 & 29.46\% & 18.86\% & 68157696 & 32.11\% & 20.58\% \\
+    lung\_2 & 511080104 & 15.99\% & 12.07\% & 269118747 & 17.98\% & 13.33\% \\
+    lung\_5 & 452105505 & 14.49\% & 10.74\% & 256353198 & 16.19\% & 11.83\% \\
+    lung\_7 & 524095146 & 18.41\% & 14.34\% & 236157103 & 20.64\% & 15.79\% \\
+    lung\_8 & 342092138 & 14.53\% & 10.66\% & 217801055 & 16.07\% & 11.67\% \\
+    \bottomrule
+    \end{tabular}
+    }
+    \caption{Statistics of unassigned and intergenic reads per sample.
+    Unassigned reads were counted after mapping with 10x reference.
+    Intergenic reads here are those that do not intersect with any reference used.
+    'Demultiplexed' column shows number of total reads after demultiplexing using UMIs,
+    and following 'unassigned' and 'intergenic' percentages were computed compared to this number.}
+    \label{tab:countStats}
+\end{table}
+
+\iffalse
 \begin{figure}[htbp]
 \centering
 \caption{Clusterings of datasets. 'n' stands for number of cells in the plot, 'res' for the resolution parameter of leiden algorithm.
@@ -22,9 +55,39 @@
 \end{tabular}
 \end{figure}
 
+\fi
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{llll}
+        \toprule
+        Name & Genomic coordinates & Prediction tool & Overlaps with 3' region of predicted gene \\
+        \midrule
+	INT196 & 6:89086200-89086500 & SIB & Yes (PNRC1) \\
+	INT827 & 9:94111950-94112200 & SIB & Yes \\
+	INT1216 & 1:72282700-72282900 & SIB & No (5' end) \\
+	INT1387 & 11:63570800-63571050 & SIB & No \\
+	INT1525 & 8:11842200-11842350 & SIB & Yes (CTSB) \\
+	INT1801 & 5:151272550-151272700 & SIB & Yes (GM2A) \\
+	INT2044 & 19:4041150-4041400 & SIB & Yes (ZBTB7A) \\
+	INT4070 & 4:47430500-47430700 & SIB & Yes \\
+	INT4147 & 1:34861500-34861700 & SIB & Yes (DLGAP3)\\
+	INT4577 & 5:702050-702300 & SIB & Yes \\
+	INT4948 & 5:703250-703450 & SIB & Yes \\
+	INT5710 & 4:47428500-47428700 & SIB & No \\
+        \bottomrule
+    \end{tabular}
+    \caption{Isolated intergenic regions overlapping with predicted genes from UCSC gene prediction archive.
+    The gene in the brackets shows if the predicted gene is extended version of already annotated genes.}
+    \label{tab:predictedIsolated}
+\end{table}
+
 \begin{table}[h]
     \small
     \centering
+    \caption{Antisense intergenic regions overlapping with predicted genes from UCSC gene prediction archive.
+    The gene in the brackets shows if the predicted gene is extended version of already annotated genes.}
+    \label{tab:predictionsAntisense}
     \begin{tabular}{llll}
         \toprule
         Name & Genomic coordinates & Prediction tool & Overlaps with 3' region of predicted gene \\
@@ -80,9 +143,6 @@
 	INT5329 & 13:95603000-95603200 & SIB & Yes (extends after) \\
         \bottomrule
     \end{tabular}
-    \caption{Antisense intergenic regions overlapping with predicted genes from UCSC gene prediction archive.
-    The gene in the brackets shows if the predicted gene is extended version of already annotated genes.}
-    \label{tab:predictionsAntisense}
 \end{table}
 
 %\input{textparts/tables/isolated.tex}

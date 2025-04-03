@@ -1,8 +1,8 @@
 \section{Intergenic regions}
 
 Fourteen datasets from various tissues (blood, brain, eye, and lung) were analyzed.
-These datasets contained between 11\% and 29\% unassigned uniquely mapped reads (as shown in Table \ref{tab:countStats})
-when using the 10x reference.
+These datasets contained between 11\% and 29\% unassigned uniquely mapped reads
+(the table with statistics can be found in Appendix \ref{tab:countStats}) when using standard reference (taken from 10x Genomics).
 Additionally, 6\% to 18\% of total reads were intergenic, meaning they did not overlap with any reference used.
 Given the size of the datasets, such a proportion of reads could potentially contain biologically relevant information.
 
@@ -23,39 +23,6 @@ While this could partially account for the reduced amplification of unassigned t
 
 ?????????????????????????????
 \fi
-
-
-\begin{table}[h]
-    \centering
-    \resizebox{\textwidth}{!}{
-    \begin{tabular}{l|rrr|rrr}
-    \toprule
-    Sample & Total Reads & Unassigned & Intergenic & Demultiplexed & Unassigned & Intergenic \\
-    \midrule
-    PBMC\_10x & 182330834 & 15.95\% & 11.37\% & 70305137 & 18.51\% & 12.86\% \\
-    PBMC\_10x\_2 & 496387931 & 18.52\% & 14.26\% & 195948926 & 21.29\% & 16.32\% \\
-    PBMC\_10x\_3 & 368640939 & 18.59\% & 14.34\% & 167804193 & 20.99\% & 16.17\% \\
-    PBMC\_indrops & 112932507 & 11.12\% & 6.5\% & 8176578 & 22.86\% & 10.25\% \\
-    PBMC\_indrops\_2 & 471705924 & 14.87\% & 8.36\% & 98063027 & 25.52\% & 13.73\% \\
-    brain & 206360627 & 16.87\% & 10.67\% & 143916177 & 19.02\% & 12.07\% \\
-    brain\_2 & 122556503 & 22.32\% & 15.98\% & 95031864 & 23.77\% & 17.00\% \\
-    eye & 375397270 & 28.02\% & 18.97\% & 161882445 & 31.87\% & 21.60\% \\
-    eye\_2 & 140981808 & 29.35\% & 14.85\% & 69146995 & 31.43\% & 15.99\% \\
-    eye\_3 & 161261977 & 29.46\% & 18.86\% & 68157696 & 32.11\% & 20.58\% \\
-    lung\_2 & 511080104 & 15.99\% & 12.07\% & 269118747 & 17.98\% & 13.33\% \\
-    lung\_5 & 452105505 & 14.49\% & 10.74\% & 256353198 & 16.19\% & 11.83\% \\
-    lung\_7 & 524095146 & 18.41\% & 14.34\% & 236157103 & 20.64\% & 15.79\% \\
-    lung\_8 & 342092138 & 14.53\% & 10.66\% & 217801055 & 16.07\% & 11.67\% \\
-    \bottomrule
-    \end{tabular}
-    }
-    \caption{Statistics of unassigned and intergenic reads per sample.
-    Unassigned reads were counted after mapping with 10x reference.
-    Intergenic reads here are those that do not intersect with any reference used.
-    'Demultiplexed' column shows number of total reads after demultiplexing using UMIs,
-    and following 'unassigned' and 'intergenic' percentages were computed compared to this number.}
-    \label{tab:countStats}
-\end{table}
 
 \paragraph{Analysing integenic regions}
 
@@ -206,7 +173,6 @@ To assess differential expression, all data samples were first clustered.
 For \textit{PBMC\_10x} samples, clustering and cell annotation were performed using CellTypist.
 For other samples, the Leiden algorithm was used, with manually chosen parameters to ensure a comparable number of clusters across similar datasets.
 For instance, all \textit{lung} samples were clustered into five groups, aligning approximately with visible UMAP structures.
-The UMAP visualizations, colored by clusters, can be found in Appendix \ref{fig:clusterings}.
 
 After filtering those regions that were differentially expressed (tresholds were used 0.01 for adjusted p-value and 0.5 for 'logfoldchange'),
 the 29 differentially expressed isolated intergenic regions were found.
@@ -250,25 +216,6 @@ The histogram showing conservation scores in isolated regions is given in the Fi
   \label{fig:conservations}
 \end{figure}
 
-\iffalse
-\begin{table}[h]
-    \centering
-    \begin{tabular}{lccc}
-        \toprule
-        Name & Genomic coordinates & Conservation score & Found in samples \\
-        \midrule
-        INT1216 & 1:72282700-72282900 & 0.7534172617 & brain, eye\\
-	INT1829 & 1:77772950-77773050 & 0.6863111111 & lung \\
-	INT2199 & 6:148122550-148122750 & 0.6364459652 & brain, eye \\
-	INT2208 & 5:18162950-18163100 & 0.6138651685 & PBMC (indrops) \\
-	INT3636 & X:129412750-129413050 & 0.7218984354 & brain \\
-        \bottomrule
-    \end{tabular}
-    \caption{Conserved intergenic regions not overlapping with known genes from ncbi and gencode annotations.}
-    \label{tab:conservedIntergenic}
-\end{table}
-\fi
-
 \paragraph{Gene predictions}
 
 To assess whether isolated intergenic regions overlap with predicted genes, UCSC gene prediction archives were examined,
@@ -279,34 +226,7 @@ However, three of these did not overlap with the 3' ends of predicted genes,
 which would be expected given that the data was generated using 3' end sequencing methods.
 Five predicted genes were extensions of known genes,
 while the remaining four corresponded to genes absent from RefSeq and NCBI references but supported by our data.
-%Table \ref{tab:predictedIsolated} summarizes these findings.
-
-\iffalse
-\begin{table}[h]
-    \centering
-    \begin{tabular}{llll}
-        \toprule
-        Name & Genomic coordinates & Prediction tool & Overlaps with 3' region of predicted gene \\
-        \midrule
-	INT196 & 6:89086200-89086500 & SIB & Yes (PNRC1) \\
-	INT827 & 9:94111950-94112200 & SIB & Yes \\
-	INT1216 & 1:72282700-72282900 & SIB & No (5' end) \\
-	INT1387 & 11:63570800-63571050 & SIB & No \\
-	INT1525 & 8:11842200-11842350 & SIB & Yes (CTSB) \\
-	INT1801 & 5:151272550-151272700 & SIB & Yes (GM2A) \\
-	INT2044 & 19:4041150-4041400 & SIB & Yes (ZBTB7A) \\
-	INT4070 & 4:47430500-47430700 & SIB & Yes \\
-	INT4147 & 1:34861500-34861700 & SIB & Yes (DLGAP3)\\
-	INT4577 & 5:702050-702300 & SIB & Yes \\
-	INT4948 & 5:703250-703450 & SIB & Yes \\
-	INT5710 & 4:47428500-47428700 & SIB & No \\
-        \bottomrule
-    \end{tabular}
-    \caption{Isolated intergenic regions overlapping with predicted genes from UCSC gene prediction archive.
-    The gene in the brackets shows if the predicted gene is extended version of already annotated genes.}
-    \label{tab:predictedIsolated}
-\end{table}
-\fi
+Table summarizing these findings can be found in Appendix \ref{tab:predictedIsolated}.
 
 \paragraph{Combining supporting features}
 
@@ -434,6 +354,15 @@ Even though some additional information is gained, when compared with the total 
 Overall, while statistical differences are evident,
 their impact on biological interpretations remains uncertain and likely depends on the specific downstream analysis.
 For instance, cell clustering is generally unaffected, and a visual inspection of UMAPs
-does not reveal significant differences between datasets generated using the enhanced and standard references.
+does not reveal significant differences between datasets generated using the enhanced and standard references
+(see example in Figure \ref{fig:enhancedClustering}).
 However, in certain cases, even a small number of additional genes could significantly influence the analysis,
 meaning that this enhanced reference could help uncover relevant biological processes.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/enhancedClustering.png}
+  \caption{UMAPs of \textit{PBMC\_10x\_2} dataset using standard and enhanced references.
+  While T cell cluster is a bit different in these two cases, main structures remain the same in both cases.}
+  \label{fig:enhancedClustering}
+\end{figure}
