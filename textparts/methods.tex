@@ -5,7 +5,7 @@
 We analyzed datasets from four different human tissues: brain, blood, lung, and eye.
 All samples, except for two Peripheral Blood Mononuclear Cell (PBMC) datasets, were generated using the 10x Genomics v3.1 protocol.
 The two exceptions were prepared using the inDrops2 protocol.
-All protocols capture 3' ends of RNA molecules and uses short-read sequencing.
+All protocols capture 3' ends of RNA molecules and use short-read sequencing.
 The datasets are publicly available, with sources and additional details provided in Table \ref{tab:datasets}.
 
 \input{"textparts/tables/datasets.tex"}
@@ -22,7 +22,7 @@ Additionally, for the NCBI reference, chromosome names were converted to Ensembl
 (e.g., 1, 2, 3 instead of NC\_000001.11, NC\_000002.12, NC\_000003.12, etc.).
 
 For references that do not have 'gene' entries, such entries were added
-(entry that spans all the components of a particular gene).
+(entries that span all the components of a particular gene).
 
 \input{"textparts/tables/references.tex"}
 
@@ -83,19 +83,19 @@ can be seen in Figure \ref{fig:pipeline}, while the description is given below:
 \end{figure}
 
 \paragraph{Mapping and filtering bam files}
-Reads were mapped using STARsolo (\cite{Kaminow2021}), both in the case of mapping from fastq and bam input files.
+Reads were mapped using STARsolo (\cite{Kaminow2021}), both from FASTQ and BAM input files.
 Parameters were used the same for all samples (see \href{https://github.com/JuozapasI/MasterThesis/}{GitHub repository}),
 except the ones regarding barcode structures
 (differences include number of barcodes, lengths of barcode/UMI sequences, and their positions in the primer).
 Filtering unassigned reads was done using \textit{awk}, taking those that have valid barcode
 (i.e. filtering out those reads that have barcode length not equal to the defined length)
 and were not assigned to any gene (i.e. had 'GN:Z:-' tag).
-Also, only uniquelly mapped reads were taken (tag 'NH:i:1').
+Also, only uniquely mapped reads were taken (tag 'NH:i:1').
 
 \paragraph{Classifying reads as 'intergenic' or 'intersecting' and reads clustering}
 Intersections of unassigned reads with references were checked using \textit{bedtools intersect} command.
 Those that intersect with genes were classified as 'intersecting', and those that do not – as 'intergenic'.
-Intersections were check in strand-specific manner (bedtools '-s' flag), i.e. regions on different strands were treated as not intersecting,
+Intersections were assesed in strand-specific manner (bedtools '-s' flag), i.e. regions on different strands were treated as not intersecting,
 even if they share overlapping genomic coordinates (see Figure \ref{fig:intergenicIntersecting}).
 The intergenic reads were clustered using \textit{bedtools merge}, again in a strand-specific manner.
 
@@ -126,8 +126,8 @@ The filtering was done using \textit{awk}.
 
 Cluster locations were adjusted using deeptools (to compute coverage) and custom python script,
 to avoid reads containing long introns making the intergenic clusters very wide.
-To accomplish this, for each intergenic region the maximum coverage location was found and extended to include neighbouring regions that had
-at least $max\_value / 2$ coverage.
+To accomplish this, for each intergenic region, the maximum coverage location was found and extended to include neighbouring regions that had
+at least half the maximum coverage.
 In such way, intergenic regions were adjusted to cover only 'peaks' of reads.
 
 The lists acquired from all samples were then merged using \textit{bedtools merge} function.
@@ -169,7 +169,7 @@ All the scripts with descriptions can be found in the \href{https://github.com/J
 
 \paragraph{Correlations}
 
-Spearman's rank correlation between intergenic region and gene on the oposite strand was checked using custom python script.
+Spearman's rank correlation between intergenic region and gene on the opposite strand was checked using custom python script.
 Formula for Spearman's correlation is given by:
 
 $$\rho = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)}$$
@@ -179,27 +179,27 @@ where $d_i$ is the difference between the ranks of corresponding values and $n$ 
 \section{Enhancing transcriptomic reference}
 \label{sec:overlappers}
 
-Three aspects were considered while enhancing trnascriptomic reference:
+Three aspects were considered while enhancing transcriptomic reference:
 \begin{itemize}
-  \item \textbf{Gene overlaps} – some of genes are overlapping, resulting in unassigned reads from those overlapping regions.
+  \item \textbf{Gene overlaps} – some of the genes are overlapping, resulting in unassigned reads from those overlapping regions.
   \item \textbf{3' end extensions} – for some genes, there are clusters of reads just after their 3' ends,
   and \textcite{Pool2023} suggested to include those reads by extending 3' ends for some genes.
   \item \textbf{Different annotations} – while most of the annotations agree on most genes,
-  there are small fraction of genes that are present in some references but not in others.
-  Hence, for the enhancing trnascriptomic reference, several transcriptomic references were used.
+  there is a small fraction of genes that are present in some references but not in others.
+  Hence, for the enhancing transcriptomic reference, several transcriptomic references were used.
 \end{itemize}
 
 \paragraph{Overlaps}
 
-The criterions for the resolving of overlapping genes are following:
+The criteria for the resolving of overlapping genes are following:
 \begin{enumerate}
   \item \textbf{Gene type}: prefer protein coding genes over other types, lncRNA over remaining (e.g. pseudogenes).
   \item \textbf{Level}: some annotations have 'level' field, indicating if the gene is verified (score 1), manually annotated (score 2)
-  or automatically annotated (score 3). Lower 'level' score was preffered.
+  or automatically annotated (score 3). Lower 'level' score was preferred.
   \item \textbf{Intersection types}: if 5' end gene is overlapping with 3' end of gene, 5' end of gene was shortened.
 \end{enumerate}
 
-Particularly, genes types was devided into three groups: protein coding, long non-coding RNAs and other,
+Particularly, gene types were divided into three groups: protein coding, long non-coding RNAs and other,
 and each class was assigned score (see Table \ref{tab:geneTypes}).
 The overall priority score was defined as sum of this gene type score and 'level' field.
 The lower this score is, the higher priority gene has.
@@ -239,6 +239,6 @@ Hence annotations for those genes were expanded to cover those clusters.
 
 The initial transcriptomic reference (taken from 10x Genomics website) was enriched with entries from other annotations.
 Particularly entries from GENCODE, RefSeq and lncpedia transcriptomic references were added to the initial reference,
-if they overlapped with unassigned reads and did not overlapped with genes already present in the reference.
+if they overlapped with unassigned reads and did not overlap with genes already present in the reference.
 This enrichment was done sequentially, i.e. firstly the reference was updated with entries from GENCODE annotation,
 then resulting reference was updated with entries from RefSeq annotation and finally from lncpedia annotation.

@@ -3,8 +3,8 @@
 Fourteen datasets from various tissues (blood, brain, eye, and lung) were analyzed.
 These datasets contained between 11\% and 29\% unassigned uniquely mapped reads
 (the table with statistics can be found in Appendix \ref{tab:countStats}) when using standard reference (taken from 10x Genomics).
-Additionally, 6\% to 18\% of total reads were intergenic, meaning they did not overlap with any reference used.
-Given the size of the datasets, such a proportion of reads could potentially contain biologically relevant information.
+The majority of those unassigned reads were intergenic, meaning they did not overlap with any reference used.
+Given the dataset sizes, this proportion of reads could potentially contain biologically relevant information.
 
 \iffalse
 ???????????????????????????????
@@ -24,64 +24,65 @@ While this could partially account for the reduced amplification of unassigned t
 ?????????????????????????????
 \fi
 
-\paragraph{Analysing integenic regions}
+\paragraph{Analysing intergenic regions}
 
 For each sample, intergenic regions containing a sufficient number of unassigned reads were identified,
 as described in the methods section (with a threshold set at 5 CPM).
-The term "intergenic" is used here in a strand-specific manner,
-meaning an "intergenic" region may be located on the opposite strand of a known gene.
+The term \textit{intergenic} is used here in a strand-specific manner,
+meaning an intergenic region may be located on the opposite strand of a known gene.
 
 To determine whether these intergenic regions contain biologically meaningful information,
 cells in each sample were clustered based solely on reads from these regions.
 As shown in selected examples in Figure \ref{fig:intergenicClustering},
-clustering was observed and roughly corresponded to clustering based on the standard ("10x") annotation.
+clustering was observed and roughly corresponded to clustering based on the standard (\textit{10x Genomics}) annotation.
 This indicates that biologically meaningful information is indeed present in these intergenic regions.
 Consequently, further analyses were performed on these regions.
 
 The lists of intergenic regions from all samples were combined and filtered based on the number of samples in which they were detected,
 resulting in a final set of 2,590 intergenic regions.
-Of these, 147 did not overlap known genes on the opposite strand and will be referred to as "isolated".
-Those located on the opposite strand of known genes will be referred to as "antisense".
+Of these, 147 did not overlap known genes on the opposite strand and will be referred to as \textit{isolated}.
+Those located on the opposite strand of known genes will be referred to as \textit{antisense}.
 
 \begin{figure}[htbp]
     \centering
     \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_pbmc10x3.png}
-        \caption{10x PBMC 3}
+        \caption{\textit{10x\_PBMC\_3} sample}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_pbmc10x2.png}
-        \caption{10x PBMC 2}
+        \caption{\textit{10x\_PBMC\_2} sample}
     \end{subfigure}
     \vspace{0.5em}
     \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_eye.png}
-        \caption{eye}
+        \caption{\textit{eye} sample}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_brain_2.png}
-        \caption{10x Brain 2}
+        \caption{\textit{brain\_2} sample}
     \end{subfigure}
-    \caption{Comparison of clustering using standard annotation ('10x' reference) and using only defined intergenic regions.
-    As can be seen, for some samples intergenic regions are sufficient for rough clustering, for others (e.g. 'brain\_2' sample), 
-    noise gives some clustering artefacts.
-    Nevertheless, this rough clustering implies that these unassigned read contain biological information.}
+    \caption{Comparison of clustering using standard annotation (\textit{10x Genomics} reference) and using only defined intergenic regions.
+    For some samples, intergenic regions are sufficient for rough clustering.
+    For others (e.g., the \textit{brain\_2} sample), noise introduces clustering artefacts.
+    Nevertheless, this rough clustering implies that these unassigned reads contain biological information.}
     \label{fig:intergenicClustering}
 \end{figure}
 
 \paragraph{A-rich sequences near the intergenic regions 3' end}
 
-If there is poly-A region near the 3' end of the intergenic region, then the presence of those peaks can be explained by mis-priming,
+If there is a poly-A region near the 3' end of the intergenic region, then the presence of those peaks can be explained by mis-priming,
 i.e. that would suggest that our intergenic region is not necessarily the actual 3' end of the novel transcript, but may be in the middle of it.
 
-This is indeed the case for the most of reported intergenic regions,
+This is indeed the case for most of the reported intergenic regions,
 see Figure \ref{fig:poly-A} for visual example and some statistics.
+The poly-A region here is defined as a region with at least 10 consecutive A's, allowing one mismatch.
 
 
 \begin{figure}[h]
@@ -130,9 +131,9 @@ If so, this may be due to several factors:
   \end{itemize}
 \end{itemize}
 
-Which of those are the case in our samples, is hard to tell.
+Which of these is the case in our samples, is hard to tell.
 Out of all defined intergenic regions, 97 (3.74 \%) showed Spearman correlation \textgreater 0.5 (p \textless 0.05) in at least 1 sample
-(83 correlated with genes on the opposite strand, 19 with gene on the same strand, 5 with both).
+(83 correlated with genes on the opposite strand, 19 with a gene on the same strand, 5 with both).
 Some examples can be seen in Figure \ref{fig:correlationScatterplots}.
 
 In the following subsections isolated and antisense intergenic regions will be discussed separatelly.
@@ -142,13 +143,14 @@ In the following subsections isolated and antisense intergenic regions will be d
     \begin{subfigure}{0.4\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/eye_3_INT978_SAMD5.png}
-        \caption{Correlation can be clearly seen in INT33 and DUSP1 normalized expressions (Spearman correlation 0.68) in the PBMC\_10x\_2 sample, both of them are on the same strand.}
+        \caption{Correlation can be clearly seen in INT33 and DUSP1 normalized expressions (Spearman correlation 0.68)
+        in the \textit{PBMC\_10x\_2} sample, both of them are on the same strand.}
     \end{subfigure}
     \hspace{0.1\textwidth}
     \begin{subfigure}{0.4\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/PBMC_10x_2_INT33_DUSP1.png}
-        \caption{Correlation of INT978 and SAMD5 normalized expressions (Spearman correlation 0.85) in the eye\_3 sample,
+        \caption{Correlation of INT978 and SAMD5 normalized expressions (Spearman correlation 0.85) in the \textit{eye\_3} sample,
         intergenic region is on the opposite strand of the gene.}
     \end{subfigure}
     \caption{Examples showing correlations between intergenic regions and nearby genes.}
@@ -170,12 +172,12 @@ To determine whether these are genuine signals rather than artifacts, several as
 \paragraph{Differential expression analysis}
 
 To assess differential expression, all data samples were first clustered.
-For \textit{PBMC\_10x} samples, clustering and cell annotation were performed using CellTypist.
+For \textit{PBMC\_10x} samples, clustering and cell annotation were performed using \textit{CellTypist}.
 For other samples, the Leiden algorithm was used, with manually chosen parameters to ensure a comparable number of clusters across similar datasets.
 For instance, all \textit{lung} samples were clustered into five groups, aligning approximately with visible UMAP structures.
 
-After filtering those regions that were differentially expressed (tresholds were used 0.01 for adjusted p-value and 0.5 for 'logfoldchange'),
-the 29 differentially expressed isolated intergenic regions were found.
+Regions were filtered for differential expression using thresholds of 0.01 for adjusted p-value and 0.5 for log fold change.
+In total, 29 isolated intergenic regions met these criteria.
 Some examples can be seen in Figure \ref{fig:isolatedDGE}.
 
 \begin{figure}
@@ -194,17 +196,17 @@ as upstream open chromatin sites may not be associated with the intergenic regio
 For each intergenic region, distances to the nearest open chromatin sites and upstream genes (strand-unspecific) were calculated.
 Of the 147 isolated intergenic regions, 66 had open chromatin regions closer than any known upstream genes.
 To ensure that these sites were not merely associated with distant genes, an additional filter was applied, 
-requiring that the closest open chromatin region be at least 2,000 bp from the nearest gene.
+requiring that the closest open chromatin region be at least 2,000 bp from the nearest known gene.
 This yielded 40 intergenic regions.
 
-It should be noted, that PBMC ATAC data was used for open chromatine regions,
+It should be noted that PBMC ATAC data was used for open chromatin regions,
 thus this feature should be taken with precaution for regions derived from other datasets.
 
 \paragraph{Conservation scores}
 
 The conservation score shows evolutionary conservation and is computed comparing genomic sequences from different species.
 A high conservation score in an intergenic region suggests potential functionality, providing additional evidence for biological relevance.
-To identify such regions, those with conservation scores above 0.6 was defined as conserved (there were 5 of such isolated regions).
+To identify such regions, those with conservation scores above 0.6 were defined as conserved (there were 5 of such isolated regions).
 The overall conservation scores were quite low, suggesting that if the isolated intergenic genes originate from unannotated genes,
 they are probably human specific.
 The histogram showing conservation scores in isolated regions is given in the Figure \ref{fig:conservations}.
@@ -261,11 +263,11 @@ No regions appeared in more than two lists.
 
 \subsection{Antisense intergenic regions}
 
-Interpretation of antisense intergenic regions is more complicated.
-The features such as open chromatin, AT-richness or conservativness are not strand specific,
+Interpreting antisense intergenic regions is more complex.
+The features such as open chromatin, AT-richness or conservativeness are not strand specific,
 meaning that if they would be present, they could not be attributed with certainty for our intergenic regions.
 The differential expression can be checked, however, even if the antisense intergenic region is differentially expressed,
-it still can be an artifact, originating from differentially expressed transcripts.
+it could still be an artifact, originating from differentially expressed transcripts.
 Hence from the features checked for the isolated intergenic regions, only real supporting evidence would be computational gene prediction.
 
 \paragraph{Gene predictions}
@@ -282,8 +284,8 @@ Having in mind that majority of the antisense intergenic regions have poly-A str
 and some of them strongly correlates with genes on the opposite strands,
 it is possible that they are artefacts from the library preparation.
 Particularly, it could happen that poly-T primer binds to poly-A stretch of cDNA produced by other primer,
-and in such way inversed transcripts are produced,
-which are later mapped to antisense strands of known genes (see Figure \ref{fig:mispriming}).
+and in such way inversed transcripts are produced.
+These are later mapped to antisense strands of known genes (see Figure \ref{fig:mispriming}).
 
 
 \begin{figure}
@@ -322,6 +324,7 @@ that were undetected using the standard transcriptomic reference (an example is 
   \caption{Example of successful resolution of overlapping genes TYMP and SCO2.
   Both genes are protein coding, however TYMP is preffered since it has lower \textit{level} value.
   Based on the exon structures, it can clearly be seen that those reads in the overlapping area indeed originate from TYMP gene.
+  Without reference enhancing, these reads from overlapping area would be classified as multimappers, and filtered out (in typical workflow).
   The 10x annotation track is expanded to highlight exon structures.}
   \label{fig:overlapResolved}
 \end{figure}
@@ -346,7 +349,7 @@ Even though some additional information is gained, when compared with the total 
   \includegraphics[width=\linewidth]{images/extension_FBX042.png}
   \caption{Example of gene extension (coverage shown is from \textit{PBMC\_10x\_2} dataset).
   In this case gene FBX042 is extended to include reads close to its 3' end.
-  However, the amount of reads gained is tinywhen compared with total count of this gene
+  However, the amount of reads gained is tiny when compared with the number of total counts of this gene
   (the number of counts of this gene increased approximatelly by 3\% in the \textit{PBMC\_10x\_2} dataset).}
   \label{fig:extension}
 \end{figure}

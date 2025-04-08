@@ -1,38 +1,39 @@
-In the results chapter, it was shown that unassigned reads constitute a significant portion of total scRNA-seq data.
-These reads can be broadly categorized into two groups: those overlapping with annotated genes and those that do not.
+In the results chapter, we demonstrated that unassigned reads constitute a significant fraction of scRNA-seq data.
+These reads can be broadly divided into two categories: those that overlap with annotated genes and those that do not.
 
-The non-overlapping reads were clustered and classified as either antisense (located on the opposite strand of known genes)
-or isolated (remaining ones).
-Antisense regions constituted the vast majority of defined intergenic regions.
-Observations regarding correlations and poly-A stretches led us to hypothesize
-that these antisense reads are artifacts generated during the reverse transcription reaction.
-Isolated reads, on the other hand, may originate from unannotated genes,
-particularly those supported by additional evidence such as differential expression or ATAC-seq data.
+Among the non-overlapping reads, we distinguished two subtypes: antisense reads, located on the opposite strand of known genes,
+and isolated reads, which do not lie near any annotated genes.
+Antisense regions comprised the majority of defined intergenic regions.
+Based on observed correlations and the presence of poly-A stretches,
+we hypothesize that many antisense reads are artifacts generated during the reverse transcription reaction.
 
-To mitigate artifacts arising from the reverse transcription reaction, it may be beneficial to conduct this reaction at lower temperatures,
-as the RNA-cDNA complex is more stable under such conditions.
-In the 10x Genomics v3.1 protocol, this reaction occurs at $52^\circ C$, whereas in inDrops2, it is performed at $42^\circ C$,
-where lower levels of unassigned reads are observed.
+In contrast, isolated reads may represent unannotated genes,
+particularly when supported by additional evidence such as differential expression or ATAC-seq signals.
+However, the short-read 3' end sequencing protocols employed in this study only allow us to localize transcriptional activity,
+not to reconstruct gene structures.
+Verification of these novel genes should therefore rely on methods capable of capturing full-length RNA molecules.
 
-For reads overlapping with known genes, the primary reason for being unassigned is gene overlap.
-When a read maps to a region where two genes are present, the mapping algorithm cannot confidently assign it to a single gene.
-The proposed pipeline for resolving these overlaps, primarily based on gene type,
-resulted in on average approximately 1.2\% more counts in the cell-gene matrices.
-However, while the total number of assigned reads and captured genes increased, some genes exhibited decreased total counts after overlap resolution.
-This underscores the complexity of the human genome and the challenges of resolving overlaps when mapping short reads.
+To reduce reverse transcription artifacts, lowering the reaction temperature may be beneficial,
+as RNA–cDNA hybrids are more stable at lower temperatures.
+In the 10x Genomics v3.1 protocol, reverse transcription is performed at $52^\circ C$,
+while in inDrops2 it occurs at $42^\circ C$, where we observed fewer unassigned reads (see Appendix \ref{tab:countStats}).
 
-Several alternative approaches exist for handling multimappers, such as uniform distribution,
-assignment based on uniquely mapped read ratios, and others (\cite{Francoeur2020}).
-However, none of these methods are universally accepted as gold standards,
-and in most cases, to minimize uncertainty, such reads are excluded from downstream analysis.
+For reads overlapping with known genes, the predominant cause of unassignment is gene overlap.
+When a read maps to a region shared by two or more genes, assignment becomes ambiguous.
+Our proposed pipeline, which resolves such overlaps based on gene type, yielded an average increase of $\sim 1.2\%$ in cell-gene matrix counts.
+While the overall number of assigned reads and detected genes increased, some genes showed reduced counts after overlap resolution.
+This highlights the complexity of the transcriptome and the challenges of disambiguating gene overlaps using short-read data.
 
-The main limitation of the proposed method for resolving gene overlaps is that it operates at the gene level,
-meaning only the start and end coordinates of genes are considered.
-However, transcriptomic annotations are typically more detailed, containing information about different transcripts, exons, and other features.
-Therefore, creating a tool that considers transcript and exon structures, rather than just gene start and end coordinates,
-would likely yield better results in terms of both the amount of data recovered and precision.
+Several alternative strategies exist for handling multimapped reads, including uniform distribution,
+probabilistic assignment based on uniquely mapped read ratios, and others \cite{Francoeur2020}.
+However, no consensus or gold standard currently exists, and to minimize uncertainty, such reads are often excluded from downstream analyses.
 
-It is important to note that the datasets used in this study were generated using short-read 3' end protocols.
-Datasets prepared with different methods may exhibit distinct artifacts.
-However, the new gene candidates identified in this study remain valid and should be verified through additional experiments.
-Additionally, only uniquely mapped unassigned reads were analyzed, leaving another subset of unassigned reads unexplored in this study.
+A key limitation of our overlap resolution strategy is its gene-level granularity: it relies solely on gene start and end coordinates.
+In contrast, transcript annotations include exon–intron structures and multiple isoforms.
+A tool that accounts for these finer-resolution features — such as exon boundaries and transcript structures —
+could potentially recover more reads and improve assignment precision.
+
+It is important to emphasize that the datasets used in this study were generated with 3' short-read protocols.
+Artifacts observed here may differ in datasets obtained using other methods.
+Nevertheless, the candidate novel genes identified remain valid and merit further investigation.
+Lastly, this study focused exclusively on uniquely mapped unassigned reads, leaving another subset of unassigned reads unexplored in this study.
