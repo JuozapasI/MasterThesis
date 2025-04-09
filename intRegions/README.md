@@ -33,7 +33,7 @@ All parameters:
 | `--bam`                | **(Required)** Input BAM file                                                                          | —          |
 | `--gtf`                | **(Required)** Transcriptomic reference GTF file                                                       | —          |
 | `--cpm_threshold`      | Cluster size threshold in counts-per-million (CPM).<br>Clusters with fewer reads will be filtered out. | `5`        |
-| `--threshold`          | Absolute cluster size threshold.<br>Overrides CPM-based threshold if provided.                         | `null`     |
+| `--threshold`          | Absolute cluster size threshold.<br>Overrides CPM-based threshold if provided.                         | —          |
 | `--read_length`        | Maximum allowed read length.<br>Used to prevent spliced reads from creating artificial clusters.       | `1000`     |
 | `--unassigned_pattern` | Pattern to detect unassigned reads in BAM files (e.g. `GN:Z:-`).                                       | `"GN:Z:-"` |
 
