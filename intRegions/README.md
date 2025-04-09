@@ -18,6 +18,8 @@ conda activate intRegions
 
 ## Usage
 
+Basic usage:
+
 ```bash
 nextflow run intergenic.nf \
   --bam path/to/input.bam \
@@ -26,12 +28,12 @@ nextflow run intergenic.nf \
 
 All parameters:
 
-
 | Parameter              | Description                                                                 | Default        |
 |------------------------|-----------------------------------------------------------------------------|----------------|
 | `--bam`                | **(Required)** Input BAM file                                               | —              |
 | `--gtf`                | **(Required)** Transcriptomic reference GTF file                            | —              |
-| `--cpm_threshold`      | Cluster size threshold in counts-per-million (CPM)                          | `5`            |
+| `--cpm_threshold`      | Cluster size threshold in counts-per-million (CPM)                          |`5`             |
+|                        | (clusters with number of reads less than this value will be filtered out)   |                |
 | `--threshold`          | Absolute cluster size threshold (overrides CPM-based threshold if provided) | `null`         |
 | `--read_length`        | Maximum allowed read length (to prevent spliced reads spanning to create    | `1000`         |
 |                        | artificial clusters or merge different clusters)                            |                |
