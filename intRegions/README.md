@@ -28,16 +28,14 @@ nextflow run intergenic.nf \
 
 All parameters:
 
-| Parameter              | Description                                                                 | Default        |
-|------------------------|-----------------------------------------------------------------------------|----------------|
-| `--bam`                | **(Required)** Input BAM file                                               | —              |
-| `--gtf`                | **(Required)** Transcriptomic reference GTF file                            | —              |
-| `--cpm_threshold`      | Cluster size threshold in counts-per-million (CPM)                          |`5`             |
-|                        | (clusters with number of reads less than this value will be filtered out)   |                |
-| `--threshold`          | Absolute cluster size threshold (overrides CPM-based threshold if provided) | `null`         |
-| `--read_length`        | Maximum allowed read length (to prevent spliced reads spanning to create    | `1000`         |
-|                        | artificial clusters or merge different clusters)                            |                |
-| `--unassigned_pattern` | Pattern to detect unassigned reads in bam files (e.g. `GN:Z:-`)             | `"GN:Z:-"`     |
+| Parameter              | Description                                                                                            | Default    |
+|------------------------|--------------------------------------------------------------------------------------------------------|------------|
+| `--bam`                | **(Required)** Input BAM file                                                                          | —          |
+| `--gtf`                | **(Required)** Transcriptomic reference GTF file                                                       | —          |
+| `--cpm_threshold`      | Cluster size threshold in counts-per-million (CPM).<br>Clusters with fewer reads will be filtered out. | `5`        |
+| `--threshold`          | Absolute cluster size threshold.<br>Overrides CPM-based threshold if provided.                         | `null`     |
+| `--read_length`        | Maximum allowed read length.<br>Used to prevent spliced reads from creating artificial clusters.       | `1000`     |
+| `--unassigned_pattern` | Pattern to detect unassigned reads in BAM files (e.g. `GN:Z:-`).                                       | `"GN:Z:-"` |
 
 ## Output format
 
