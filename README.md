@@ -4,4 +4,4 @@ The content of this repository:
 - textparts -> contains latex scripts for report generation
 - scripts -> contains various scripts used in this project
 - Makefile -> main file containing data analysis pipeline
-- intRegions -> user friendly script to extract intergenic regions from bam file
+- intRegions -> user friendly pipeline to extract intergenic regions from bam file
