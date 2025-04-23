@@ -86,7 +86,6 @@ Primers used in these protocols typically share a common structure, including:
 \end{itemize}
 An example of primer design is shown in Figure \ref{fig:inDropsPrimer}.
 Once cells are encapsulated in droplets, lysis occurs, releasing RNA, which is then captured by the primers.
-%A schematic overview of library preparation is provided in Figure \ref{fig:inDropsPipeline}.
 
 \begin{figure}
   \centering
@@ -100,21 +99,9 @@ Once cells are encapsulated in droplets, lysis occurs, releasing RNA, which is t
   \label{fig:inDropsPrimer}
 \end{figure}
 
-\iffalse
-\begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]{images/scAnalysisPipeline.jpg}
-  \caption{The schematic presentation of droplet-based scRNAseq
-  particularly inDrops, however main steps are shared between most of the droplet based protocols.
-  Figure taken from \textcite{Klein2015}.}
-  \label{fig:inDropsPipeline}
-\end{figure}
-\fi
-
 Depending on the method, reverse transcription may occur within the droplets
 (as in inDrops and 10X Genomics) or in bulk (as in Drop-seq).
 Subsequent steps typically include RNA fragmentation, PCR amplification, and next-generation sequencing (NGS).	
-
 
 \subsection{scRNAseq data analysis}
 
@@ -242,6 +229,85 @@ with mapping being particularly crucial in the context of this project.
 While mapping algorithms and tools differ, they all rely on the genome and its annotation (also refered as 'transcriptomic reference'),
 which directly impact their results.
 In the next section, I will further expand on this topic.
+
+\section{Genome biology}
+
+The biological features of an organism are largely encoded in its genome.
+The genome is typically defined as the complete set of genetic material (usually DNA) of an organism.
+DNA is a double-stranded helical molecule composed of four nucleotides: adenine (A), cytosine (C), guanine (G), and thymine (T).
+The strands are complementary: adenine pairs with thymine, and cytosine pairs with guanine (\cite{Alberts2022}).
+DNA serves as a template for RNA transcription, which can then be translated into proteins or function directly as RNA (e.g., regulatory RNAs).
+
+Genes are generally defined as regions of the genome that are transcribed to produce functional RNAs.
+For some RNAs, parts of the transcript are removed in a process known as splicing.
+The discarded segments are called introns, while the retained, coding parts are called exons.
+It is worth noting that only a small portion of the human genome is transcribed.
+For example, in the GENCODE v47 annotation, exons span only about 6.5\% of the genome sequence.
+
+Beyond clearly functional genomic elements (e.g., protein-coding genes),
+there are non-coding regions that are still functional, such as transcription promoter regions.
+Additionally, there are regions that are transcribed but whose function remains unknown or may be nonfunctional (e.g. transcribed pseudogenes).
+
+Not all regions of the eukaryotic genome—particularly the human genome—are unique.
+In humans, more than half of the genome consists of repetitive sequences (\cite{Liehr2021}).
+These were historically dismissed as 'junk', 'selfish', or 'parasitic' DNA.
+However, later studies have shown that repetitive sequences can serve structural roles
+or contribute to genomic stability through redundancy (\cite{Shapiro2005}).
+Many of these repeats originate from transposons — mobile genetic elements capable of copying or repositioning themselves within the genome.
+Although transposons were initially considered parasitic,
+growing evidence suggests they play a generative role in genome evolution and should not be dismissed as 'junk' DNA (\cite{Fedoroff2012}).
+
+\paragraph{Transcription}
+
+Transcription is carried out by RNA polymerases—enzymes that synthesize RNA molecules from a DNA template.
+This process can be divided into three stages:
+\begin{itemize}
+  \item \textbf{Initiation} – RNA polymerase recognizes the promoter region at the start of a gene and binds to it.
+  The enzyme then unwinds the DNA duplex, begins RNA synthesis, and escapes the promoter (\cite{Cramer2019}).
+  \item \textbf{Elongation} – RNA polymerase moves along the DNA template, synthesizing the RNA molecule.
+  \item \textbf{Termination} – Upon encountering a termination signal,
+  the polymerase detaches from the DNA and releases the completed RNA molecule, marking the end of transcription (\cite{Lodish2021}).
+\end{itemize}
+Each of these steps involves additional proteins and RNA molecules, collectively known as transcription factors.
+For example, RNA polymerases cannot independently recognize promoter sequences,
+instead, specific transcription factors are required to recruit the polymerase to the promoter (\cite{Cramer2019}).
+
+\paragraph{Chromatin}
+
+Chromatin is a dynamic complex of DNA and histone proteins that packages the eukaryotic genome within the nucleus.
+Its fundamental unit, the nucleosome, comprises approximately 147 base pairs of DNA wrapped around a histone octamer,
+enabling efficient genome compaction and regulation (\cite{Alberts2022}).
+Chromatin exists in a spectrum of conformational states, from tightly packed heterochromatin (generally transcriptionally inactive)
+to more relaxed euchromatin (transcriptionally active).
+Accessible chromatin refers to regions where DNA is less tightly associated with histones,
+permitting interactions with transcription factors and other regulatory proteins.
+Although accessible chromatin constitutes only 2–3\% of the total genome sequence,
+it accounts for over 90\% of known transcription factor binding sites (\cite{Klemm2019}).
+Techniques such as ATAC-seq and DNase-seq are widely used to map these regions,
+offering insights into gene regulation and cellular identity (\cite{Minnoye2021}).
+
+\paragraph{Non-coding RNAs}
+
+As mentioned earlier, not all transcribed RNAs are translated into proteins.
+In fact, a substantial portion of the genome is transcribed into non-coding RNAs, which include a wide range of functional RNA types.
+Among these, long non-coding RNAs (lncRNAs) have emerged as a major output of complex eukaryotic genomes (\cite{Mattick2023}).
+These RNAs are typically longer than 200 nucleotides and are not translated into proteins, yet they participate in essential biological processes.
+
+Non-coding RNAs can serve both housekeeping and regulatory roles.
+Housekeeping ncRNAs include rRNAs, tRNAs, and small nuclear RNAs, while regulatory ncRNAs—particularly lncRNAs —
+are involved in gene expression regulation, chromatin remodeling, RNA splicing, translation, and even phase separation in the nucleus.
+lncRNAs are often transcribed from intergenic regions, but they can also arise from introns,
+antisense strands, pseudogenes, and enhancers (\cite{Poliseno2024}).
+
+These RNAs tend to be expressed in a cell type-specific and developmentally regulated manner, contributing to lineage specification,
+tissue identity, and responses to environmental cues.
+Despite their relatively low abundance and rapid sequence evolution, lncRNAs often exhibit conserved structure-function features,
+such as modular domains and repeat elements that mediate interactions with chromatin, RNA, and proteins.
+Importantly, they are frequently associated with chromatin-modifying complexes and are increasingly recognized
+as integral to the spatial and temporal organization of gene regulation during development (\cite{Mattick2023}).
+
+Given their diversity and specificity, the biological importance of non-coding RNAs—especially lncRNAs —
+is increasingly appreciated, and many are now considered as genes with crucial regulatory roles in development, physiology, and disease.
 
 \section{Genome annotation}
 
