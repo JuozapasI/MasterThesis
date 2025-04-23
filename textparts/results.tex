@@ -261,6 +261,10 @@ No regions appeared in more than two lists.
   \label{fig:predictedExtension}
 \end{figure}
 
+For overall transcript structure inference, full-length Oxford Nanopore PBMC data were investigated.
+Isolated transcripts were also detected using this sequencing method, providing potential transcript structures.
+However, due to low coverage, these inferred structures should be interpreted with caution.
+
 \subsection{Antisense intergenic regions}
 
 Interpreting antisense intergenic regions is more complex.
@@ -369,3 +373,19 @@ meaning that this enhanced reference could help uncover relevant biological proc
   While T cell cluster is a bit different in these two cases, main structures remain the same in both cases.}
   \label{fig:enhancedClustering}
 \end{figure}
+
+\section{Unmapped reads}
+
+In the previous sections, mapped but unassigned reads were explored.
+However, in scRNA-seq data, there are also reads that do not map to the reference genome at all.
+In the analyzed datasets, such reads constituted approximately 3–13\% (mean 5.96\%) of total reads.
+The majority of these are likely technical artifacts.
+Nonetheless, it is worth investigating whether some may represent meaningful sequences originating from non-human DNA, such as viral genomes.
+
+To explore this, unmapped reads were aligned to viral genomes using the BLAST tool.
+Indeed, a small fraction (around 1–2\% of unmapped reads) mapped to viral genomes.
+The viral species to which reads mapped were consistent across samples, with most reads aligning to
+\textit{BeAn 58058 virus}, \textit{Human endogenous retrovirus K113}, and \textit{Aeribacillus phage AP45}.
+
+While it is difficult to draw definitive conclusions from this type of mapping,
+these findings suggest that scRNA-seq data is sufficiently sensitive to detect non-host transcripts even in healthy individuals.
