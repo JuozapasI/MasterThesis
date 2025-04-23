@@ -35,6 +35,15 @@ genome conservation scores ('phastCons100way' track) were downloaded from \href{
 
 The open chromatin regions (bed format) in PBMCs was downloaded from \href{https://www.10xgenomics.com/datasets/10k-human-pbmcs-atac-v2-chromium-controller-2-standard}{10x website}.
 
+\paragraph{Oxford Nanopore data}
+
+PBMC nanopore (full-length cDNA) data were downloaded from \href{https://www.10xgenomics.com/datasets/5k-human-pbmcs-3-v3-1-chromium-controller-3-1-standard}{10x genomics website.}
+
+\paragraph{Viral genomes}
+
+Viral genomes for blasting unassigned sequences for BLAST searches were downloaded
+from \href{https://ftp.ncbi.nlm.nih.gov/genomes/refseq/viral/}{NCBI Refseq genomes database}.
+
 \section{Computational Tools and Environment}
 
 All analyses were performed on a high-performance computing (HPC) cluster running a Linux environment.
@@ -176,6 +185,10 @@ $$\rho = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)}$$
 
 where $d_i$ is the difference between the ranks of corresponding values and $n$ is the number of observations.
 
+\paragraph{Oxford Nanopores data}
+
+Nanopores data were mapped using \textit{minimap2} algorithm and possible transcript structures was inferred using \textit{stringtie} tool.
+
 \section{Enhancing transcriptomic reference}
 \label{sec:overlappers}
 
@@ -242,3 +255,8 @@ Particularly entries from GENCODE, RefSeq and lncpedia transcriptomic references
 if they overlapped with unassigned reads and did not overlap with genes already present in the reference.
 This enrichment was done sequentially, i.e. firstly the reference was updated with entries from GENCODE annotation,
 then resulting reference was updated with entries from RefSeq annotation and finally from lncpedia annotation.
+
+\section{Unmapped reads}
+
+Additionally, unmapped reads were extracted using samtools and mappings were searched against viral genome sequences (BLAST tool).
+The tool was run locally, with the viral genome sequences for database construction acquired from \href{https://ftp.ncbi.nlm.nih.gov/genomes/refseq/viral/}{NCBI Refseq genomes database}.
