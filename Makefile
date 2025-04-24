@@ -10,7 +10,7 @@ clusterThreshold = 100
 fasta = data/genome/fasta/GRCh38.dna.primary_assembly.fa
 ATrichThreshold = 70
 AT = 60
-ends_dist = 10000
+ends_dist = 1000
 closeEndThreshold = 100
 cpmThreshold = 5
 
@@ -674,7 +674,7 @@ data/downstream/intergenic/sequences_extended_with_strands.tsv: data/downstream/
 	
 data/downstream/intergenic/TATA_AT.tsv: data/downstream/intergenic/sequences_extended_with_strands.tsv
 	python scripts/python/TATA_AT.py $< $@
-	
+
 data/downstream/intergenic/isolated/TATA_AT.tsv: data/downstream/intergenic/TATA_AT.tsv data/downstream/intergenic/isolated/isolated.bed
 	awk -F '\t' 'NR==FNR {keys[$$4]; next} $$1 in keys' data/downstream/intergenic/isolated/isolated.bed $< > $@
 	
@@ -688,7 +688,26 @@ data/downstream/intergenic/isolated/ATAC_distances.tsv: data/downstream/intergen
 #	mkdir -p $@
 #	awk -F '\t' 'FNR == NR {seen[$$1]; next} $$4 in seen {system("bash ../../../../scripts/bash/coverage.sh " $$1 ":" $$2 - 1000 ":" $$3 + 1000 " " $$6 " " $$4)}' $<
 #	awk -F ',' 'FNR == NR {ss[$$1] = $$2; next} BEGIN {FS = "\t"} {$$4 = $$4 / [
+
+
+### For blasting ###
+# Extract unmapped reads from bam file:
+%unmapped.fasta: %Aligned.sortedByCoord.out.bam
+	samtools view -f 4 $< | samtools fastq - | seqtk seq -A - > $@
 	
+data/blast/viral/%.txt: data/datasets/%/solo_output.10x/unmapped.fasta
+	blastn -query $< -db /tmp/Mazutislab-out/Juozapas/Thesis/data/blast/viral_db -out $@ -num_threads 8
+
+### Nanopores ###
+# Extract reads from isolated regions and try to reconstruct trnascripts using stringtie
+data/datasets/PBMC_10x/nanopore/isolated.gtf: data/downstream/intergenic/isolated/isolated.bed data/datasets/PBMC_10x/nanopore/sorted.bam
+	mkdir -p data/datasets/PBMC_10x/nanopore/isolated
+	awk -F '\t' '{cmd = "samtools view -b -h -F 4 data/datasets/PBMC_10x/nanopore/sorted.bam " $$1 ":" $$2 "-" $$3 "> data/datasets/PBMC_10x/nanopore/isolated/" $$4 ".bam"; system(cmd);}' $<
+	samtools merge data/datasets/PBMC_10x/nanopore/merged.bam data/datasets/PBMC_10x/nanopore/isolated/*.bam
+	stringtie -o $@ data/datasets/PBMC_10x/nanopore/merged.bam 
+
+
+
 # rule to clean working directory (mainly from the latex intermediates)
 clean:
 	latexmk -c
