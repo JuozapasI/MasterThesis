@@ -1,39 +1,100 @@
-In the results chapter, we demonstrated that unassigned reads constitute a significant fraction of scRNA-seq data.
-These reads can be broadly divided into two categories: those that overlap with annotated genes and those that do not.
+Single-cell RNA sequencing is a widely used tool for analyzing cellular systems nowadays.
+These experiments generate vast amounts of data, and since they are becoming increasingly affordable and accessible,
+the data is often used solely for the primary goal of the study, without deeper exploration.
+One underexamined aspect in most studies is the presence of reads that map to the genome but are not assigned to any gene.
+As shown in the Results chapter, such reads can comprise 10–30\% of total reads—a significant portion of the dataset.
 
-Among the non-overlapping reads, we distinguished two subtypes: antisense reads, located on the opposite strand of known genes,
-and isolated reads, which do not lie near any annotated genes.
-Antisense regions comprised the majority of defined intergenic regions.
-Based on observed correlations and the presence of poly-A stretches,
-we hypothesize that many antisense reads are artifacts generated during the reverse transcription reaction.
+This project aimed to investigate these unassigned reads.
+They were first classified based on whether they intersected with known genes or not (referred to as intergenic).
+Intergenic reads were then divided into two groups:
+antisense (located on the opposite strand of known genes) and isolated (with no known genes on either strand).
+Reads were clustered, and only regions with at least 5 CPM were analyzed.
 
-In contrast, isolated reads may represent unannotated genes,
-particularly when supported by additional evidence such as differential expression or ATAC-seq signals.
-However, the short-read 3' end sequencing protocols employed in this study only allow us to localize transcriptional activity,
-not to reconstruct gene structures.
-Verification of these novel genes should therefore rely on methods capable of capturing full-length RNA molecules.
+\paragraph{Antisense intergenic regions}
 
-To reduce reverse transcription artifacts, lowering the reaction temperature may be beneficial,
-as RNA–cDNA hybrids are more stable at lower temperatures.
-In the 10x Genomics v3.1 protocol, reverse transcription is performed at $52^\circ C$,
-while in inDrops2 it occurs at $42^\circ C$, where we observed fewer unassigned reads (see Appendix \ref{tab:countStats}).
+Two key observations — expression correlations with genes on the opposite strand and poly-A stretches downstream of the regions —
+led us to hypothesize that these reads may be artifacts produced during the reverse transcription step.
+These reads represent the vast majority of unassigned reads,
+so addressing this mechanism could improve the efficiency of single-cell RNA-seq experiments.
+It should be noted that this hypothesis applies specifically to 3'-end capturing methods, which rely on poly-A tails.
 
-For reads overlapping with known genes, the predominant cause of unassignment is gene overlap.
-When a read maps to a region shared by two or more genes, assignment becomes ambiguous.
-Our proposed pipeline, which resolves such overlaps based on gene type, yielded an average increase of $\sim 1.2\%$ in cell-gene matrix counts.
-While the overall number of assigned reads and detected genes increased, some genes showed reduced counts after overlap resolution.
-This highlights the complexity of the transcriptome and the challenges of disambiguating gene overlaps using short-read data.
+Temperature adjustments might help reduce such artifacts: at lower temperatures, RNA–cDNA complexes are more stable.
+In the 10x Genomics v3.1 protocol, reverse transcription is performed at $52^\circ C$, while in inDrops2 it occurs at $42^\circ C$,
+where we observed fewer unassigned reads (see Appendix \ref{tab:countStats}).
+However, strong conclusions cannot be drawn, as only two samples from inDrops2 were analyzed.
 
-Several alternative strategies exist for handling multimapped reads, including uniform distribution,
-probabilistic assignment based on uniquely mapped read ratios, and others \cite{Francoeur2020}.
-However, no consensus or gold standard currently exists, and to minimize uncertainty, such reads are often excluded from downstream analyses.
+While this hypothesis may explain the majority of antisense reads, other possibilities should not be dismissed.
+For instance, template switching — when reverse transcriptase (or polymerase) detaches and reattaches elsewhere —
+is reported in both reverse transcription and amplification steps (\cite{Houseley2010, Potapov2017}).
+Although artifacts from template switching are unlikely to form large clusters (due to expected more random distribution),
+they may explain reads in clusters smaller than 5 CPM, which were not explored in this project.
 
-A key limitation of our overlap resolution strategy is its gene-level granularity: it relies solely on gene start and end coordinates.
-In contrast, transcript annotations include exon–intron structures and multiple isoforms.
-A tool that accounts for these finer-resolution features — such as exon boundaries and transcript structures —
-could potentially recover more reads and improve assignment precision.
+\paragraph{Isolated intergenic regions}
 
-It is important to emphasize that the datasets used in this study were generated with 3' short-read protocols.
-Artifacts observed here may differ in datasets obtained using other methods.
-Nevertheless, the candidate novel genes identified remain valid and merit further investigation.
-Lastly, this study focused exclusively on uniquely mapped unassigned reads, leaving another subset of unassigned reads unexplored in this study.
+Unlike antisense regions, isolated regions might represent unannotated (novel) genes rather than artifacts.
+This is particularly likely for regions with supporting features, the most indicative of which is differential expression —
+since noise is not expected to be cell-type specific.
+
+Although the human genome has been extensively studied, several factors still complicate novel gene identification.
+First, since protein-coding genes have more defined structures (and are thus easier to detect computationally) (\cite{Guigo2023}),
+these potential novel genes are likely non-coding, such as lncRNAs.
+Second, their low expression and high cell-type specificity hinder confident annotation,
+which is generally required by widely used transcriptome references like GENCODE or RefSeq.
+
+While transcript structures can be inferred using long-read RNA sequencing (as we demonstrated using Oxford Nanopore data),
+high sequencing depth is needed for confident annotations.
+
+Although lncRNAs can participate in virtually any cellular process, predicting the function of a specific lncRNA is challenging.
+They often lack clear phenotypic effects, and mutations typically influence quantitative traits (\cite{Mattick2023}).
+This project did not attempt to assign functions to these novel candidates; future studies could explore this.
+
+A subset of isolated regions located near known genes could be explained by unannotated transcript extensions.
+Some overlapped predicted longer isoforms of known genes, suggesting this as a possible origin.
+Long-read sequencing data can be used to validate this hypothesis.
+
+\paragraph{Enhancing transcriptomic reference}
+
+Some reads were unassigned despite aligning to annotated gene regions.
+This is mainly due to gene overlaps.
+To incorporate such reads, the transcriptomic reference was enhanced by resolving overlaps based on gene types.
+Using this enhanced reference, downstream cell–gene matrices increased by $\sim 1.2$\% on average.
+
+While overall assigned reads and gene detection increased, some genes showed reduced counts after overlap resolution —
+highlighting the complexity of the transcriptome and the difficulty of disambiguating gene overlaps with short reads.
+
+Our method for enhancing transcriptomic references raises several points of consideration:
+first, prioritizing gene types (e.g., protein-coding over lncRNAs) can be subjective, and may not always be appropriate.
+Second, our overlap resolution used only gene-level annotations (start and end coordinates),
+whereas transcriptome annotations typically include exon–intron structures and isoforms.
+
+Alternative strategies for handling multi-mapped reads exist —
+such as uniform distribution or probabilistic assignment based on uniquely mapped read ratios (\cite{Francoeur2020}).
+However, no consensus or gold standard currently exists, so such reads are often excluded to reduce uncertainty.
+
+An improved approach could consider transcript-level annotations, e.g., comparing read coverage with exon structures
+to infer the most likely gene of origin in overlapping regions.
+Such a tool could recover more reads and improve assignment accuracy.
+
+\paragraph{Unampped reads}
+
+As a side investigation, unmapped reads were also briefly explored.
+While the majority are likely artifacts, some may originate from non-human organisms, such as viruses.
+We found that a small fraction aligned to viral species —
+suggesting that even unmapped reads may hold biological value and should not be dismissed outright.
+
+\paragraph{Limitations and discreapncies}
+
+This project analyzed datasets generated using short-read, 3' end-capturing RNA-seq methods.
+Datasets from other methods would exhibit different artifacts and require separate analysis.
+These data did not allow the definition of full transcript structures, which is possible with full-length sequencing.
+
+An interesting discrepancy is shown in Table \ref{tab:countStats}:
+the proportion of unassigned reads is lower when computed from raw counts compared to demultiplexed counts.
+Since demultiplexed counts represent actual molecule counts, and raw counts reflect amplification,
+one would expect similar ratios — assuming equal amplification efficiency.
+
+However, we observed a consistently higher proportion of unassigned reads in the demultiplexed data,
+suggesting that unassigned reads may be amplified less efficiently.
+The origin of this bias is unclear and warrants further study.
+This effect is especially pronounced in datasets generated using inDrops2,
+so comparisons between inDrops2 and 10x v3.1 may help uncover its cause.
