@@ -16,15 +16,20 @@
     
 \end{center}
 
-Single cell RNA sequencing data contain reads that map to the genome but are not assigned to any gene.
-The aim of this project was to investigate such reads, to reveal their origins and if they are not technical artifacts,
-to include them into downstream analysis.
-In this project unassigned reads from fourteen datasets were analyzed.
-It was shown, that majority of those comes from antisense regions of known genes, and hypothesis was suggested,
-that those are artifacts produced during reverse transcription reaction.
-Some of the reads were mapped to intergenic regions without any genes on any strand,
-and those are likely originating from unannotated (novel) genes.
-Finally, a part of reads were mapped to gene regions but still left unassigned.
-To include those into downstream analysis, transcriptomic reference was enhanced, by resolving some overlapping genes,
-extending 3' ends of part of the genes and adding some genes from different transcriptomic annotations.
-Such approach allowed to have on average 1.2\% more counts in the downstream analysis.
+Single-cell RNA sequencing (scRNA-seq) experiments generate large datasets,
+a portion of which often consists of reads that align to the genome but are not assigned to any annotated gene.
+This project aimed to investigate the origins of these unassigned reads and explore strategies to recover them for downstream analysis.
+
+Unassigned reads from fourteen publicly available scRNA-seq datasets were analyzed.
+The majority were found to originate from the antisense strand of known genes.
+It is hypothesized that these reads are artifacts introduced during the reverse transcription step, particularly in 3'-end capturing protocols.
+Another subset of reads mapped to intergenic regions without any annotated genes on either strand.
+These regions may correspond to unannotated transcripts, and 147 such candidate regions were identified for future validation.
+
+Additionally, a fraction of unassigned reads mapped within known gene regions but were not assigned due to overlapping annotations.
+To recover these, the transcriptomic reference was enhanced by resolving gene overlaps,
+extending 3' ends of selected genes, and combining information from four different annotations.
+This modification led to an average increase of 1.2\% in total read counts in the resulting cell–gene matrices.
+
+Together, these findings suggest that unassigned reads—often discarded in scRNA-seq workflows — 
+can be informative and should be systematically examined to improve transcriptomic references and the interpretability of single-cell data.

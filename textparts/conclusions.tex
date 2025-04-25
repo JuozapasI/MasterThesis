@@ -1,15 +1,17 @@
 \begin{itemize}
   \item Single cell RNA sequencing data contain reads that map to the genome, but are not assigned to any gene.
-  The proportion of such reads ranged from 11-29\% in datasets analyzed.
+  In the analyzed datasets, these unassigned reads accounted for 11–29\% of all reads.
   
   \item The unassigned reads mapping to the antisense strand of known genes constitute the majority of unassigned reads
   and are likely artifacts produced during the reverse transcription reaction.
-  This observation is specific to short-read 3' end sequencing protocols.
+  This observation is specific to 3' end sequencing protocols.
   
   \item Unassigned reads mapping to regions without annotated genes on either strand may originate from unannotated genes.
   This thesis proposes 147 such candidate regions.
-  Due to the limitations of short-read 3' end sequencing, the global structures of these potentially novel genes could not be inferred.
+  These candidate regions should be validated through other type of experiments.
   
   \item Some unassigned reads mapped to regions with overlapping genes may be recovered by resolving gene overlaps in the transcriptomic annotation.
-  The proposed approach increased the number of reads in the cell–gene matrices by approximately 1.2\%.
+  The proposed approach increased the number of counts in the cell–gene matrices by approximately 1.2\%.
+  
+  \item Overall, the results suggest that at least part of unassigned reads might be biologically meaningful and should not be discarded by default.
 \end{itemize}

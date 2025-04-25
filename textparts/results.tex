@@ -1,28 +1,10 @@
 \section{Intergenic regions}
 
 Fourteen datasets from various tissues (blood, brain, eye, and lung) were analyzed.
-These datasets contained between 11\% and 29\% unassigned uniquely mapped reads
+These datasets contained between 11\% and 29\% of uniquely mapped reads that remained unassigned.
 (the table with statistics can be found in Appendix \ref{tab:countStats}) when using standard reference (taken from 10x Genomics).
 The majority of those unassigned reads were intergenic, meaning they did not overlap with any reference used.
 Given the dataset sizes, this proportion of reads could potentially contain biologically relevant information.
-
-\iffalse
-???????????????????????????????
-
-Also, one can observe that the proportions of unassigned and intergenic reads are higher when samples are first demultiplexed by UMIs.
-This suggests that unassigned transcripts are amplified in lower amounts than assigned ones.
-If all unassigned transcripts originated from unannotated genes,
-one would expect amplification to occur similarly for both assigned and unassigned transcripts.
-However, this is not the case, which suggests that additional factors contribute to the discrepancy.
-One possible explanation is polymerase error, particularly template switching.
-
-\textcite{Kebschull2015} demonstrated that template switching occurs during PCR amplification, albeit rarely.
-Notably, these events are more common in the later cycles of PCR (\cite{Kebschull2015}),
-meaning that the resulting chimeric transcripts undergo fewer amplification cycles and thus appear at lower abundances in the data.
-While this could partially account for the reduced amplification of unassigned transcripts, it is unlikely to be the sole explanation.
-
-?????????????????????????????
-\fi
 
 \paragraph{Analysing intergenic regions}
 
@@ -70,15 +52,15 @@ Those located on the opposite strand of known genes will be referred to as \text
     \end{subfigure}
     \caption{Comparison of clustering using standard annotation (\textit{10x Genomics} reference) and using only defined intergenic regions.
     For some samples, intergenic regions are sufficient for rough clustering.
-    For others (e.g., the \textit{brain\_2} sample), noise introduces clustering artefacts.
+    For others (e.g., the \textit{brain\_2} sample), noise introduces clustering artifacts.
     Nevertheless, this rough clustering implies that these unassigned reads contain biological information.}
     \label{fig:intergenicClustering}
 \end{figure}
 
 \paragraph{A-rich sequences near the intergenic regions 3' end}
 
-If there is a poly-A region near the 3' end of the intergenic region, then the presence of those peaks can be explained by mis-priming,
-i.e. that would suggest that our intergenic region is not necessarily the actual 3' end of the novel transcript, but may be in the middle of it.
+If there is a poly-A region near the 3' end of the intergenic region, then the presence of those peaks can be explained by mispriming,
+i.e., that would suggest that our intergenic region is not necessarily the actual 3' end of the novel transcript, but may be in the middle of it.
 
 This is indeed the case for most of the reported intergenic regions,
 see Figure \ref{fig:poly-A} for visual example and some statistics.
@@ -100,7 +82,7 @@ The poly-A region here is defined as a region with at least 10 consecutive A's, 
         \centering
         \includegraphics[width=\textwidth]{images/poly-A-distances.png}
         \caption{Distances from 3' ends to closest A-rich region downstream.
-  	From all the intergenic regions, only 40 do not have such region within 1kb from the 3' end.}
+  	From all the intergenic regions, only 40 do not have such region within 1 kb from the 3' end.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.45\textwidth}
@@ -121,22 +103,22 @@ If so, this may be due to several factors:
   \item If the region correlates with gene on the same strand:
   \begin{itemize}
     \item Technical issues – the genome annotation might be not comprehensive and not include some longer transcripts
-    (that would span intergenic region as well as the gene with which correlation is observed).
+    that would span intergenic region as well as the gene with which correlation is observed.
     \item Biological reasons – genes in close proximity tend to be coexpressed due to the shared chromatin structure.
   \end{itemize}
   \item If the region correlates with gene on the oposite strand:
   \begin{itemize}
-    \item Technical artefacts – errors during library preparation could produce inversed cDNA (will be discussed later).
+    \item Technical artifacts – errors during library preparation could produce inversed cDNA (will be discussed later).
     \item Biological reasons – as mentioned before, genes in close proximity tend to be coexpressed.
   \end{itemize}
 \end{itemize}
 
-Which of these is the case in our samples, is hard to tell.
+It is difficult to determine which of these scenarios applies in our samples.
 Out of all defined intergenic regions, 97 (3.74 \%) showed Spearman correlation \textgreater 0.5 (p \textless 0.05) in at least 1 sample
 (83 correlated with genes on the opposite strand, 19 with a gene on the same strand, 5 with both).
 Some examples can be seen in Figure \ref{fig:correlationScatterplots}.
 
-In the following subsections isolated and antisense intergenic regions will be discussed separatelly.
+In the following subsections isolated and antisense intergenic regions will be discussed separately.
 
 \begin{figure}[htbp]
     \centering
@@ -250,7 +232,6 @@ All three of these predicted genes were extended versions of already annotated g
 The differential expression and open chromatin lists had 11 regions in common
 (INT1312, INT1426, INT1492, INT1554, INT1609, INT1993, INT2209, INT349, INT368, INT4216, INT6013).
 No regions appeared in more than two lists.
-%The full list of isolated regions can be found in Appendix \ref{tab:isolated}.
 
 \begin{figure}
   \centering
@@ -281,14 +262,14 @@ An example of inferred transcript structures can be seen in Figure \ref{fig:tran
   \end{subfigure}
 
   \caption{From the Oxford Nanopore data several transcripts were inferred in the INT1492 region.
-  The inferred transcripts vary in length, with the shortest one being just around 1kb and longer ones being longer than 150kb.}
+  The inferred transcripts varied in length, from around 1 kb to over 150 kb.}
   \label{fig:transcripts}
 \end{figure}
 
 \subsection{Antisense intergenic regions}
 
 Interpreting antisense intergenic regions is more complex.
-The features such as open chromatin, AT-richness or conservativeness are not strand specific,
+The features such as open chromatin or conservation are not strand specific,
 meaning that if they would be present, they could not be attributed with certainty for our intergenic regions.
 The differential expression can be checked, however, even if the antisense intergenic region is differentially expressed,
 it could still be an artifact, originating from differentially expressed transcripts.
@@ -300,13 +281,13 @@ As in the case of isolated intergenic regions,
 antisense intergenic regions were checked for overlaps with predicted genes from UCSC prediction archive.
 There were 49 such regions found, out of them 35 were in the 3' ends of predicted genes.
 9 of those 35 predicted genes were longer version of already annotated genes in RefSeq or GENCODE references.
-The all list can be found in the Appendix \ref{tab:predictionsAntisense}.
+The complete list can be found in the Appendix \ref{tab:predictionsAntisense}.
 
 \paragraph{Poly-A segments}
 
 Having in mind that majority of the antisense intergenic regions have poly-A stretch after 3' end,
 and some of them strongly correlates with genes on the opposite strands,
-it is possible that they are artefacts from the library preparation.
+it is possible that at least some of them are artifacts from the library preparation.
 Particularly, it could happen that poly-T primer binds to poly-A stretch of cDNA produced by other primer,
 and in such way inversed transcripts are produced.
 These are later mapped to antisense strands of known genes (see Figure \ref{fig:mispriming}).
@@ -340,7 +321,7 @@ Finally, gene entries with reads near their 3' ends were extended.
 This enhanced reference resulted in an average increase of 1.2\% more reads in the cell-gene matrices.
 While this increase is relatively small, it enabled the detection of approximately 350 additional genes
 that were undetected using the standard transcriptomic reference (an example is given in Figure \ref{fig:overlapResolved}).
-%However, an average of 13 genes per dataset were lost when using this enhanced reference.
+However, an average of 13 genes per dataset were lost when using this enhanced reference.
 
 \begin{figure}
   \centering

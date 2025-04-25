@@ -12,29 +12,29 @@ Current sequencing methods allow us to obtain the complete genetic sequence of a
 However, the genome alone cannot explain the full diversity of cells in multicellular organisms,
 as all cells share the same genome but exhibit significant variation in shape, size, and function.
 
-RNA sequencing (RNAseq), on the other hand, enables the measurement of gene expression within cells,
+RNA sequencing (RNA-seq), on the other hand, enables the measurement of gene expression within cells,
 providing valuable insights into cellular processes.
-RNAseq methods largely follow DNA sequencing protocols,
-with the addition of a step where complementary DNA (cDNA) is synthesized from RNA (\cite{Heumos2023}).
-The first RNAseq methods were developed for bulk sequencing, where RNA from entire cell populations is sequenced,
+RNA-seq methods largely follow DNA sequencing protocols,
+with the addition of a step in which complementary DNA (cDNA) is synthesized from RNA (\cite{Heumos2023}).
+The first RNA-seq methods were developed for bulk sequencing, where RNA from entire cell populations is sequenced,
 providing an average gene expression profile across the population.
-Although bulk RNAseq has provided valuable insights into the dynamics of cellular processes
+Although bulk RNA-seq has provided valuable insights into the dynamics of cellular processes
 (such as changes in disease states in response to therapeutics, detection of gene isoforms, gene fusions,
 and various other properties of target cells (\cite{Heumos2023})),
 this approach masks non-dominant processes and cell-to-cell variability through averaging.
-This limitation was addressed by the introduction of single-cell RNA sequencing (scRNAseq) methods,
+This limitation was addressed by the introduction of single-cell RNA sequencing (scRNA-seq) methods,
 which allow for the generation of transcriptomic profiles from individual cells,
 providing high-resolution insights into cellular systems.
 
-Current scRNAseq methods enable the generation of transcriptomic profiles from thousands of cells
+Current scRNA-seq methods enable the generation of transcriptomic profiles from thousands of cells
 at unprecedented resolution in a single experiment.
 These data can be used for constructing cellular atlases (\cite{Rozenblatt2017}),
 understanding disease mechanisms (\cite{Zhang2024}),
-exploring cell differentiation and developmental processes (\cite{Skinner2024}), among many other applications.
+exploring cell differentiation and developmental processes (\cite{Skinner2024}), among other applications.
 
-\section{scRNAseq data generation and analysis}
+\section{scRNA-seq data generation and analysis}
 
-\subsection{Overview of scRNAseq protocols}
+\subsection{Overview of scRNA-seq protocols}
 
 The generation of scRNA-seq data is a complex, multi-step process that varies across different protocols.
 These protocols can be grouped based on several criteria, such as the type of RNA capture
@@ -72,7 +72,7 @@ Primers used in these protocols typically share a common structure, including:
   \includegraphics[width=\linewidth]{images/indropsDevice.jpg}
   \caption{An example of microfluidics device for droplet generation (inDrops).
   A) Schematic view of the device.
-  B) Snapshots of droplet generation and colection.
+  B) Snapshots of droplet generation and collection.
   C) Scheme of droplet generation.
   Figure taken from \textcite{Klein2015}.}
   \label{fig:inDropsDevice}
@@ -90,7 +90,7 @@ Once cells are encapsulated in droplets, lysis occurs, releasing RNA, which is t
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/primer.png}
-  \caption{Example of primer design (inDrops).
+  \caption{Primer design in the inDrops protocol..
   The image above shows schematic view, while below is given example with sequences.
   The structure of primers varies between the protocols, the main parts (UMI site, barcodes, poly-T's)
   are found in most of them.
@@ -103,7 +103,7 @@ Depending on the method, reverse transcription may occur within the droplets
 (as in inDrops and 10X Genomics) or in bulk (as in Drop-seq).
 Subsequent steps typically include RNA fragmentation, PCR amplification, and next-generation sequencing (NGS).	
 
-\subsection{scRNAseq data analysis}
+\subsection{scRNA-seq data analysis}
 
 \paragraph{Raw data processing}
 
@@ -129,7 +129,7 @@ columns represent genes, and each entry indicates the number of captured RNAs fo
 
 \paragraph{Cell-gene matrix processing}
 
-The next steps in the analysis of the scRNAseq data involves following steps (see Figure \ref{fig:dataAnalysis} for graphical summary):
+The next steps in the analysis of the scRNA-seq data involve following steps (see Figure \ref{fig:dataAnalysis} for graphical summary):
 
 \begin{figure}
   \centering
@@ -149,10 +149,10 @@ can be evaluated based on several factors, such as mitochondrial gene content
 (apoptotic cells tend to have a higher proportion of mitochondrial transcripts (\cite{Heumos2023})) or
 total number of captured genes (very low numbers can be produced by ambient RNA entering empty droplets).
 In some cases, two cells can end up in one droplet,
-resulting in count matrix row corresponding to genes from  both cells.
+producing a count matrix row that reflects the combined gene expression of both cells.
 Such matrix entries (doublets) can be filtered by using specialized software
 such as Scrublet (\cite{Wolock2019}) or scDblFinder (\cite{Germain2022}).
-Another source of noise in scRNAseq data is ambient RNA,
+Another source of noise in scRNA-seq data is ambient RNA,
 which consists of RNA that escapes individual droplets and spreads into the medium or other droplets,
 leading to background noise.
 Even though the amount of such RNA is not high (in good quality datasets it can be around 2\% (\cite{Young2020})),
@@ -174,7 +174,7 @@ General recommendations for normalization suggest comparing several methods,
 and if the results are similar, opting for the simpler method (\cite{Lingen2024}).
 Sophisticated methods do not necessarily show better results, and a recent benchmarking study by \textcite{Ahlmann2023}
 has shown that simpler method (particularly the logarithm normalization,
-where each element $y$ of count matrix is transformed by formula $y_{trnasformed} = log(y+1)$)
+where each element $y$ of the count matrix is transformed by formula $y_{transformed} = log(y+1)$)
 performs as well or better than more advanced methods.
 \item \textbf{Filtering genes}
 Once the data is normalized and cleaned, one can filter out non-informative genes.
@@ -182,16 +182,16 @@ Initially, count matrices contain all the genes that are present in the transcri
 However, not all of them are expressed in the sequenced data, or are expressed in negligible numbers (\cite{Heumos2023}).
 Therefore, it is common practice to filter such genes (e.g., genes that are expressed in less than three cells).
 Moreover, some genes might be expressed in all the cells more or less evenly (housekeeping genes),
-which do not provide useful information that could be usefull in, for instance, grouping cells or determining cell types.
+which do not provide useful information that could be useful in, for instance, grouping cells or determining cell types.
 Therefore, in many applications, it is beneficial to leave only those genes, that are highly variable between cells.
 In such way, the dimensionality of the count matrix is greatly reduced without loosing significant information.
 Additionally, genes that are outside the scope of the specific study can also be filtered out.
 \item \textbf{Dimensionality reduction}
 Even after filtering and selecting only highly variable genes, several thousand genes usually remain.
-It is not feasible to visualize (and hard to interpret in general) data of such high dimentionality, therefore,
+It is not feasible to visualize (and hard to interpret in general) data of such high dimensionality, therefore,
 dimensionality reduction is essential step of subsequent analysis.
-The idea of dimentionality reduction is simple:
-to reduce the dimentions of the data loosing as little information as possible.
+The idea of dimensionality reduction is simple:
+to reduce the dimensions of the data loosing as little information as possible.
 There are a number of dimensionality reduction methods based on different mathematical concepts,
 but the most widely used today include
 t-SNE (\cite{Hinton2002}), UMAP (\cite{McInnes2018}) and principal component analysis (PCA).
@@ -199,14 +199,14 @@ Although the use of these algorithms are supported by some benchmarking studies
 (in the study of \textcite{Xiang2021}, t-SNE was showed best performance, while UMAP showed the highest stability),
 other benchmarking studies report different findings.
 The study of \textcite{Koch2021} suggested that such overlooked methods as
-latent Dirichlet alloacation (LDA) and PHATE are among the best performing
+latent Dirichlet allocation (LDA) and PHATE are among the best performing
 (metrics for comparison included clustering accuracy, structure preservation, efficiency and others).
 Meanwhile \textcite{Sun2019} provided guidelines for choosing dimensionality reduction method
 depending on downstream analysis tasks, and in their results UMAP and tSNE were not on the top choices.
 Thus, while UMAP remains the gold standard method in the field (usually preceded by PCA for initial dimensionality reduction),
 it is worth considering alternative methods as well.
 \item \textbf{Clustering and other analyses}
-One of the most common tasks of scRNAseq data analysis is to identify and classify cell populations (\cite{Andrews2018}).
+One of the most common tasks of scRNA-seq data analysis is to identify and classify cell populations (\cite{Andrews2018}).
 This task requires to assign cells to different groups (clusters),
 such that cells in the same clusters are similar and distinct from cells in other clusters.
 There is a great variety of clustering algorithms available,
@@ -224,21 +224,18 @@ inferring gene regulatory networks (GRNs), and more.
 \end{itemize}
 
 The described analysis pipeline enables insights into multicellular systems.
-It is evident that all downstream analyses are directly influenced by the initial steps of raw data processing,
-with mapping being particularly crucial in the context of this project.
-While mapping algorithms and tools differ, they all rely on the genome and its annotation (also refered as 'transcriptomic reference'),
-which directly impact their results.
-In the next section, I will further expand on this topic.
+All downstream analyses rely heavily on the initial processing steps, particularly read mapping, which depends on the transcriptomic reference. 
+In the next sections, I will shortly introduce genome biology and further expand on transcriptomic references.
 
 \section{Genome biology}
 
-The biological features of an organism are largely encoded in its genome.
+An organism’s biological features are largely encoded in its genome.
 The genome is typically defined as the complete set of genetic material (usually DNA) of an organism.
 DNA is a double-stranded helical molecule composed of four nucleotides: adenine (A), cytosine (C), guanine (G), and thymine (T).
 The strands are complementary: adenine pairs with thymine, and cytosine pairs with guanine (\cite{Alberts2022}).
 DNA serves as a template for RNA transcription, which can then be translated into proteins or function directly as RNA (e.g., regulatory RNAs).
 
-Genes are generally defined as regions of the genome that are transcribed to produce functional RNAs.
+Genes are generally defined as genomic regions transcribed into functional RNAs.
 For some RNAs, parts of the transcript are removed in a process known as splicing.
 The discarded segments are called introns, while the retained, coding parts are called exons.
 It is worth noting that only a small portion of the human genome is transcribed.
@@ -246,9 +243,9 @@ For example, in the GENCODE v47 annotation, exons span only about 6.5\% of the g
 
 Beyond clearly functional genomic elements (e.g., protein-coding genes),
 there are non-coding regions that are still functional, such as transcription promoter regions.
-Additionally, there are regions that are transcribed but whose function remains unknown or may be nonfunctional (e.g. transcribed pseudogenes).
+Additionally, there are regions that are transcribed but whose function remains unknown or may be nonfunctional (e.g., transcribed pseudogenes).
 
-Not all regions of the eukaryotic genome—particularly the human genome—are unique.
+Not all regions of the eukaryotic genome — especially the human genome — are unique.
 In humans, more than half of the genome consists of repetitive sequences (\cite{Liehr2021}).
 These were historically dismissed as 'junk', 'selfish', or 'parasitic' DNA.
 However, later studies have shown that repetitive sequences can serve structural roles
@@ -373,7 +370,7 @@ Additionally, the classification systems used in genome annotations may be parti
 For example, some pseudogenes, generally considered non-functional copies of functional genes,
 are transcribed and may have biological functions (\cite{Pei2012}).
 Similarly, the distinction between protein-coding and non-coding genes is debated, as many protein-coding loci generate both coding
-and non-coding transcripts, and numerous long non-coding RNAs (lncRNAs) contain potentially coding  open reading frames (ORFs) (\cite{Salzberg2019}).
+and non-coding transcripts, and numerous long non-coding RNAs (lncRNAs) contain potentially coding open reading frames (ORFs) (\cite{Salzberg2019}).
 
 \paragraph{Future perspectives of annotating genomes}
 
@@ -388,13 +385,13 @@ continued improvements in annotation methods remain a priority.
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/gencode.png}
-  \caption{Number of different genes in the gencode annotation during time. Figure taken from paper by \textcite{Guigo2023}}
+  \caption{Changes in the number of annotated genes in GENCODE over time. Figure taken from paper by \textcite{Guigo2023}}
   \label{fig:gencode}
 \end{figure}
 
-\section{Transcriptomic references for scRNAseq}
+\section{Transcriptomic references for scRNA-seq}
 
-Having a well-annotated genome does not solve all the challenges encountered during the mapping step.
+A well-annotated genome does not eliminate all challenges during read mapping.
 In simple terms, mapping algorithms determine the genomic location to which a sequence aligns,
 and if an annotated gene is present at that location, the read is assigned to that gene.
 However, there are cases where assigning a read to a gene is not straightforward,

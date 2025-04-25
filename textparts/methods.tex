@@ -93,7 +93,7 @@ can be seen in Figure \ref{fig:pipeline}, while the description is given below:
 
 \paragraph{Mapping and filtering bam files}
 Reads were mapped using STARsolo (\cite{Kaminow2021}), both from FASTQ and BAM input files.
-Parameters were used the same for all samples (see \href{https://github.com/JuozapasI/MasterThesis/}{GitHub repository}),
+The same parameters were used for all samples (see \href{https://github.com/JuozapasI/MasterThesis/}{GitHub repository}),
 except the ones regarding barcode structures
 (differences include number of barcodes, lengths of barcode/UMI sequences, and their positions in the primer).
 Filtering unassigned reads was done using \textit{awk}, taking those that have valid barcode
@@ -126,7 +126,7 @@ particularly \textit{rtracklayer} library.
 
 \paragraph{Extracting intergenic regions}
 
-The intergenic reads were extracted as described in the previous section (i.e. taked unassigned reads that do not overlap with any reference used)
+The intergenic reads were extracted as described in the previous section (i.e. taken unassigned reads that do not overlap with any reference used)
 and merged into clusters using \textit{bedtools merge} command.
 Clusters were filtered based on cluster size, requiring at least 5 reads per million (CPM),
 where CPM represents the normalized read count per million of total primary reads in the dataset
@@ -165,7 +165,7 @@ The matrices produced by STAR were filtered, allowing cells that have sufficient
 and only genes that were expressed in at least 3 cells.
 Also cells were filtered based on mitochondrial gene count (allowing up to 10\% of mitochondrial gene counts in a cell).
 Doublets were filtered using \textit{scrublet}.
-Afterwards, matrices were normalized (using \textit{normalize\_total} function from \textit{scanpy} package) and log-transformaed
+Afterwards, matrices were normalized (using \textit{normalize\_total} function from \textit{scanpy} package) and log-transformed
 (i.e. for each entry $x = log(x+1)$, \textit{log1p} function from \textit{scanpy}).
 
 Then only highly-variable genes (min\_mean=0.0125, max\_mean=3, min\_disp=0.5) were selected.
@@ -187,7 +187,7 @@ where $d_i$ is the difference between the ranks of corresponding values and $n$ 
 
 \paragraph{Oxford Nanopores data}
 
-Nanopores data were mapped using \textit{minimap2} algorithm and possible transcript structures was inferred using \textit{stringtie} tool.
+Nanopores data were mapped using \textit{minimap2} algorithm and possible transcript structures were inferred using \textit{stringtie} tool.
 
 \section{Enhancing transcriptomic reference}
 \label{sec:overlappers}
