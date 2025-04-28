@@ -385,8 +385,16 @@ Nonetheless, it is worth investigating whether some may represent meaningful seq
 
 To explore this, unmapped reads were aligned to viral genomes using the BLAST tool.
 Indeed, a small fraction (around 1–2\% of unmapped reads) mapped to viral genomes.
-The viral species to which reads mapped were consistent across samples, with most reads aligning to
-\textit{BeAn 58058 virus}, \textit{Human endogenous retrovirus K113}, and \textit{Aeribacillus phage AP45}.
+The viral species to which reads mapped were consistent across tissues (except \textit{PBMC\_indrops\_2} sample), with most reads aligning to
+\textit{BeAn 58058 virus}, \textit{Human endogenous retrovirus K113}, and \textit{Aeribacillus phage AP45} (see Figure \ref{fig:blast}).
 
 While it is difficult to draw definitive conclusions from this type of mapping,
 these findings suggest that scRNA-seq data is sufficiently sensitive to detect non-host transcripts even in healthy individuals.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{images/blast.png}
+  \caption{Unmapped reads include those that map to viral genomes.
+  Bar plots show the relative proportions of BLAST hits to viral species.}
+  \label{fig:blast}
+\end{figure}
