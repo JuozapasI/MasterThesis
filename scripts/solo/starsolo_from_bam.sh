@@ -22,7 +22,7 @@ STAR \
     --outSAMattributes NH HI nM AS CR UR CB UB sS sQ sM GX GN \
     --outSAMunmapped Within \
     --soloMultiMappers PropUnique \
-    --soloFeatures GeneFull \
+    --soloFeatures GeneFull GeneFull_ExonOverIntron GeneFull_Ex50pAS \
     --soloType CB_UMI_Simple \
     --soloUMIdedup Exact \
     --soloCBtype String \
