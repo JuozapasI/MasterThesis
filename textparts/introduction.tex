@@ -8,7 +8,7 @@ However, there are some reads that map to the genome but remain unassigned to an
 As a result, such reads are not used in downstream analysis.
 
 Since these unassigned reads can constitute a significant fraction of the total read count (often up to 30\%),
-understanding their origin could help improve scRNA-seq technologies and analysis.
+understanding their origin could help improve scRNA-seq data analysis.
 
 There are two potential sources of unassigned reads: either they are sequencing artifacts,
 or they originate from real transcripts that remain unassigned due to issues related to transcriptomic references.
@@ -16,12 +16,12 @@ or they originate from real transcripts that remain unassigned due to issues rel
 The two main challenges with transcriptomic references are:
 
 \begin{enumerate}
-  \item Incomplete transcriptome annotations –
+  \item Incomplete genomic annotations –
   even though great efforts have been made to annotate all genes, it is very likely that not all genes are annotated,
   and many remain to be found.
-  These unannotated genes are missed in the typical scRNA-seq analysis.
-  \item Complexity and overlaps in transcriptomic features – the genomes of humans and many other species are highly complex,
-   with many overlapping features.
+  Although potentially informative, reads from such regions are typically ignored in a standard scRNA-seq analysis.
+  \item Complexity and overlaps in transcriptomic features – the genomes of humans are highly complex,
+   with many overlapping features, such as genes, exons etc.
    In such cases, mapping algorithms assign multiple features for a given read, and such reads are usually discarded from downstream analysis.
 \end{enumerate}
 

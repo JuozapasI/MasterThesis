@@ -10,7 +10,7 @@ which laid the foundation for next-generation sequencing (NGS) technologies in u
 such as the widely used Illumina platform (\cite{Heather2016}).
 Current sequencing methods allow us to obtain the complete genetic sequence of any organism.
 However, the genome alone cannot explain the full diversity of cells in multicellular organisms,
-as all cells share the same genome but exhibit significant variation in shape, size, and function.
+as all somatic cells share the same genome but exhibit significant variation in shape, size, and function.
 
 RNA sequencing (RNA-seq), on the other hand, enables the measurement of gene expression within cells,
 providing valuable insights into cellular processes.
@@ -46,7 +46,7 @@ or plate-based methods such as CEL-Seq2 (\cite{Hashimshony2016}) and Smart-seq2 
 In this project, datasets generated using droplet-based 3' end sequencing methods were analyzed.
 Therefore, these methods will be the focus of the following literature review.
 
-\paragraph{3' End Sequencing and Polyadenylation}
+\paragraph{3' End Sequencing}
 
 3' end sequencing captures RNA molecules using primers complementary to poly(A) tails.
 Polyadenylation at the 3' end is a post-transcriptional modification
@@ -70,9 +70,11 @@ Primers used in these protocols typically share a common structure, including:
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/indropsDevice.jpg}
-  \caption{An example of microfluidics device for droplet generation (inDrops).
+  \caption{An example of microfluidics device for droplet generation.
   A) Schematic view of the device.
+  The device has four inlets (for RT mix, cells, barcoding hydrogels and oil) and one outlet for droplet collection.
   B) Snapshots of droplet generation and collection.
+  Blue arrows indicate hydrogels, red arrows indicate cells, black ones – flow direction.
   C) Scheme of droplet generation.
   Figure taken from \textcite{Klein2015}.}
   \label{fig:inDropsDevice}
@@ -80,28 +82,31 @@ Primers used in these protocols typically share a common structure, including:
 
 \begin{itemize}
   \item \textbf{Cell barcodes:} Unique sequences that identify the cell from which a particular read originates (since all droplets are pooled and sequenced together).
-  \item \textbf{Unique molecular identifiers (UMIs):} Short sequences used to quantify the original number of RNA molecules, helping to eliminate amplification bias.
+  \item \textbf{Unique molecular identifiers (UMIs):} Short sequences compromised of random nucleotides which are
+  used to quantify the original number of RNA molecules, helping to eliminate amplification bias.
   \item \textbf{PCR handles:} Sequences that facilitate amplification.
   \item \textbf{Poly-T sequences}: In 3' end sequencing methods are used to selectively capture polyadenylated RNAs (\cite{Zhang2019}).
 \end{itemize}
 An example of primer design is shown in Figure \ref{fig:inDropsPrimer}.
-Once cells are encapsulated in droplets, lysis occurs, releasing RNA, which is then captured by the primers.
+
+Once cells are encapsulated in droplets, lysis occurs, releasing RNA that is captured by barcoded primers.
+When the primers hybridize to the RNA molecules, reverse transcription takes place, generating barcoded cDNA.
+The emulsion is then broken, and the cDNA is amplified in bulk (typically using PCR) (\cite{Klein2015, Zheng2017}).
+After amplification, the cDNA is processed to be compatible with the chosen sequencing platform.
+For short-read Illumina sequencing, this involves cDNA purification, fragmentation, and ligation of Illumina-compatible adapters.
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/primer.png}
-  \caption{Primer design in the inDrops protocol..
+  \caption{Primer design in the inDrops protocol.
   The image above shows schematic view, while below is given example with sequences.
   The structure of primers varies between the protocols, the main parts (UMI site, barcodes, poly-T's)
   are found in most of them.
-  Here also present are promoter region for RNA polymerase (red), sequencing primer (blue), synthesis adaptor (dark brown).
+  Here also present are promoter region for RNA polymerase (red), sequencing primer (blue), synthesis adapter (dark brown).
   Figure taken from \textcite{Klein2015}.}
   \label{fig:inDropsPrimer}
 \end{figure}
 
-Depending on the method, reverse transcription may occur within the droplets
-(as in inDrops and 10X Genomics) or in bulk (as in Drop-seq).
-Subsequent steps typically include RNA fragmentation, PCR amplification, and next-generation sequencing (NGS).	
 
 \subsection{scRNA-seq data analysis}
 
@@ -110,11 +115,12 @@ Subsequent steps typically include RNA fragmentation, PCR amplification, and nex
 The output from NGS machines is typically converted to FASTQ files, containing recorded sequences,
 as well as (depending on method) barcode and UMI sequences, and quality scores.
 The subsequent processing steps include quality control of FASTQ file (based on quality scores),
-filtering duplicate reads (using UMIs), mapping reads to the genome sequence, assigning the reads to the genes,
+mapping reads to the genome sequence, assigning the reads to the genes, filtering duplicate reads
+(reads having the same UMIs, cell barcodes and assigned to the same gene are considered duplicates),
 and finally, counting gene expression per cell (barcode) (\cite{Heumos2023}) (see figure \ref{fig:rawData}).
 Usually, all these steps are performed with a single piece of dedicated software,
 such as STARsolo (\cite{Kaminow2021}), CellRanger (\cite{Zheng2017}) or other.
-It should be noted, that there are variations in the pipeline described above,
+The pipeline described above might vary,
 depending on many experiment-related (e.g., whether the genome sequence or transcriptone of the study organism is known),
 or method-related (e.g., whether UMIs are used in the protocol) factors.
 The typical result of such processing is cell-gene matrix (i.e., a matrix where rows represent cells,
@@ -123,13 +129,16 @@ columns represent genes, and each entry indicates the number of captured RNAs fo
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/rawdata.png}
-  \caption{Inputs and outputs of mapping software.}
+  \caption{The process of mapping raw sequencing reads (fastq file) requires genome sequence (fasta file) and
+  transcriptomic reference (gtf file).
+  The mapping software then alligns reads to the genome, and if there are genes present, to the genes.
+  Later the reads per cell are counted (using cell barcodes) and cell-gene matrix is constructed.}
   \label{fig:rawData}
 \end{figure}
 
 \paragraph{Cell-gene matrix processing}
 
-The next steps in the analysis of the scRNA-seq data involve following steps (see Figure \ref{fig:dataAnalysis} for graphical summary):
+The next steps in the analysis of the scRNA-seq data include following (see Figure \ref{fig:dataAnalysis} for graphical summary):
 
 \begin{figure}
   \centering
@@ -144,7 +153,7 @@ The next steps in the analysis of the scRNA-seq data involve following steps (se
 
 \begin{itemize}
   \item \textbf{Quality control}
-The quality of indidual cells (represented as all reads harboring a unique barcode)
+The quality of individual cells (represented as all reads harboring a unique barcode)
 can be evaluated based on several factors, such as mitochondrial gene content
 (apoptotic cells tend to have a higher proportion of mitochondrial transcripts (\cite{Heumos2023})) or
 total number of captured genes (very low numbers can be produced by ambient RNA entering empty droplets).
@@ -153,7 +162,7 @@ producing a count matrix row that reflects the combined gene expression of both 
 Such matrix entries (doublets) can be filtered by using specialized software
 such as Scrublet (\cite{Wolock2019}) or scDblFinder (\cite{Germain2022}).
 Another source of noise in scRNA-seq data is ambient RNA,
-which consists of RNA that escapes individual droplets and spreads into the medium or other droplets,
+which consists of cell-free RNA (e.g. RNA that escaped dying cells) that spreads in the cell medium and is subsequently encapsulated in droplets,
 leading to background noise.
 Even though the amount of such RNA is not high (in good quality datasets it can be around 2\% (\cite{Young2020})),
 removing these RNAs from the count matrix can improve data quality.
@@ -161,10 +170,11 @@ This can be achieved by identifying the background noise profile from empty drop
 adjusting the count matrix accordingly.
 There are dedicated softwares,
 such as SoupX (\cite{Young2020}), decontX (\cite{Yang2020}), CellBender (\cite{Fleming2023}) and others.
+
   \item \textbf{Normalization}
 The next step in preprocessing pipeline is normalization.
-The goal of normalization is to transform the data so that the variation in gene expression levels is comparable,
-making subsequent analysis more efficient (\cite{Ahlmann2023}).
+The goal of normalization is to transform the data so that the variation in gene expression levels is comparable.
+This is important as standard statistical methods work best for data with uniform variance (\cite{Ahlmann2023}).
 Normalization can also help eliminate biases,
 such as differences in sequencing depth when combining data from multiple samples (\cite{Lingen2024}).
 There are numerous normalization methods, based on different approaches
@@ -176,27 +186,29 @@ Sophisticated methods do not necessarily show better results, and a recent bench
 has shown that simpler method (particularly the logarithm normalization,
 where each element $y$ of the count matrix is transformed by formula $y_{transformed} = log(y+1)$)
 performs as well or better than more advanced methods.
-\item \textbf{Filtering genes}
-Once the data is normalized and cleaned, one can filter out non-informative genes.
-Initially, count matrices contain all the genes that are present in the transcriptome.
-However, not all of them are expressed in the sequenced data, or are expressed in negligible numbers (\cite{Heumos2023}).
+
+  \item \textbf{Filtering genes}
+While all genes are biologically meaningful, not all are informative for statistical analysis.
+Initially, count matrices contain all the genes that are present in the transcriptomic reference.
+However, not all of them are expressed in the sequenced cells, or are expressed in negligible numbers (\cite{Heumos2023}).
 Therefore, it is common practice to filter such genes (e.g., genes that are expressed in less than three cells).
-Moreover, some genes might be expressed in all the cells more or less evenly (housekeeping genes),
-which do not provide useful information that could be useful in, for instance, grouping cells or determining cell types.
+Moreover, some genes (typically referred as housekeeping) are expressed relatively uniformly across all cells
+and therefore offer little discriminatory power for tasks like cell clustering or type identification.
 Therefore, in many applications, it is beneficial to leave only those genes, that are highly variable between cells.
-In such way, the dimensionality of the count matrix is greatly reduced without loosing significant information.
+In such way, the dimensionality of the count matrix is greatly reduced without losing significant information.
 Additionally, genes that are outside the scope of the specific study can also be filtered out.
-\item \textbf{Dimensionality reduction}
+
+  \item \textbf{Dimensionality reduction}
 Even after filtering and selecting only highly variable genes, several thousand genes usually remain.
 It is not feasible to visualize (and hard to interpret in general) data of such high dimensionality, therefore,
 dimensionality reduction is essential step of subsequent analysis.
 The idea of dimensionality reduction is simple:
-to reduce the dimensions of the data loosing as little information as possible.
+to reduce the dimensions of the data losing as little information as possible.
 There are a number of dimensionality reduction methods based on different mathematical concepts,
 but the most widely used today include
 t-SNE (\cite{Hinton2002}), UMAP (\cite{McInnes2018}) and principal component analysis (PCA).
 Although the use of these algorithms are supported by some benchmarking studies
-(in the study of \textcite{Xiang2021}, t-SNE was showed best performance, while UMAP showed the highest stability),
+(the study of \textcite{Xiang2021} have shown that t-SNE has best performance, while UMAP is the most stable),
 other benchmarking studies report different findings.
 The study of \textcite{Koch2021} suggested that such overlooked methods as
 latent Dirichlet allocation (LDA) and PHATE are among the best performing
@@ -218,22 +230,19 @@ Clustering is usually followed by cell annotation (i.e., assigning cell type to 
 which is done by finding cell type specific markers
 or using automatic (machine learning) tools such as CellTypist (\cite{Dom2022}).
 The subsequent steps in the analysis depend on the focus of the particular study and can include
-differential gene expression (dge) analysis,
+differential gene expression (DGE) analysis,
 investigation of the dynamics of cellular systems (RNA velocity, pseudotime),
 inferring gene regulatory networks (GRNs), and more.
 \end{itemize}
 
 The described analysis pipeline enables insights into multicellular systems.
-All downstream analyses rely heavily on the initial processing steps, particularly read mapping, which depends on the transcriptomic reference. 
+However, all downstream analyses critically depend on the accuracy of the initial processing steps,
+especially read mapping, which in turn relies on the quality of the transcriptomic reference.
 In the next sections, I will shortly introduce genome biology and further expand on transcriptomic references.
 
 \section{Genome biology}
 
-An organism’s biological features are largely encoded in its genome.
-The genome is typically defined as the complete set of genetic material (usually DNA) of an organism.
-DNA is a double-stranded helical molecule composed of four nucleotides: adenine (A), cytosine (C), guanine (G), and thymine (T).
-The strands are complementary: adenine pairs with thymine, and cytosine pairs with guanine (\cite{Alberts2022}).
-DNA serves as a template for RNA transcription, which can then be translated into proteins or function directly as RNA (e.g., regulatory RNAs).
+The 
 
 Genes are generally defined as genomic regions transcribed into functional RNAs.
 For some RNAs, parts of the transcript are removed in a process known as splicing.
