@@ -196,7 +196,6 @@ Moreover, some genes (typically referred as housekeeping) are expressed relative
 and therefore offer little discriminatory power for tasks like cell clustering or type identification.
 Therefore, in many applications, it is beneficial to leave only those genes, that are highly variable between cells.
 In such way, the dimensionality of the count matrix is greatly reduced without losing significant information.
-Additionally, genes that are outside the scope of the specific study can also be filtered out.
 
   \item \textbf{Dimensionality reduction}
 Even after filtering and selecting only highly variable genes, several thousand genes usually remain.
@@ -238,15 +237,95 @@ inferring gene regulatory networks (GRNs), and more.
 The described analysis pipeline enables insights into multicellular systems.
 However, all downstream analyses critically depend on the accuracy of the initial processing steps,
 especially read mapping, which in turn relies on the quality of the transcriptomic reference.
-In the next sections, I will shortly introduce genome biology and further expand on transcriptomic references.
+In the following sections, I will shortly introduce genome biology and further expand on transcriptomic references.
 
 \section{Genome biology}
 
-The 
+The RNA molecules captured in scRNA-seq experiments reflect the transcriptional output of the genome
+and provide a natural link to the underlying gene structure and regulation.
+RNA is considered either a final or intermediate gene product,
+depending on whether the gene encodes a functional RNA or a protein.
+Genes are typically defined as genomic loci transcribed into functional RNA molecules.
 
-Genes are generally defined as genomic regions transcribed into functional RNAs.
-For some RNAs, parts of the transcript are removed in a process known as splicing.
-The discarded segments are called introns, while the retained, coding parts are called exons.
+In eukaryotes, primary transcripts often undergo \textit{splicing},
+a process in which segments called \textit{introns} are removed
+and \textit{exons} are joined to form the mature RNA (see Figure \ref{fig:gene}).
+While introns are not retained in the final transcript, they can contribute to gene regulation,
+affecting the rate of transcription, nuclear export, and transcript stability (\cite{Shaul2017}).
+Importantly, the classification of exons and introns is transcript-specific:
+due to alternative splicing, a genomic region may be exonic in one transcript and intronic in another.
+
+Exons that encode the amino acid sequence of proteins are referred to as \textit{coding sequences} (CDS),
+while non-coding exons may contribute regulatory elements.
+A typical protein-coding gene includes \textit{untranslated regions} (UTRs) at both the 5' and 3' ends.
+Although UTRs do not encode proteins, they are functionally important,
+influencing mRNA localization, stability, and translation (\cite{Mayr2018, Hinnebusch2016}).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\linewidth]{images/gene.jpg}
+  \caption{Schematics showing an example of gene structure.
+  A) A genomic region of protein coding gene.
+  It consist of 6 exons, of which 3rd, 4th and 5th are completely CDS, 2nd and 6th contain both CDS and UTR,
+  and 1st is completely non-coding (5' end UTR).
+  B) The mature RNA of protein-coding transcript represented in (A).
+  C) The mature long non-coding RNA consists of only non-coding exons.
+  Figure taken from \textcite{Aspden2023}.}
+  \label{fig:gene}
+\end{figure}
+
+\paragraph{Transcription regulation}
+
+Transcription is a tightly regulated process, as different cell types require the expression of distinct sets of genes.
+This regulation is largely governed by non-coding DNA regions, particularly promoters and enhancers.
+
+Promoters are DNA elements located near the transcription start sites of genes,
+serving as binding platforms for RNA polymerase and other components of the transcriptional machinery.
+Their activity depends on the presence and availability
+of specific transcription factors (TFs) in the nucleus (\cite{Cramer2019}).
+
+Enhancers are another class of regulatory elements that can influence transcription from a distance,
+often located hundreds of kilobases or even over a megabase away from their target genes (\cite{Furlong2018}).
+They function by recruiting transcription factors and coactivators,
+facilitating chromatin looping or condensate formation to bring them into physical proximity with promoters,
+thereby increasing transcriptional activity in a context-dependent manner (\cite{Kittle2025}).
+
+As mentioned above, transcription factors play important role in the transcri[tion regulation.
+They are proteins that bind to specific DNA sequences and modulate transcriptional activity.
+Some transcription factors directly recruit RNA polymerases to the promoter, while others act indirectly by recruiting
+cofactors that influence chromatin accessibility or promote distinct phases of the transcription cycle (\cite{Lambert2018}).
+
+\paragraph{Chromatin}
+
+For RNA polymerases to access DNA, the structural organization of the genome is critical.
+This organization is governed by chromatin, a dynamic complex of DNA and histone proteins
+that compacts and regulates the eukaryotic genome within the nucleus.
+Its fundamental unit, the nucleosome, consists of approximately 147 base pairs of DNA wrapped around a histone octamer,
+allowing both efficient packaging and regulatory control (\cite{Alberts2022}).
+
+Chromatin exists along a continuum of conformational states, ranging from tightly packed heterochromatin,
+which is generally transcriptionally silent, to more relaxed euchromatin, which is associated with active transcription.
+Accessible chromatin refers to regions where DNA is less tightly associated with histones,
+allowing interaction with transcription factors and other regulatory proteins.
+Although such accessible regions comprise only 2–3\% of the genome,
+they harbor over 90\% of known transcription factor binding sites (\cite{Klemm2019}).
+
+Genome-wide assays such as ATAC-seq and DNase-seq are widely used to map chromatin accessibility,
+providing insight into regulatory landscapes and cell-type-specific transcriptional programs (\cite{Minnoye2021}).
+
+\paragraph{Gene types}
+
+Transcribed RNA molecules have very different functions and fates, hence a classification is needed.
+The most broad classification defines genes as either protein-coding or non-coding.
+The protein coding genes is the most studied group of genes, most have common features,
+such as 3' and 5' UTRs, open reading frames (ORFs).
+They encode 
+
+
+
+
+\iffalse
+
 It is worth noting that only a small portion of the human genome is transcribed.
 For example, in the GENCODE v47 annotation, exons span only about 6.5\% of the genome sequence.
 
@@ -262,35 +341,9 @@ or contribute to genomic stability through redundancy (\cite{Shapiro2005}).
 Many of these repeats originate from transposons — mobile genetic elements capable of copying or repositioning themselves within the genome.
 Although transposons were initially considered parasitic,
 growing evidence suggests they play a generative role in genome evolution and should not be dismissed as 'junk' DNA (\cite{Fedoroff2012}).
+\fi 
 
-\paragraph{Transcription}
 
-Transcription is carried out by RNA polymerases—enzymes that synthesize RNA molecules from a DNA template.
-This process can be divided into three stages:
-\begin{itemize}
-  \item \textbf{Initiation} – RNA polymerase recognizes the promoter region at the start of a gene and binds to it.
-  The enzyme then unwinds the DNA duplex, begins RNA synthesis, and escapes the promoter (\cite{Cramer2019}).
-  \item \textbf{Elongation} – RNA polymerase moves along the DNA template, synthesizing the RNA molecule.
-  \item \textbf{Termination} – Upon encountering a termination signal,
-  the polymerase detaches from the DNA and releases the completed RNA molecule, marking the end of transcription (\cite{Lodish2021}).
-\end{itemize}
-Each of these steps involves additional proteins and RNA molecules, collectively known as transcription factors.
-For example, RNA polymerases cannot independently recognize promoter sequences,
-instead, specific transcription factors are required to recruit the polymerase to the promoter (\cite{Cramer2019}).
-
-\paragraph{Chromatin}
-
-Chromatin is a dynamic complex of DNA and histone proteins that packages the eukaryotic genome within the nucleus.
-Its fundamental unit, the nucleosome, comprises approximately 147 base pairs of DNA wrapped around a histone octamer,
-enabling efficient genome compaction and regulation (\cite{Alberts2022}).
-Chromatin exists in a spectrum of conformational states, from tightly packed heterochromatin (generally transcriptionally inactive)
-to more relaxed euchromatin (transcriptionally active).
-Accessible chromatin refers to regions where DNA is less tightly associated with histones,
-permitting interactions with transcription factors and other regulatory proteins.
-Although accessible chromatin constitutes only 2–3\% of the total genome sequence,
-it accounts for over 90\% of known transcription factor binding sites (\cite{Klemm2019}).
-Techniques such as ATAC-seq and DNase-seq are widely used to map these regions,
-offering insights into gene regulation and cellular identity (\cite{Minnoye2021}).
 
 \paragraph{Non-coding RNAs}
 
