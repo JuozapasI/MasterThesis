@@ -269,12 +269,12 @@ influencing mRNA localization, stability, and translation (\cite{Mayr2018, Hinne
   It consist of 6 exons, of which 3rd, 4th and 5th are completely CDS, 2nd and 6th contain both CDS and UTR,
   and 1st is completely non-coding (5' end UTR).
   B) The mature RNA of protein-coding transcript represented in (A).
-  C) The mature long non-coding RNA consists of only non-coding exons.
+  C) The mature long non-coding RNA consists of non-coding exons only.
   Figure taken from \textcite{Aspden2023}.}
   \label{fig:gene}
 \end{figure}
 
-\paragraph{Transcription regulation}
+\paragraph{Transcription}
 
 Transcription is a tightly regulated process, as different cell types require the expression of distinct sets of genes.
 This regulation is largely governed by non-coding DNA regions, particularly promoters and enhancers.
@@ -290,10 +290,26 @@ They function by recruiting transcription factors and coactivators,
 facilitating chromatin looping or condensate formation to bring them into physical proximity with promoters,
 thereby increasing transcriptional activity in a context-dependent manner (\cite{Kittle2025}).
 
-As mentioned above, transcription factors play important role in the transcri[tion regulation.
+As mentioned above, transcription factors play important role in the transcription regulation.
 They are proteins that bind to specific DNA sequences and modulate transcriptional activity.
 Some transcription factors directly recruit RNA polymerases to the promoter, while others act indirectly by recruiting
 cofactors that influence chromatin accessibility or promote distinct phases of the transcription cycle (\cite{Lambert2018}).
+
+Transcription of many genes does not occur as a continuous, uniform process but rather in discrete bursts.
+This phenomenon, known as transcriptional bursting,
+involves episodic periods of transcriptional activity interspersed with silent intervals.
+Bursting is a key contributor to cell-to-cell variability in gene expression,
+or transcriptional noise, especially in genes with low expression levels.
+The frequency and size of these bursts can be modulated by promoter architecture,
+enhancer activity, chromatin state, and TF binding dynamics (\cite{Hebenstreit2024}).
+
+In addition to dynamic regulation, the transcription process is inherently prone to errors.
+RNA polymerase can misincorporate nucleotides, leading to transient errors in RNA sequences (\cite{Gordon2015}).
+Although these transcription errors are not propagated across cell generations like DNA mutations,
+they can affect the function of transcripts and proteins, particularly in highly expressed or functionally sensitive genes.
+Sources of transcription errors include polymerase infidelity, sequence context, and stress conditions, among others.
+Some transcription errors may even lead to the production of neoepitopes or trigger RNA surveillance pathways,
+highlighting their potential biological consequences (\cite{Sun2025}).
 
 \paragraph{Chromatin}
 
@@ -313,39 +329,18 @@ they harbor over 90\% of known transcription factor binding sites (\cite{Klemm20
 Genome-wide assays such as ATAC-seq and DNase-seq are widely used to map chromatin accessibility,
 providing insight into regulatory landscapes and cell-type-specific transcriptional programs (\cite{Minnoye2021}).
 
-\paragraph{Gene types}
+\paragraph{Protein coding genes}
 
-Transcribed RNA molecules have very different functions and fates, hence a classification is needed.
-The most broad classification defines genes as either protein-coding or non-coding.
-The protein coding genes is the most studied group of genes, most have common features,
-such as 3' and 5' UTRs, open reading frames (ORFs).
-They encode 
+Transcribed RNA molecules vary widely in their functions and biological roles.
+A fundamental classification distinguishes genes as either protein-coding or non-coding.
+Protein-coding genes are the most extensively studied and typically share common structural features,
+including 5' and 3' UTRs and an open reading frame (ORF), which is translated into a polypeptide.
+Their expression and processing follow the classical central dogma of molecular biology:
+DNA is transcribed to RNA, which later is converted to protein.
+Current annotations
+converge on an estimate of approximately 20,000 protein-coding genes in the human genome (\cite{Amaral2023}).
 
-
-
-
-\iffalse
-
-It is worth noting that only a small portion of the human genome is transcribed.
-For example, in the GENCODE v47 annotation, exons span only about 6.5\% of the genome sequence.
-
-Beyond clearly functional genomic elements (e.g., protein-coding genes),
-there are non-coding regions that are still functional, such as transcription promoter regions.
-Additionally, there are regions that are transcribed but whose function remains unknown or may be nonfunctional (e.g., transcribed pseudogenes).
-
-Not all regions of the eukaryotic genome — especially the human genome — are unique.
-In humans, more than half of the genome consists of repetitive sequences (\cite{Liehr2021}).
-These were historically dismissed as 'junk', 'selfish', or 'parasitic' DNA.
-However, later studies have shown that repetitive sequences can serve structural roles
-or contribute to genomic stability through redundancy (\cite{Shapiro2005}).
-Many of these repeats originate from transposons — mobile genetic elements capable of copying or repositioning themselves within the genome.
-Although transposons were initially considered parasitic,
-growing evidence suggests they play a generative role in genome evolution and should not be dismissed as 'junk' DNA (\cite{Fedoroff2012}).
-\fi 
-
-
-
-\paragraph{Non-coding RNAs}
+\paragraph{Non-coding genes}
 
 As mentioned earlier, not all transcribed RNAs are translated into proteins.
 In fact, a substantial portion of the genome is transcribed into non-coding RNAs, which include a wide range of functional RNA types.
@@ -353,10 +348,10 @@ Among these, long non-coding RNAs (lncRNAs) have emerged as a major output of co
 These RNAs are typically longer than 200 nucleotides and are not translated into proteins, yet they participate in essential biological processes.
 
 Non-coding RNAs can serve both housekeeping and regulatory roles.
-Housekeeping ncRNAs include rRNAs, tRNAs, and small nuclear RNAs, while regulatory ncRNAs—particularly lncRNAs —
+Housekeeping ncRNAs include rRNAs, tRNAs, and small nuclear RNAs, while regulatory ncRNAs
 are involved in gene expression regulation, chromatin remodeling, RNA splicing, translation, and even phase separation in the nucleus.
-lncRNAs are often transcribed from intergenic regions, but they can also arise from introns,
-antisense strands, pseudogenes, and enhancers (\cite{Poliseno2024}).
+Long non-coding RNAs (lncRNAs) are often transcribed from genomic regions located between protein-coding genes,
+but they can also arise from introns, antisense strands of other genes, pseudogenes, and enhancers (\cite{Poliseno2024}).
 
 These RNAs tend to be expressed in a cell type-specific and developmentally regulated manner, contributing to lineage specification,
 tissue identity, and responses to environmental cues.
@@ -367,6 +362,28 @@ as integral to the spatial and temporal organization of gene regulation during d
 
 Given their diversity and specificity, the biological importance of non-coding RNAs—especially lncRNAs —
 is increasingly appreciated, and many are now considered as genes with crucial regulatory roles in development, physiology, and disease.
+
+\paragraph{Other genome components}
+
+The previously described functional elements account for only a fraction of the genome.
+For example, in the GENCODE v47 annotation, exons span approximately 6.5\% of the human genome sequence.
+
+A large portion of the genome is composed of repetitive sequences, which are not unique.
+In humans, more than 50\% of the genome consists of various classes of repeats (\cite{Liehr2021}).
+These were historically referred to as junk, selfish, or parasitic DNA.
+However, subsequent research has revealed that many repetitive elements have
+structural, regulatory, or evolutionary functions.
+Some contribute to genome stability by providing redundancy or scaffolding,
+while others influence gene expression or chromatin structure (\cite{Shapiro2005}).
+
+A substantial fraction of these repeats originate from transposable elements (transposons) —
+mobile DNA sequences capable of moving or copying themselves within the genome.
+Once thought to be purely parasitic, transposons are now recognized for their generative role in genome evolution,
+and are increasingly viewed as integral components of genome architecture (\cite{Fedoroff2012}).
+
+Other repetitive structures include centromeres and telomeres,
+which are composed of tandem repeats and play essential roles in chromosome segregation and end protection, respectively,
+during DNA replication and cell division (\cite{Alberts2022}).
 
 \section{Genome annotation}
 
