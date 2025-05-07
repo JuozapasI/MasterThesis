@@ -29,8 +29,8 @@ providing high-resolution insights into cellular systems.
 Current scRNA-seq methods enable the generation of transcriptomic profiles from thousands of cells
 at unprecedented resolution in a single experiment.
 These data can be used for constructing cellular atlases (\cite{Rozenblatt2017}),
-understanding disease mechanisms (\cite{Zhang2024}),
-exploring cell differentiation and developmental processes (\cite{Skinner2024}), among other applications.
+understanding disease mechanisms (\cite{Galen2019}),
+exploring cell differentiation and developmental processes (\cite{Chu2016}), among other applications.
 
 \section{scRNA-seq data generation and analysis}
 
@@ -49,15 +49,9 @@ Therefore, these methods will be the focus of the following literature review.
 \paragraph{3' End Sequencing}
 
 3' end sequencing captures RNA molecules using primers complementary to poly(A) tails.
-Polyadenylation at the 3' end is a post-transcriptional modification
-in which non-templated adenosines are added to the 3' end of mRNA molecules.
-Although the poly(A) tail is present in almost all mRNAs,
-its length varies and can influence mRNA fate, stability, and translation efficiency (\cite{Brouze2022}).
-
-3' end sequencing protocols exploit this feature to selectively capture RNA molecules,
-enabling high-throughput and cost-effective sequencing.
-However, some RNA molecules lack poly(A) tails and are therefore not captured by these methods,
-such as replication-dependent histone mRNAs (\cite{Brouze2022}).
+Polyadenylation is a post-transcriptional modification in which non-templated adenosines are added to the 3' end of RNA molecules.
+Although poly(A) tail length can vary, it is present in nearly all mature RNAs (\cite{Brouze2022}),
+enabling 3' end sequencing protocols to selectively capture transcripts in a high-throughput and cost-effective manner.
 
 \paragraph{Common Steps in scRNA-seq Protocols}
 
@@ -82,7 +76,7 @@ Primers used in these protocols typically share a common structure, including:
 
 \begin{itemize}
   \item \textbf{Cell barcodes:} Unique sequences that identify the cell from which a particular read originates (since all droplets are pooled and sequenced together).
-  \item \textbf{Unique molecular identifiers (UMIs):} Short sequences compromised of random nucleotides which are
+  \item \textbf{Unique molecular identifiers (UMIs):} Short sequences comprised of random nucleotides which are
   used to quantify the original number of RNA molecules, helping to eliminate amplification bias.
   \item \textbf{PCR handles:} Sequences that facilitate amplification.
   \item \textbf{Poly-T sequences}: In 3' end sequencing methods are used to selectively capture polyadenylated RNAs (\cite{Zhang2019}).
@@ -116,8 +110,8 @@ The output from NGS machines is typically converted to FASTQ files, containing r
 as well as (depending on method) barcode and UMI sequences, and quality scores.
 The subsequent processing steps include quality control of FASTQ file (based on quality scores),
 mapping reads to the genome sequence, assigning the reads to the genes, filtering duplicate reads
-(reads having the same UMIs, cell barcodes and assigned to the same gene are considered duplicates),
-and finally, counting gene expression per cell (barcode) (\cite{Heumos2023}) (see figure \ref{fig:rawData}).
+(reads having the same UMIs, cell barcodes and assigned to the same gene are considered to be duplicates),
+and finally, counting gene expression per cell (barcode) (\cite{Heumos2023}) (see Figure \ref{fig:rawData}).
 Usually, all these steps are performed with a single piece of dedicated software,
 such as STARsolo (\cite{Kaminow2021}), CellRanger (\cite{Zheng2017}) or other.
 The pipeline described above might vary,
@@ -129,8 +123,8 @@ columns represent genes, and each entry indicates the number of captured RNAs fo
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/rawdata.png}
-  \caption{The process of mapping raw sequencing reads (fastq file) requires genome sequence (fasta file) and
-  transcriptomic reference (gtf file).
+  \caption{The process of mapping raw sequencing reads (FASTQ file) requires genome sequence (FASTA file) and
+  transcriptomic reference (GTF file).
   The mapping software then alligns reads to the genome, and if there are genes present, to the genes.
   Later the reads per cell are counted (using cell barcodes) and cell-gene matrix is constructed.}
   \label{fig:rawData}
@@ -241,8 +235,7 @@ In the following sections, I will shortly introduce genome biology and further e
 
 \section{Genome biology}
 
-The RNA molecules captured in scRNA-seq experiments reflect the transcriptional output of the genome
-and provide a natural link to the underlying gene structure and regulation.
+The RNA molecules captured in scRNA-seq experiments reflect the transcriptional output of the genome.
 RNA is considered either a final or intermediate gene product,
 depending on whether the gene encodes a functional RNA or a protein.
 Genes are typically defined as genomic loci transcribed into functional RNA molecules.
@@ -265,11 +258,11 @@ influencing mRNA localization, stability, and translation (\cite{Mayr2018, Hinne
   \centering
   \includegraphics[width=0.9\linewidth]{images/gene.jpg}
   \caption{Schematics showing an example of gene structure.
-  A) A genomic region of protein coding gene.
-  It consist of 6 exons, of which 3rd, 4th and 5th are completely CDS, 2nd and 6th contain both CDS and UTR,
-  and 1st is completely non-coding (5' end UTR).
+  A) A genomic region of a protein-coding gene.
+  It consists of 6 exons: the 3rd, 4th, and 5th are entirely CDS; the 2nd and 6th contain both CDS and UTR;
+  and the 1st is entirely non-coding (5' UTR).
   B) The mature RNA of protein-coding transcript represented in (A).
-  C) The mature long non-coding RNA consists of non-coding exons only.
+  C) The mature long non-coding RNA consists solely of non-coding exons.
   Figure taken from \textcite{Aspden2023}.}
   \label{fig:gene}
 \end{figure}
@@ -290,10 +283,9 @@ They function by recruiting transcription factors and coactivators,
 facilitating chromatin looping or condensate formation to bring them into physical proximity with promoters,
 thereby increasing transcriptional activity in a context-dependent manner (\cite{Kittle2025}).
 
-As mentioned above, transcription factors play important role in the transcription regulation.
-They are proteins that bind to specific DNA sequences and modulate transcriptional activity.
-Some transcription factors directly recruit RNA polymerases to the promoter, while others act indirectly by recruiting
-cofactors that influence chromatin accessibility or promote distinct phases of the transcription cycle (\cite{Lambert2018}).
+TFs are proteins that bind specific DNA sequences to modulate transcriptional output.
+Some directly recruit RNA polymerase, while others function by recruiting cofactors
+that alter chromatin accessibility or facilitate specific phases of the transcription cycle (\cite{Lambert2018}).
 
 Transcription of many genes does not occur as a continuous, uniform process but rather in discrete bursts.
 This phenomenon, known as transcriptional bursting,
@@ -326,17 +318,32 @@ allowing interaction with transcription factors and other regulatory proteins.
 Although such accessible regions comprise only 2–3\% of the genome,
 they harbor over 90\% of known transcription factor binding sites (\cite{Klemm2019}).
 
+Chromatin also contributes to the higher-order three-dimensional (3D) organization of the genome.
+This structure is not random but is hierarchically organized across multiple scales.
+For instance, individual chromosomes occupy distinct territories within the nucleus,
+with their positioning correlating with gene activity and cell-type-specific functions.
+Within these territories, genomic regions are further organized into topologically associating domains (TADs),
+which facilitate or restrict interactions between enhancers, promoters, and other regulatory elements.
+Such spatial organization plays a crucial role in gene regulation,
+including long-range interactions between loci on the same or even different chromosomes (\cite{Elimelech2020}).
+
 Genome-wide assays such as ATAC-seq and DNase-seq are widely used to map chromatin accessibility,
 providing insight into regulatory landscapes and cell-type-specific transcriptional programs (\cite{Minnoye2021}).
 
+\paragraph{Gene classification}
+
+RNA transcripts vary in function and biological role.
+A foundational classification distinguishes genes as either protein-coding or non-coding.
+While this binary distinction remains common, it is increasingly seen as oversimplified.
+Protein-coding genes can yield non-coding isoforms, and some non-coding genes contain small open reading frames (sORFs)
+that are translated into functional peptides (\cite{Poliseno2024}).
+
 \paragraph{Protein coding genes}
 
-Transcribed RNA molecules vary widely in their functions and biological roles.
-A fundamental classification distinguishes genes as either protein-coding or non-coding.
 Protein-coding genes are the most extensively studied and typically share common structural features,
 including 5' and 3' UTRs and an open reading frame (ORF), which is translated into a polypeptide.
 Their expression and processing follow the classical central dogma of molecular biology:
-DNA is transcribed to RNA, which later is converted to protein.
+DNA is transcribed to mRNA, which later is translated to protein.
 Current annotations
 converge on an estimate of approximately 20,000 protein-coding genes in the human genome (\cite{Amaral2023}).
 
@@ -365,12 +372,10 @@ is increasingly appreciated, and many are now considered as genes with crucial r
 
 \paragraph{Other genome components}
 
-The previously described functional elements account for only a fraction of the genome.
-For example, in the GENCODE v47 annotation, exons span approximately 6.5\% of the human genome sequence.
-
+The functional elements described so far account for only a fraction of the genome.
 A large portion of the genome is composed of repetitive sequences, which are not unique.
 In humans, more than 50\% of the genome consists of various classes of repeats (\cite{Liehr2021}).
-These were historically referred to as junk, selfish, or parasitic DNA.
+These were historically referred to as 'junk', 'selfish', or 'parasitic' DNA.
 However, subsequent research has revealed that many repetitive elements have
 structural, regulatory, or evolutionary functions.
 Some contribute to genome stability by providing redundancy or scaffolding,
@@ -380,6 +385,15 @@ A substantial fraction of these repeats originate from transposable elements (tr
 mobile DNA sequences capable of moving or copying themselves within the genome.
 Once thought to be purely parasitic, transposons are now recognized for their generative role in genome evolution,
 and are increasingly viewed as integral components of genome architecture (\cite{Fedoroff2012}).
+
+Pseudogenes are believed to arise, in part, from transposon-mediated duplication or retrotransposition events.
+They are genomic regions that closely resemble functional genes but contain disabling mutations or lack the necessary
+regulatory elements for transcription or translation (\cite{Qian2022}).
+Initially considered evolutionary relics, pseudogenes are now known to exhibit diverse biological roles.
+Some have been implicated in the regulation of gene expression,
+particularly through RNA-mediated mechanisms (\cite{Tutar2012}).
+Moreover, it is estimated that up to 19\% of human pseudogenes may be translated,
+representing a potential source of protein innovation (\cite{Qian2022}).
 
 Other repetitive structures include centromeres and telomeres,
 which are composed of tandem repeats and play essential roles in chromosome segregation and end protection, respectively,
