@@ -393,7 +393,7 @@ Initially considered evolutionary relics, pseudogenes are now known to exhibit d
 Some have been implicated in the regulation of gene expression,
 particularly through RNA-mediated mechanisms (\cite{Tutar2012}).
 Moreover, it is estimated that up to 19\% of human pseudogenes may be translated,
-representing a potential source of protein innovation (\cite{Qian2022}).
+possibly contributing to the emergence of new proteins (\cite{Qian2022}).
 
 Other repetitive structures include centromeres and telomeres,
 which are composed of tandem repeats and play essential roles in chromosome segregation and end protection, respectively,
@@ -444,7 +444,8 @@ Despite extensive efforts, a fully comprehensive human genome annotation has not
 Several factors contribute to this challenge.
 
 Firstly, the complexity of the human genome itself presents significant obstacles.
-Compared to the total genome length, the number of genes is relatively low, and their sequences are interrupted by introns (\cite{Salzberg2019}).
+Compared to the total genome length, the number of genes is relatively low,
+and they are organized as a series of separated exonic regions (\cite{Salzberg2019}).
 Additionally, bulk RNA sequencing often has relatively low sequencing depth,
 making it difficult to detect rare transcripts or those expressed in a cell-type-specific manner (\cite{Guigo2023}).
 
@@ -494,12 +495,14 @@ such as when a read maps to multiple locations or to a unique location where ove
 There are two possible reasons for reads assigned to multiple genes: either they are mapped to multiple genome locations,
 or they are mapped to the genomic location containing overlapping features (genes).
 Such reads (commonly referred to as multimappers) are typically excluded from analysis (\cite{Paz2024}).
-However, as demonstrated by (\textcite{Paz2024}), this approach can introduce biases that affect downstream analyses.
-Currently, various methods exist to handle such cases (\cite{Francoeur2020}),
-yet no entirely satisfactory solution has been established (\cite{Paz2024}).
+However, as shown by \textcite{Paz2024}, this exclusion can introduce biases that affect downstream analyses.
+For instance, highly similar gene families may be underrepresented; in the case of the ubiquitin B family,
+only 3\% of reads mapping to these loci are uniquely assigned.
+Although various methods have been proposed to handle multimappers (\cite{Francoeur2020}),
+no fully satisfactory solution has yet been established (\cite{Paz2024}).
 
-The aforementioned methods primarily rely on computational strategies to resolve multimappers,
-but the issue can also be approached from a transcriptomic reference perspective.
+Multimapper resolution is primarily addressed through computational strategies.
+ However, the issue can also be mitigated by refining the transcriptomic reference itself.
 For example, in the case of CellRanger (the mapping software from 10x Genomics)
 the GENCODE reference is filtered based on gene types (e.g., retaining protein-coding genes while filtering out pseudogenes) (\cite{10xRef}).
 While this filtering improves the number of reads included in downstream analyses, there is still room for improvement.
@@ -526,9 +529,10 @@ Although \textcite{Pool2023} proposed a tool to implement these strategies, it h
 Some of its aspects remain debatable (e.g., threshold choices), others seem unnecessary
 (such as handling exon-intron distinctions when most alignment tools already provide this option),
 and the process still requires significant manual effort.
-Thus, there is still a need for a more comprehensive tool for enhancing transcriptomic references — a need that will be addressed in this thesis.
+Thus, there is still a need for a more comprehensive tool for enhancing transcriptomic references.
 
 \paragraph{Reads mapped to the intergenic regions}
-Some reads map to the genome but not to any annotated gene.
-While these could simply be noise in scRNA-seq data, there is also the possibility that they contain biologically relevant information.
-As will be shown in the results section, scRNA-seq datasets indeed contain such reads, and they are not entirely noise.
+Some reads map to the genome but fall outside of annotated genes.
+While such reads are often considered noise in scRNA-seq data, they may also represent biologically meaningful signals.
+As will be demonstrated in the results section,
+scRNA-seq datasets do contain these reads, and they are not merely technical artifacts.
