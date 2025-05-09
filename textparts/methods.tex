@@ -40,11 +40,6 @@ The open chromatin regions (bed format) in PBMCs was downloaded from \href{https
 
 PBMC ONT data (full-length cDNA) were downloaded from \href{https://www.10xgenomics.com/datasets/5k-human-pbmcs-3-v3-1-chromium-controller-3-1-standard}{10x genomics website.}
 
-\paragraph{Viral genomes}
-
-Viral genomes for blasting unassigned sequences for BLAST searches were downloaded
-from \href{https://ftp.ncbi.nlm.nih.gov/genomes/refseq/viral/}{NCBI Refseq genomes database}.
-
 \section{Computational Tools and Environment}
 
 All analyses were performed on a high-performance computing (HPC) cluster running a Linux environment.
@@ -67,9 +62,10 @@ can be seen in Figure \ref{fig:pipeline}, while the description is given below:
     \begin{enumerate}
         \item For intersecting:
         \begin{enumerate}
-            \item Resolve overlapping genes that have unassigned reads (if possible).
-            \item From the second reference and further: add genes to the original GTF that contain unassigned reads
-            and do not overlap with entries from the original one.
+            \item Resolve overlapping genes that also overlap with unassigned reads (if possible).
+            \item From the second reference and further: add genes to the original transcriptomic reference
+            that i) overlap with unassigned reads and
+            ii) do not overlap with entries from the original transcriptomic reference.
         \end{enumerate}
         \item For intergenic:
         \begin{enumerate}
@@ -77,7 +73,8 @@ can be seen in Figure \ref{fig:pipeline}, while the description is given below:
             \item Filter-out relatively small clusters (custom threshold).
             \item For the first reference only: filter-out AT-rich reads.
             \item For reads that are left, repeat from the beginning with the next reference.
-            \item For the last reference only: clusters that start just after 3' ends are assigned to genes (i.e., extend genes).
+            \item For the last reference only: clusters that start just after 3' ends of known genes are assigned
+            to those genes (by extending genes in transcriptomic reference).
         \end{enumerate}
     \end{enumerate}
     \item Create final GTF and map initial sequences to it.
@@ -102,10 +99,10 @@ Filtering unassigned reads was done using \textit{awk}, taking those that have v
 and were not assigned to any gene (i.e. had 'GN:Z:-' tag).
 Also, only uniquely mapped reads were taken (tag 'NH:i:1').
 
-\paragraph{Classifying reads as 'intergenic' or 'intersecting' and reads clustering}
+\paragraph{Classifying reads as 'intergenic' or 'intersecting' and read clustering}
 Intersections of unassigned reads with references were checked using \textit{bedtools intersect} command.
 Those that intersect with genes were classified as 'intersecting', and those that do not – as 'intergenic'.
-Intersections were assesed in strand-specific manner (bedtools '-s' flag), i.e. regions on different strands were treated as not intersecting,
+Intersections were assesed in a strand-specific manner (bedtools '-s' flag), i.e. regions on different strands were treated as not intersecting,
 even if they share overlapping genomic coordinates (see Figure \ref{fig:intergenicIntersecting}).
 The intergenic reads were clustered using \textit{bedtools merge}, again in a strand-specific manner.
 
@@ -256,8 +253,3 @@ Particularly entries from GENCODE, RefSeq and lncpedia transcriptomic references
 if they overlapped with unassigned reads and did not overlap with genes already present in the reference.
 This enrichment was done sequentially, i.e. firstly the reference was updated with entries from GENCODE annotation,
 then resulting reference was updated with entries from RefSeq annotation and finally from lncpedia annotation.
-
-\section{Unmapped reads}
-
-Additionally, unmapped reads were extracted using samtools and mappings were searched against viral genome sequences (BLAST tool).
-The tool was run locally, with the viral genome sequences for database construction acquired from \href{https://ftp.ncbi.nlm.nih.gov/genomes/refseq/viral/}{NCBI Refseq genomes database}.
