@@ -2,7 +2,7 @@
 
 Fourteen datasets from various tissues (blood, brain, eye, and lung) were analyzed.
 These datasets contained between 11\% and 29\% of uniquely mapped reads that remained unassigned.
-(the table with statistics can be found in Appendix \ref{tab:countStats}) when using standard reference (taken from 10x Genomics).
+(see Appendix \ref{tab:countStats}) when using standard reference (taken from 10x Genomics).
 The majority of those unassigned reads were intergenic, meaning they did not overlap with any reference used.
 Given the dataset sizes, this proportion of reads could potentially contain biologically relevant information.
 
@@ -17,7 +17,8 @@ To determine whether these intergenic regions contain biologically meaningful in
 cells in each sample were clustered based solely on reads from these regions.
 As shown in selected examples in Figure \ref{fig:intergenicClustering},
 clustering was observed and roughly corresponded to clustering based on the standard (\textit{10x Genomics}) annotation.
-This indicates that biologically meaningful information is indeed present in these intergenic regions.
+This indicates that biologically meaningful information is indeed present in these intergenic regions,
+or at least that noise is not random and originates from real (cell-type specific) transcripts.
 Consequently, further analyses were performed on these regions.
 
 The lists of intergenic regions from all samples were combined and filtered based on the number of samples in which they were detected,
@@ -25,6 +26,7 @@ resulting in a final set of 2,590 intergenic regions.
 Of these, 147 did not overlap known genes on the opposite strand and will be referred to as \textit{isolated}.
 Those located on the opposite strand of known genes will be referred to as \textit{antisense}.
 
+% fix this image!
 \begin{figure}[htbp]
     \centering
     \begin{subfigure}{0.45\textwidth}
@@ -50,21 +52,30 @@ Those located on the opposite strand of known genes will be referred to as \text
         \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_brain_2.png}
         \caption{\textit{brain\_2} sample}
     \end{subfigure}
-    \caption{Comparison of clustering using standard annotation (\textit{10x Genomics} reference) and using only defined intergenic regions.
-    For some samples, intergenic regions are sufficient for rough clustering.
+    \caption{Comparison of clustering using standard annotation (\textit{10x Genomics} reference)
+    and using only information from defined intergenic regions.
+    Each these plots, each dot represent a cell, and are colored according cell types.
+    Cell types were infered using standard annotation, and then corresponding dots in 'intergenic'
+    plots were colored using same colors.
+    For some samples, visible clusters infered using only intergenic regions are roughly corresponding to the ones
+    using entire standard annotation.
     For others (e.g., the \textit{brain\_2} sample), noise introduces clustering artifacts.
-    Nevertheless, this rough clustering implies that these unassigned reads contain biological information.}
+    Nevertheless, this rough clustering implies that the data in unassigned reads are not entirely random noise.}
     \label{fig:intergenicClustering}
 \end{figure}
 
-\paragraph{A-rich sequences near the intergenic regions 3' end}
+\paragraph{poly-A sequences near the intergenic regions 3' end}
 
-If there is a poly-A region near the 3' end of the intergenic region, then the presence of those peaks can be explained by mispriming,
-i.e., that would suggest that our intergenic region is not necessarily the actual 3' end of the novel transcript, but may be in the middle of it.
+The poly-A region here is defined as a region with at least 10 consecutive A's, allowing one mismatch.
+If there is a poly-A region near the 3' end of the intergenic region,
+then the presence of those peaks can be explained by mispriming,
+i.e., that would suggest that our intergenic region is not necessarily the actual 3' end of the novel transcript,
+but may be in the middle of it.
 
 This is indeed the case for most of the reported intergenic regions,
-see Figure \ref{fig:poly-A} for visual example and some statistics.
-The poly-A region here is defined as a region with at least 10 consecutive A's, allowing one mismatch.
+with majority of them (???\%) having such region within 200bp from their 3' end,
+and the length of such poly-A segments varying from 10 to ?? (mean ??) (see Figure \ref{fig:poly-A}).
+
 
 
 \begin{figure}[h]
@@ -139,9 +150,50 @@ In the following subsections isolated and antisense intergenic regions will be d
     \label{fig:correlationScatterplots}
 \end{figure}
 
+\subsection{Antisense intergenic regions}
+
+Interpreting antisense intergenic regions is complex, as some indicative features that are typically associated
+with active transcription or or genes in general, such as open chromatin or conservativness are not strand specific,
+and might be atributed to the known genes that are present on the opoesite strand of antisense regions.
+Hence only computational gene predictions were assesed as supporting evidence for antisense regions being not artifacts.
+
+\paragraph{Gene predictions}
+
+To assess whether antisense intergenic regions overlap with predicted genes, UCSC gene prediction archives were examined,
+focusing on overlaps with 3' ends of predicted genes.
+
+Of the identified regions, 49 overlapped with predicted genes,
+35 of them were located in the 3' of predicted genes, as one would be expecting for data derived
+with 3' end sequencing methods.
+9 of those 35 predicted genes were longer version of already annotated genes in RefSeq or GENCODE references.
+The complete list can be found in the Appendix \ref{tab:predictionsAntisense}.
+
+\paragraph{Poly-A segments}
+
+Having in mind that majority of the antisense intergenic regions have poly-A stretch after 3' end,
+and some of them strongly correlate with genes on the opposite strand,
+it is possible that at least some of them are artifacts from the library preparation.
+Particularly, it could happen that poly-T primer binds to poly-A stretch of cDNA produced by other primer,
+and in such way inversed transcripts are produced.
+These transcripts would later be mapped to antisense strands of known genes (see Figure \ref{fig:mispriming}).
+Such hypothesis would explain why nice clustering can be observed in the FIgure \ref{fig:clusterings}.
+This would mean that in fact majority of the data in unassigned read is technical noise, however, not random,
+but originating from real transcripts.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\linewidth]{images/mispriming.jpg}
+  \caption{Scheme of poly-A mispriming resulting in reads mapped to the opposite strand compared to the original gene.
+  a) RNA is captured by a poly-A tail with a primer containing a poly-T sequence.
+  b) Reverse transcriptase attaches to the primer and synthesizes cDNA from the RNA template.
+  c) If the RNA-cDNA complex becomes unstable and dissociates, another primer may bind to the poly-A stretches on the cDNA,
+  if present. This would result in reversed cDNA, causing the reads to be mapped to the antisense strand.}
+  \label{fig:mispriming}
+\end{figure}
+
 \subsection{Isolated intergenic regions}
 
-The intergenic regions that are distant from known genes and contain reads may indicate novel genes.
+On the other hand, the intergenic regions that are distant from known genes and contain reads may indicate novel genes.
 To determine whether these are genuine signals rather than artifacts, several aspects were considered:
 \begin{enumerate}
   \item Differential expression: Are these regions differentially expressed in any samples, i.e., are they specific to certain cell types?
@@ -189,7 +241,8 @@ thus this feature should be taken with precaution for regions derived from other
 The conservation score shows evolutionary conservation and is computed comparing genomic sequences from different species.
 A high conservation score in an intergenic region suggests potential functionality, providing additional evidence for biological relevance.
 To identify such regions, those with conservation scores above 0.6 were defined as conserved (there were 5 of such isolated regions).
-The overall conservation scores were quite low, suggesting that if the isolated intergenic genes originate from unannotated genes,
+The overall conservation scores were quite low, suggesting that if the isolated intergenic regions
+represent unannotated genes,
 they are probably human specific.
 The histogram showing conservation scores in isolated regions is given in the Figure \ref{fig:conservations}.
 
@@ -236,7 +289,7 @@ No regions appeared in more than two lists.
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/prediction_example.png}
-  \caption{Example of gene which is predicted to have some longer transcripts than are present in the gencode and ncbi annotations.
+  \caption{Example of gene which is predicted to have some longer transcripts than are present in the GENCODE and NCBI annotations.
   The intergenic region is located after the 3' end of gene GM2A, however,
   SIB prediction tool suggest that longer transcripts should be included in the annotation of this gene.}
   \label{fig:predictedExtension}
@@ -266,43 +319,6 @@ An example of inferred transcript structures can be seen in Figure \ref{fig:tran
   \label{fig:transcripts}
 \end{figure}
 
-\subsection{Antisense intergenic regions}
-
-Interpreting antisense intergenic regions is more complex.
-The features such as open chromatin or conservation are not strand specific,
-meaning that if they would be present, they could not be attributed with certainty for our intergenic regions.
-The differential expression can be checked, however, even if the antisense intergenic region is differentially expressed,
-it could still be an artifact, originating from differentially expressed transcripts.
-Hence from the features checked for the isolated intergenic regions, only real supporting evidence would be computational gene prediction.
-
-\paragraph{Gene predictions}
-
-As in the case of isolated intergenic regions,
-antisense intergenic regions were checked for overlaps with predicted genes from UCSC prediction archive.
-There were 49 such regions found, out of them 35 were in the 3' ends of predicted genes.
-9 of those 35 predicted genes were longer version of already annotated genes in RefSeq or GENCODE references.
-The complete list can be found in the Appendix \ref{tab:predictionsAntisense}.
-
-\paragraph{Poly-A segments}
-
-Having in mind that majority of the antisense intergenic regions have poly-A stretch after 3' end,
-and some of them strongly correlates with genes on the opposite strands,
-it is possible that at least some of them are artifacts from the library preparation.
-Particularly, it could happen that poly-T primer binds to poly-A stretch of cDNA produced by other primer,
-and in such way inversed transcripts are produced.
-These are later mapped to antisense strands of known genes (see Figure \ref{fig:mispriming}).
-
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.7\linewidth]{images/mispriming.jpg}
-  \caption{Scheme of poly-A mispriming resulting in reads mapped to the opposite strand compared to the original gene.
-  a) RNA is captured by a poly-A tail with a primer containing a poly-T sequence.
-  b) Reverse transcriptase attaches to the primer and synthesizes cDNA from the RNA template.
-  c) If the RNA-cDNA complex becomes unstable and dissociates, another primer may bind to the poly-A stretches on the cDNA,
-  if present. This would result in reversed cDNA, causing the reads to be mapped to the antisense strand.}
-  \label{fig:mispriming}
-\end{figure}
 
 \section{Enhancing transcriptomic reference}
 
@@ -373,28 +389,4 @@ meaning that this enhanced reference could help uncover relevant biological proc
   \caption{UMAPs of \textit{PBMC\_10x\_2} dataset using standard and enhanced references.
   While T cell cluster is a bit different in these two cases, main structures remain the same in both cases.}
   \label{fig:enhancedClustering}
-\end{figure}
-
-\section{Unmapped reads}
-
-In the previous sections, mapped but unassigned reads were explored.
-However, in scRNA-seq data, there are also reads that do not map to the reference genome at all.
-In the analyzed datasets, such reads constituted approximately 3–13\% (mean 5.96\%) of total reads.
-The majority of these are likely technical artifacts.
-Nonetheless, it is worth investigating whether some may represent meaningful sequences originating from non-human DNA, such as viral genomes.
-
-To explore this, unmapped reads were aligned to viral genomes using the BLAST tool.
-Indeed, a small fraction (around 1–2\% of unmapped reads) mapped to viral genomes.
-The viral species to which reads mapped were consistent across tissues (except \textit{PBMC\_indrops\_2} sample), with most reads aligning to
-\textit{BeAn 58058 virus}, \textit{Human endogenous retrovirus K113}, and \textit{Aeribacillus phage AP45} (see Figure \ref{fig:blast}).
-
-While it is difficult to draw definitive conclusions from this type of mapping,
-these findings suggest that scRNA-seq data is sufficiently sensitive to detect non-host transcripts even in healthy individuals.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]{images/blast.png}
-  \caption{Unmapped reads include those that map to viral genomes.
-  Bar plots show the relative proportions of BLAST hits to viral species.}
-  \label{fig:blast}
 \end{figure}
