@@ -1,30 +1,33 @@
 \section{Intergenic regions}
 
-Fourteen datasets from various tissues (blood, brain, eye, and lung) were analyzed.
-These datasets contained between 11\% and 29\% of uniquely mapped reads that remained unassigned.
-(see Appendix \ref{tab:countStats}) when using standard reference (taken from 10x Genomics).
-The majority of those unassigned reads were intergenic, meaning they did not overlap with any reference used.
-Given the dataset sizes, this proportion of reads could potentially contain biologically relevant information.
+Fourteen datasets from various human tissues (blood, brain, eye, and lung) were analyzed.
+When using the standard transcriptomic reference (obtained from 10x Genomics), between 11\% and 29\%
+of uniquely mapped reads remained unassigned (see Appendix~\ref{tab:countStats}).
+The majority of these unassigned reads were classified as intergenic,
+meaning they did not overlap with any annotated gene in the references used.
+Given the size of the datasets, this substantial proportion of intergenic reads suggests the potential
+for biologically relevant information to be uncovered.
 
 \paragraph{Analysing intergenic regions}
 
-For each sample, intergenic regions containing a sufficient number of unassigned reads were identified,
-as described in the methods section (with a threshold set at 5 CPM).
-The term \textit{intergenic} is used here in a strand-specific manner,
-meaning an intergenic region may be located on the opposite strand of a known gene.
+For each sample, intergenic regions containing a sufficient number of unassigned reads
+were identified as described in the Methods section, using a threshold of 5 CPM.
+The term \textit{intergenic} is used in a strand-specific sense,
+i.e., regions located on the opposite strand of known genes are still considered intergenic.
 
-To determine whether these intergenic regions contain biologically meaningful information,
-cells in each sample were clustered based solely on reads from these regions.
-As shown in selected examples in Figure \ref{fig:intergenicClustering},
-clustering was observed and roughly corresponded to clustering based on the standard (\textit{10x Genomics}) annotation.
-This indicates that biologically meaningful information is indeed present in these intergenic regions,
-or at least that noise is not random and originates from real (cell-type specific) transcripts.
-Consequently, further analyses were performed on these regions.
+To assess whether these regions carry biologically meaningful information,
+UMAP embeddings were generated for each sample using only reads originating from intergenic regions.
+As shown in selected examples (Figure~\ref{fig:intergenicClustering}), the resulting clustering patterns
+roughly corresponded to those obtained using the standard (\textit{10x Genomics}) annotation.
+This suggests that intergenic reads capture underlying biological signal, or at least
+that the observed variation is structured and likely originates from real, cell-type-specific transcripts.
+Consequently, further analyses focused on these regions.
 
-The lists of intergenic regions from all samples were combined and filtered based on the number of samples in which they were detected,
-resulting in a final set of 2,590 intergenic regions.
-Of these, 147 did not overlap known genes on the opposite strand and will be referred to as \textit{isolated}.
-Those located on the opposite strand of known genes will be referred to as \textit{antisense}.
+Intergenic regions from all samples were merged and filtered based on their recurrence across samples,
+resulting in a final set of 2,590 regions.
+Of these, 2,443 were located on the opposite strand of known genes and were classified as \textit{antisense},
+while the remaining 147 regions,
+which did not overlap any known gene on either strand, were classified as \textit{isolated}.
 
 % fix this image!
 \begin{figure}[htbp]
@@ -176,7 +179,7 @@ it is possible that at least some of them are artifacts from the library prepara
 Particularly, it could happen that poly-T primer binds to poly-A stretch of cDNA produced by other primer,
 and in such way inversed transcripts are produced.
 These transcripts would later be mapped to antisense strands of known genes (see Figure \ref{fig:mispriming}).
-Such hypothesis would explain why nice clustering can be observed in the FIgure \ref{fig:clusterings}.
+Such hypothesis would explain why nice clustering can be observed in the Figure \ref{fig:intergenicClustering}.
 This would mean that in fact majority of the data in unassigned read is technical noise, however, not random,
 but originating from real transcripts.
 
