@@ -1,100 +1,103 @@
-Single-cell RNA sequencing is a widely used tool for analyzing cellular systems nowadays.
-These experiments generate vast amounts of data, and since they are becoming increasingly affordable and accessible,
-the data is often used solely for the primary goal of the study, without deeper exploration.
-One underexamined aspect in most studies is the presence of reads that map to the genome but are not assigned to any gene.
-As shown in the Results chapter, such reads can comprise 10–30\% of total reads—a significant portion of the dataset.
+Single-cell RNA sequencing (scRNA-seq) has become a widely used tool for studying cellular systems.
+These experiments generate large volumes of data, and as the technology becomes increasingly affordable and accessible,
+the total amount of data produced is expected to grow rapidly.
+While scRNA-seq data typically serves the primary goals of transcriptomic studies,
+a substantial fraction of the reads—those that are mapped but not assigned to annotated features—are often ignored.
+As demonstrated in the Results chapter,
+such unassigned reads can account for 10–30\% of the total reads, representing a significant portion of the dataset.
 
-This project aimed to investigate these unassigned reads.
-They were first classified based on whether they intersected with known genes or not (referred to as intergenic).
-Intergenic reads were then divided into two groups:
-antisense (located on the opposite strand of known genes) and isolated (with no known genes on either strand).
-Reads were clustered, and only regions with at least 5 CPM were analyzed.
+This project was designed to explore these unassigned reads.
+They were first categorized based on whether they overlapped known genes.
+Those that did not were termed intergenic.
+Intergenic reads were further divided into two categories:
+antisense (mapped to the opposite strand of known genes) and isolated (not overlapping any known genes on either strand).
+Reads were clustered, and only regions with a minimum expression threshold of 5 CPM were considered for analysis.
 
 \paragraph{Antisense intergenic regions}
 
-Two key observations — expression correlations with genes on the opposite strand and poly-A stretches downstream of the regions —
-led us to hypothesize that these reads may be artifacts produced during the reverse transcription step.
-These reads represent the vast majority of unassigned reads,
-so addressing this mechanism could improve the efficiency of single-cell RNA-seq experiments.
-It should be noted that this hypothesis applies specifically to 3'-end capturing methods, which rely on poly-A tails.
+Two key observations — expression correlations with genes on the opposite strand and the presence
+of poly-A stretches downstream of the regions —
+led us to hypothesize that these reads may be artifacts generated during the reverse transcription step.
+As these reads constitute the vast majority of unassigned reads,
+understanding this mechanism could improve the efficiency of single-cell RNA-seq experiments.
+This hypothesis is particularly relevant to 3'-end capturing protocols, which rely on poly-A tail priming.
 
-Temperature adjustments might help reduce such artifacts: at lower temperatures, RNA–cDNA complexes are more stable.
-In the 10x Genomics v3.1 protocol, reverse transcription is performed at $52^\circ C$, while in inDrops2 it occurs at $42^\circ C$,
-where we observed fewer unassigned reads (see Appendix \ref{tab:countStats}).
-However, strong conclusions cannot be drawn, as only two samples from inDrops2 were analyzed.
+Temperature modifications might help mitigate such artifacts: RNA–cDNA complexes are more stable at lower temperatures.
+In the 10x Genomics v3.1 protocol, reverse transcription occurs at $52^\circ C$,
+while in the inDrops2 protocol it is performed at $42^\circ C$,
+where fewer unassigned reads were observed (see Appendix \ref{tab:countStats}).
+However, strong conclusions cannot be drawn, as only two inDrops2 samples were analyzed.
 
-While this hypothesis may explain the majority of antisense reads, other possibilities should not be dismissed.
-For instance, template switching — when reverse transcriptase (or polymerase) detaches and reattaches elsewhere —
-is reported in both reverse transcription and amplification steps (\cite{Houseley2010, Potapov2017}).
-Although artifacts from template switching are unlikely to form large clusters (due to expected more random distribution),
-they may explain reads in clusters smaller than 5 CPM, which were not explored in this project.
+While this hypothesis may explain most antisense reads, other mechanisms should not be excluded.
+For example, template switching
+— in which reverse transcriptase (or polymerase) detaches from the template and reattaches elsewhere during transcription —
+is known to occur during both reverse transcription and amplification steps \cite{Houseley2010, Potapov2017}.
+Although such artifacts are unlikely to form large clusters due to their random nature,
+they may account for smaller clusters (below the 5 CPM threshold) that were not investigated in this study.
 
 \paragraph{Isolated intergenic regions}
 
-Unlike antisense regions, isolated regions might represent unannotated (novel) genes rather than artifacts.
-This is particularly likely for regions with supporting features, the most indicative of which is differential expression —
-since noise is not expected to be cell-type specific.
+Unlike antisense regions, isolated regions may represent unannotated (novel) genes rather than artifacts.
+This is particularly likely for regions with supporting evidence,
+with the most indicative feature being differential expression —
+as noise is not expected to be cell-type specific.
 
-Although the human genome has been extensively studied, several factors still complicate novel gene identification.
-First, since protein-coding genes have more defined structures (and are thus easier to detect computationally) (\cite{Guigo2023}),
-these potential novel genes are likely non-coding, such as lncRNAs.
-Second, their low expression and high cell-type specificity hinder confident annotation,
-which is generally required by widely used transcriptome references like GENCODE or RefSeq.
+Although the human genome has been extensively studied,
+several factors continue to complicate the identification of novel genes, especially long non-coding RNAs (lncRNAs).
+lncRNAs often lack features that enable reliable computational annotation.
+For example, they are typically not conserved, lack long open reading frames (unlike protein-coding genes),
+and frequently exhibit non-canonical splicing.
+In addition, their low expression levels and high cell-type specificity hinder confident annotation —
+a requirement for inclusion in widely used transcriptomic references such as GENCODE or RefSeq.
 
-While transcript structures can be inferred using long-read RNA sequencing (as we demonstrated using Oxford Nanopore data),
-high sequencing depth is needed for confident annotations.
+While transcript structures can be inferred using long-read RNA sequencing (as demonstrated with Oxford Nanopore data),
+high sequencing depth is necessary for robust annotation.
 
-Although lncRNAs can participate in virtually any cellular process, predicting the function of a specific lncRNA is challenging.
-They often lack clear phenotypic effects, and mutations typically influence quantitative traits (\cite{Mattick2023}).
-This project did not attempt to assign functions to these novel candidates; future studies could explore this.
+Although lncRNAs can participate in virtually any cellular process, predicting the function of a specific lncRNA remains challenging.
+They often lack clear phenotypic effects, and mutations usually affect quantitative traits \cite{Mattick2023}.
+This project did not attempt to assign functions to the novel candidates; future studies could explore this further.
 
-A subset of isolated regions located near known genes could be explained by unannotated transcript extensions.
-Some overlapped predicted longer isoforms of known genes, suggesting this as a possible origin.
-Long-read sequencing data can be used to validate this hypothesis.
+A subset of isolated regions located near known genes may instead represent unannotated transcript extensions.
+Indeed, some isolated regions overlapped predicted longer isoforms of known genes,
+suggesting this as a possible explanation.
+Long-read sequencing data could be used to validate this hypothesis.
 
 \paragraph{Enhancing transcriptomic reference}
 
-Some reads were unassigned despite aligning to annotated gene regions.
-This is mainly due to gene overlaps.
-To incorporate such reads, the transcriptomic reference was enhanced by resolving overlaps based on gene types.
-Using this enhanced reference, downstream cell–gene matrices increased by $\sim 1.2$\% on average.
+Some reads remained unassigned despite aligning to annotated gene regions, primarily due to overlapping genes.
+To incorporate such reads, we enhanced the transcriptomic reference by resolving overlaps based on gene types.
+Using this enhanced reference, the downstream cell–gene matrices increased by approximately 1.2\% on average.
 
-While overall assigned reads and gene detection increased, some genes showed reduced counts after overlap resolution —
-highlighting the complexity of the transcriptome and the difficulty of disambiguating gene overlaps with short reads.
+While the overall data volume increased (in both the number of detected genes and total counts in cell–gene matrices),
+some genes showed reduced counts after overlap resolution —
+highlighting the complexity of human genome and the difficulty of disambiguating overlapping genes using short reads.
 
-Our method for enhancing transcriptomic references raises several points of consideration:
-first, prioritizing gene types (e.g., protein-coding over lncRNAs) can be subjective, and may not always be appropriate.
-Second, our overlap resolution used only gene-level annotations (start and end coordinates),
-whereas transcriptome annotations typically include exon–intron structures and isoforms.
+This method of enhancing transcriptomic references raises several points of consideration.
+First, prioritizing certain gene types (e.g., protein-coding over lncRNAs) can be subjective and may not always be appropriate.
+Second, our overlap resolution was based on gene-level annotations (start and end coordinates),
+whereas transcriptomic annotations typically include more detailed exon–intron structures and isoforms.
 
 Alternative strategies for handling multi-mapped reads exist —
-such as uniform distribution or probabilistic assignment based on uniquely mapped read ratios (\cite{Francoeur2020}).
-However, no consensus or gold standard currently exists, so such reads are often excluded to reduce uncertainty.
+such as uniform distribution or probabilistic assignment based on the ratio of uniquely mapped reads (\cite{Francoeur2020}).
+However, no consensus or gold standard currently exists, and such reads are often excluded to reduce uncertainty.
 
-An improved approach could consider transcript-level annotations, e.g., comparing read coverage with exon structures
-to infer the most likely gene of origin in overlapping regions.
+A more refined approach could incorporate transcript-level annotations,
+e.g., comparing read coverage with exon structures to infer the most likely gene of origin in overlapping regions.
 Such a tool could recover more reads and improve assignment accuracy.
-
-\paragraph{Unampped reads}
-
-As a side investigation, unmapped reads were also briefly explored.
-While the majority are likely artifacts, some may originate from non-human organisms, such as viruses.
-We found that a small fraction aligned to viral species —
-suggesting that even unmapped reads may hold biological value and should not be dismissed outright.
 
 \paragraph{Limitations and discrepancies}
 
-This project analyzed datasets generated using short-read, 3' end-capturing RNA-seq methods.
-Datasets from other methods would exhibit different artifacts and require separate analysis.
-These data did not allow the definition of full transcript structures, which is possible with full-length sequencing.
+This project analyzed datasets generated using short-read, 3'-end capturing RNA-seq methods.
+Datasets produced by other methods may contain different artifacts and would require separate analysis.
+Additionally, the data used here do not support full transcript structure reconstruction,
+which is possible with full-length sequencing.
 
 An interesting discrepancy is shown in Table \ref{tab:countStats}:
-the proportion of unassigned reads is lower when computed from raw counts compared to demultiplexed counts.
-Since demultiplexed counts represent actual molecule counts, and raw counts reflect amplification,
-one would expect similar ratios — assuming equal amplification efficiency.
-
-However, we observed a consistently higher proportion of unassigned reads in the demultiplexed data,
-suggesting that unassigned reads may be amplified less efficiently.
-The origin of this bias is unclear and warrants further study.
-This effect is especially pronounced in datasets generated using inDrops2,
-so comparisons between inDrops2 and 10x v3.1 may help uncover its cause.
+the proportion of unassigned reads is lower when calculated from raw counts compared to demultiplexed counts.
+Since demultiplexed counts reflect actual molecule numbers and raw counts reflect amplification,
+one would expect similar ratios — assuming equal amplification efficiency across read types.
+However, we consistently observed a higher proportion of unassigned reads in the demultiplexed data,
+suggesting that these reads may be amplified less efficiently.
+The source of this bias remains unclear and warrants further investigation.
+This effect is especially pronounced in datasets generated using the inDrops2 protocol,
+so comparisons between inDrops2 and 10x Genomics v3.1 may help identify its cause.

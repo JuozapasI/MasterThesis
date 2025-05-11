@@ -69,15 +69,16 @@ which did not overlap any known gene on either strand, were classified as \texti
 
 \paragraph{poly-A sequences near the intergenic regions 3' end}
 
-The poly-A region here is defined as a region with at least 10 consecutive A's, allowing one mismatch.
-If there is a poly-A region near the 3' end of the intergenic region,
-then the presence of those peaks can be explained by mispriming,
-i.e., that would suggest that our intergenic region is not necessarily the actual 3' end of the novel transcript,
-but may be in the middle of it.
+A poly-A region was defined as a stretch of at least 10 consecutive adenines, allowing one mismatch.
+If such a region is located near the 3' end of an intergenic region, it may indicate mispriming,
+suggesting that the observed read cluster does not represent the true 3' end of a novel transcript,
+but instead results from internal priming,
+and could therefore mark any internal position within the captured transcript.
 
-This is indeed the case for most of the reported intergenic regions,
-with majority of them (???\%) having such region within 200bp from their 3' end,
-and the length of such poly-A segments varying from 10 to ?? (mean ??) (see Figure \ref{fig:poly-A}).
+This pattern was observed for the vast majority of identified intergenic regions:
+99\% contained a poly-A sequence within 200 bp of their 3' end.
+The lengths of these poly-A stretches ranged from 10 to 51 nucleotides
+with a mean length of 16.6 (see Figure~\ref{fig:poly-A}).
 
 
 
@@ -87,7 +88,7 @@ and the length of such poly-A segments varying from 10 to ?? (mean ??) (see Figu
     \begin{subfigure}{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/poly-A-example.png}
-        \caption{Example of poly-A segment after the 3' end of defined intergenic region.}
+        \caption{Example of a poly-A segment located after the 3' end of a defined intergenic region.}
     \end{subfigure}
     
     \vspace{1em} % Space between first and second row
@@ -95,44 +96,44 @@ and the length of such poly-A segments varying from 10 to ?? (mean ??) (see Figu
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/poly-A-distances.png}
-        \caption{Distances from 3' ends to closest A-rich region downstream.
-  	From all the intergenic regions, only 40 do not have such region within 1 kb from the 3' end.}
+        \caption{Distances from the 3' ends to the closest A-rich region downstream.
+        Only 40 of the intergenic regions do not have such a region within 1 kb from the 3' end.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/poly-A-lengths.png}
-        \caption{Lengths of closest poly-A segments downstream, measured in base pairs (bp).}
+        \caption{Lengths of the closest poly-A segments downstream, measured in base pairs (bp).}
     \end{subfigure}
-    \caption{Poly-A stretches (defined as at least 10 consecutive A's allowing one mismatch) are present near 3' ends of majority of defined intergenic regions.}
+    \caption{Poly-A stretches (defined as at least 10 consecutive adenines, allowing one mismatch) are found near the 3' ends of the majority of defined intergenic regions.}
     \label{fig:poly-A}
 \end{figure}
 
-
 \paragraph{Correlations}
 
-Another aspect to assess is whether expression of those intergenic regions correlate with the expression of nearby genes.
-If so, this may be due to several factors:
+Another aspect to assess is whether the expression of these intergenic regions correlates with the expression of nearby genes.
+If such correlations exist, they may arise from several factors:
 \begin{itemize}
-  \item If the region correlates with gene on the same strand:
+  \item If the region correlates with a gene on the same strand:
   \begin{itemize}
-    \item Technical issues – the genome annotation might be not comprehensive and not include some longer transcripts
-    that would span intergenic region as well as the gene with which correlation is observed.
-    \item Biological reasons – genes in close proximity tend to be coexpressed due to the shared chromatin structure.
+    \item Technical issues – the genome annotation may be incomplete, possibly missing longer transcripts that span both the intergenic region and the gene with which the correlation is observed.
+    \item Biological reasons – genes in close proximity often exhibit similar expression profiles (\cite{Dong2024}).
   \end{itemize}
-  \item If the region correlates with gene on the oposite strand:
+  \item If the region correlates with a gene on the oposite strand:
   \begin{itemize}
-    \item Technical artifacts – errors during library preparation could produce inversed cDNA (will be discussed later).
-    \item Biological reasons – as mentioned before, genes in close proximity tend to be coexpressed.
+    \item Technical artifacts – errors during library preparation could result in the production of inverted cDNA,
+    which will be discussed later.
+    \item Biological reasons – genes located near each other tend to show similar expression profiles,
+    potentially due to shared regulatory elements or similar chromatin structure (\cite{Zinani2022}).
   \end{itemize}
 \end{itemize}
 
-It is difficult to determine which of these scenarios applies in our samples.
-Out of all defined intergenic regions, 97 (3.74 \%) showed Spearman correlation \textgreater 0.5 (p \textless 0.05) in at least 1 sample
-(83 correlated with genes on the opposite strand, 19 with a gene on the same strand, 5 with both).
-Some examples can be seen in Figure \ref{fig:correlationScatterplots}.
-
-In the following subsections isolated and antisense intergenic regions will be discussed separately.
+It is challenging to determine which of these scenarios applies to our samples.
+Of all the defined intergenic regions, 97 (3.74\%) showed a Spearman correlation greater than 0.5 (p < 0.05)
+in at least one sample (83 correlated with genes on the opposite strand, 19 with genes on the same strand, and 5 with both).
+While these numbers are relatively small, it's important to note that scRNA-seq data is inherently noisy,
+and part of the correlations may be obscured by this noise.
+Some examples are provided in Figure \ref{fig:correlationScatterplots}.
 
 \begin{figure}[htbp]
     \centering
@@ -155,67 +156,81 @@ In the following subsections isolated and antisense intergenic regions will be d
 
 \subsection{Antisense intergenic regions}
 
-Interpreting antisense intergenic regions is complex, as some indicative features that are typically associated
-with active transcription or or genes in general, such as open chromatin or conservativness are not strand specific,
-and might be atributed to the known genes that are present on the opoesite strand of antisense regions.
-Hence only computational gene predictions were assesed as supporting evidence for antisense regions being not artifacts.
+Interpreting antisense intergenic regions is complex because certain features typically associated
+with active transcription or gene sequences, such as open chromatin or conservation, are not strand-specific.
+These features could be attributed to the known genes present on the opposite strand of antisense regions.
+Therefore, only computational gene predictions were assessed as supporting evidence
+to distinguish antisense regions from potential artifacts.
 
 \paragraph{Gene predictions}
 
-To assess whether antisense intergenic regions overlap with predicted genes, UCSC gene prediction archives were examined,
-focusing on overlaps with 3' ends of predicted genes.
+To assess whether antisense intergenic regions overlap with predicted genes,
+UCSC gene prediction archives were examined, specifically focusing on overlaps with the 3' ends of predicted genes.
 
-Of the identified regions, 49 overlapped with predicted genes,
-35 of them were located in the 3' of predicted genes, as one would be expecting for data derived
-with 3' end sequencing methods.
-9 of those 35 predicted genes were longer version of already annotated genes in RefSeq or GENCODE references.
-The complete list can be found in the Appendix \ref{tab:predictionsAntisense}.
+Out of the identified regions, 49 overlapped with predicted genes.
+Among them, 35 were located at the 3' end of predicted genes,
+which aligns with expectations for data derived from 3' end sequencing methods.
+Furthermore, 9 of these 35 predicted genes
+were longer versions of genes already annotated in the RefSeq or GENCODE references.
+The complete list can be found in Appendix \ref{tab:predictionsAntisense}.
 
-\paragraph{Poly-A segments}
+\paragraph{RT artifacts}
 
-Having in mind that majority of the antisense intergenic regions have poly-A stretch after 3' end,
-and some of them strongly correlate with genes on the opposite strand,
-it is possible that at least some of them are artifacts from the library preparation.
-Particularly, it could happen that poly-T primer binds to poly-A stretch of cDNA produced by other primer,
-and in such way inversed transcripts are produced.
-These transcripts would later be mapped to antisense strands of known genes (see Figure \ref{fig:mispriming}).
-Such hypothesis would explain why nice clustering can be observed in the Figure \ref{fig:intergenicClustering}.
-This would mean that in fact majority of the data in unassigned read is technical noise, however, not random,
-but originating from real transcripts.
+Given that only a small fraction of antisense intergenic regions are supported by computational predictions,
+that the majority contain a poly-A stretch near the 3' end,
+and that some show strong correlation with genes on the opposite strand,
+we hypothesize that at least some of these regions may be artifacts introduced during library preparation.
+
+Specifically, poly-T primers may bind to internal poly-A stretches of cDNA synthesized from genuine transcripts,
+resulting in the creation of reverse-complement (inverted) cDNA fragments.
+These would then be mapped to the antisense strand of known genes (see Figure~\ref{fig:mispriming}).
+
+This hypothesis could also explain the clear clustering observed in Figure~\ref{fig:intergenicClustering}:
+while the unassigned reads appear to carry biological signal,
+it may actually reflect technical artifacts derived from real transcripts.
+Under this hypothesis, the unassigned data is not random noise
+but systematic artifacts derived from real, biologically relevant transcripts.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.7\linewidth]{images/mispriming.jpg}
-  \caption{Scheme of poly-A mispriming resulting in reads mapped to the opposite strand compared to the original gene.
-  a) RNA is captured by a poly-A tail with a primer containing a poly-T sequence.
-  b) Reverse transcriptase attaches to the primer and synthesizes cDNA from the RNA template.
-  c) If the RNA-cDNA complex becomes unstable and dissociates, another primer may bind to the poly-A stretches on the cDNA,
-  if present. This would result in reversed cDNA, causing the reads to be mapped to the antisense strand.}
+  \caption{Schematic illustration of poly-A mispriming
+  that can lead to reads mapping to the opposite strand of the original gene.
+  a) An RNA molecule is captured via its poly-A tail by a primer containing a poly-T sequence.
+  b) Reverse transcriptase binds the primer and synthesizes cDNA from the RNA template.
+  c) If the RNA–cDNA hybrid dissociates, a second primer may bind to poly-A stretches within the newly synthesized cDNA.
+  This can lead to synthesis of a reversed cDNA, ultimately causing the resulting reads to map to the antisense strand.}
   \label{fig:mispriming}
 \end{figure}
 
 \subsection{Isolated intergenic regions}
 
-On the other hand, the intergenic regions that are distant from known genes and contain reads may indicate novel genes.
-To determine whether these are genuine signals rather than artifacts, several aspects were considered:
+In contrast, isolated intergenic regions cannot be explained by
+the mispriming hypothesis described above and may therefore represent novel genes.
+To assess whether these regions reflect genuine biological signals rather than technical artifacts,
+several aspects were evaluated:
 \begin{enumerate}
-  \item Differential expression: Are these regions differentially expressed in any samples, i.e., are they specific to certain cell types?
-  If so, this strongly suggests a biological origin rather than an artifact.
-  \item Open chromatin: Are open chromatin regions present upstream? Such regions often indicate active transcription.
-  \item Conservation score: Coding regions tend to be more evolutionarily conserved than non-coding regions.
-  \item Gene predictions: Do these regions overlap with predicted genes identified by computational tools?
+  \item Differential expression: are these regions differentially expressed in any samples, i.e., specific to certain cell types?
+  Cell-type specificity would strongly support a biological origin.
+  \item Open chromatin: Are regions of open chromatin present upstream?
+  Such regions are often indicative of active transcription initiation.
+  \item Conservation score: Do these regions show evolutionary conservation?
+  While coding regions are typically more conserved, non-coding functional elements can also display moderate conservation.
+  \item Gene predictions: Do these regions overlap with genes predicted by computational annotation tools?
 \end{enumerate}
 
 \paragraph{Differential expression analysis}
 
-To assess differential expression, all data samples were first clustered.
-For \textit{PBMC\_10x} samples, clustering and cell annotation were performed using \textit{CellTypist}.
-For other samples, the Leiden algorithm was used, with manually chosen parameters to ensure a comparable number of clusters across similar datasets.
-For instance, all \textit{lung} samples were clustered into five groups, aligning approximately with visible UMAP structures.
+To assess differential expression, cell clustering was performed for each dataset.
+For the \textit{PBMC\_10x} samples, clustering and cell type annotation were performed using \textit{CellTypist}.
+For the remaining datasets, the Leiden algorithm was applied with manually selected parameters
+to yield a comparable number of clusters across similar samples.
+For example, all \textit{lung} datasets were partitioned into five clusters, roughly aligning with observed UMAP structures.
 
-Regions were filtered for differential expression using thresholds of 0.01 for adjusted p-value and 0.5 for log fold change.
-In total, 29 isolated intergenic regions met these criteria.
-Some examples can be seen in Figure \ref{fig:isolatedDGE}.
+Isolated intergenic regions were tested for differential expression
+using a threshold of 0.01 for adjusted p-value and 0.5 for log fold change.
+In total, 29 isolated regions passed these criteria.
+Examples are shown in Figure~\ref{fig:isolatedDGE}.
 
 \begin{figure}
   \centering
@@ -226,65 +241,67 @@ Some examples can be seen in Figure \ref{fig:isolatedDGE}.
 
 \paragraph{Open chromatin}
 
-Open chromatin regions may provide further evidence of transcriptional activity when located upstream.
-However, distances to the nearest known genes must also be considered,
-as upstream open chromatin sites may not be associated with the intergenic regions but rather with other genes.
+Open chromatin regions located upstream of intergenic regions may indicate transcriptional activity.
+However, their proximity to known genes must also be considered,
+as these open regions could be associated with known gene promoters rather than the intergenic regions.
 
-For each intergenic region, distances to the nearest open chromatin sites and upstream genes (strand-unspecific) were calculated.
-Of the 147 isolated intergenic regions, 66 had open chromatin regions closer than any known upstream genes.
-To ensure that these sites were not merely associated with distant genes, an additional filter was applied, 
-requiring that the closest open chromatin region be at least 2,000 bp from the nearest known gene.
-This yielded 40 intergenic regions.
+For each isolated intergenic region,
+distances to the nearest open chromatin site and the nearest upstream gene (strand-agnostic) were computed.
+Among the 147 isolated regions, 66 had an open chromatin site closer than any known upstream gene.
+To further reduce the likelihood that these sites belonged to distant annotated genes, an additional filter was applied:
+the nearest open chromatin site had to be at least 2,000 bp away from the nearest known gene.
+This criterion was met by 40 intergenic regions.
 
-It should be noted that PBMC ATAC data was used for open chromatin regions,
-thus this feature should be taken with precaution for regions derived from other datasets.
+Note that open chromatin information was derived from PBMC ATAC-seq data.
+Therefore, this feature should be interpreted cautiously for intergenic regions identified in non-blood tissue datasets.
 
 \paragraph{Conservation scores}
 
-The conservation score shows evolutionary conservation and is computed comparing genomic sequences from different species.
-A high conservation score in an intergenic region suggests potential functionality, providing additional evidence for biological relevance.
-To identify such regions, those with conservation scores above 0.6 were defined as conserved (there were 5 of such isolated regions).
-The overall conservation scores were quite low, suggesting that if the isolated intergenic regions
-represent unannotated genes,
-they are probably human specific.
-The histogram showing conservation scores in isolated regions is given in the Figure \ref{fig:conservations}.
+Conservation scores reflect evolutionary conservation by comparing genomic sequences across multiple species.
+A high conservation score in an intergenic region may indicate functional importance
+and support the hypothesis of biological relevance.
+
+To identify conserved regions, isolated intergenic regions
+with average conservation scores above 0.6 were classified as conserved.
+Only five such regions met this criterion.
+Overall, conservation scores across isolated regions were low (see Figure~\ref{fig:conservations}),
+suggesting that if these regions correspond to unannotated genes, they are likely to be human-specific.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.5\linewidth]{"images/conservationScores.png"}
-  \caption{Histogram showing conservation scores in the isolated regions.}
+  \caption{Distribution of average conservation scores across isolated intergenic regions.}
   \label{fig:conservations}
 \end{figure}
 
 \paragraph{Gene predictions}
 
-To assess whether isolated intergenic regions overlap with predicted genes, UCSC gene prediction archives were examined,
-focusing on overlaps with 3' ends of predicted genes.
-
-Of the identified regions, 12 overlapped with predicted genes.
-However, three of these did not overlap with the 3' ends of predicted genes,
-which would be expected given that the data was generated using 3' end sequencing methods.
-Five predicted genes were extensions of known genes,
-while the remaining four corresponded to genes absent from RefSeq and NCBI references but supported by our data.
-Table summarizing these findings can be found in Appendix \ref{tab:predictedIsolated}.
+To assess whether isolated intergenic regions overlap with predicted genes, UCSC gene prediction archives were examined.
+Twelve isolated regions overlapped with predicted genes. Of these, three did not align with the 3' ends of the predictions,
+which reduces the likelihood that they represent true transcript termini.
+Five predictions appeared to be extensions of known genes,
+while the remaining four matched genes not present in RefSeq or NCBI annotations but were supported by our data.
+A summary of these findings is provided in Appendix~\ref{tab:predictedIsolated}.
 
 \paragraph{Combining supporting features}
 
-In total, four features were examined as supportive evidence for the biological significance of these intergenic regions:
+Four features were examined as supporting evidence for the biological significance of isolated intergenic regions:
 conservation, open chromatin presence, differential expression, and gene predictions.
-Based on these, four sublists of isolated intergenic regions were generated:
+Based on these features, four sublists of isolated intergenic regions were generated:
 
 \begin{itemize}
-  \item Conserved regions
-  \item Regions associated with open chromatin
-  \item Differentially expressed regions
-  \item Regions overlapping predicted genes
+\item Conserved regions
+\item Regions associated with open chromatin
+\item Differentially expressed regions
+\item Regions overlapping predicted genes
 \end{itemize}
 
-Notably, the list of conserved regions had only one element (INT1216) in common with the other lists (particularly, prediction list).
-The predicted gene list had two regions in common with the differential expression list (INT196, INT1525)
-and one in common with the open chromatin list (INT4147).
-All three of these predicted genes were extended versions of already annotated genes (see example in Figure \ref{fig:predictedExtension}).
+Notably, the list of conserved regions contained only one region (INT1216) that overlapped with the other lists,
+particularly the predicted gene list.
+The predicted gene list shared two regions (INT196, INT1525) with the differential expression list,
+and one region (INT4147) with the open chromatin list.
+All three of these predicted genes were extensions of already annotated genes
+(see example in Figure~\ref{fig:predictedExtension}).
 The differential expression and open chromatin lists had 11 regions in common
 (INT1312, INT1426, INT1492, INT1554, INT1609, INT1993, INT2209, INT349, INT368, INT4216, INT6013).
 No regions appeared in more than two lists.
@@ -292,104 +309,108 @@ No regions appeared in more than two lists.
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/prediction_example.png}
-  \caption{Example of gene which is predicted to have some longer transcripts than are present in the GENCODE and NCBI annotations.
-  The intergenic region is located after the 3' end of gene GM2A, however,
-  SIB prediction tool suggest that longer transcripts should be included in the annotation of this gene.}
+  \caption{Example of a gene predicted to have longer transcripts
+  than those currently included in the GENCODE and NCBI annotations.
+  The intergenic region is located downstream of the 3' end of the GM2A gene.
+  However, the SIB prediction tool suggests that the annotation of
+  this gene should be extended to include longer transcript variants.}
   \label{fig:predictedExtension}
 \end{figure}
 
-For overall transcript structure inference, full-length Oxford Nanopore PBMC data were investigated.
-Isolated transcripts were also detected using this sequencing method, providing potential transcript structures.
-However, due to low coverage, these inferred structures should be interpreted with caution.
-An example of inferred transcript structures can be seen in Figure \ref{fig:transcripts}.
+For comprehensive transcript structure inference, short-read data alone is insufficient.
+To investigate the feasibility of using long-read data, which generally has lower coverage
+and is less suitable for detecting rare transcripts, full-length Oxford Nanopore PBMC data were analyzed.
+This sequencing method successfully detected isolated transcripts, suggesting potential transcript structures.
+However, due to the low coverage, these inferred structures should be interpreted with caution.
+An example of the inferred transcript structures is shown in Figure \ref{fig:transcripts}.
 
 \begin{figure}[htbp]
   \centering
   \begin{subfigure}[b]{\linewidth}
     \centering
     \includegraphics[width=\linewidth]{images/transcripts_local.png}
-    \caption{Inferred transcript structures of INT1492 region, zoomed-in view.}
+    \caption{Inferred transcript structures for the INT1492 region (zoomed-in view).}
   \end{subfigure}
   
   \begin{subfigure}[b]{\linewidth}
     \centering
     \includegraphics[width=\linewidth]{images/transcripts_global.png}
-    \caption{Inferred transcript structures of INT1492 region, wider view.}
+    \caption{Inferred transcript structures for the INT1492 region (wider view).}
   \end{subfigure}
 
-  \caption{From the Oxford Nanopore data several transcripts were inferred in the INT1492 region.
-  The inferred transcripts varied in length, from around 1 kb to over 150 kb.}
+  \caption{Several transcript structures were inferred from the ONT data in the INT1492 region,
+  with transcript lengths ranging from approximately 1 kb to over 150 kb.}
   \label{fig:transcripts}
 \end{figure}
 
 
 \section{Enhancing transcriptomic reference}
 
-Keeping in mind that unassigned reads are also present in gene locations,
-we attempted to resolve overlapping genes in the annotations
-so that reads from these regions could be included in the downstream analysis.
-For overlap resolution, a simple set of rules was applied,
-primarily favoring protein-coding genes over others and considering the level field in the transcriptomic annotations
-(more details can be found in Methods \ref{sec:overlappers}).
+Given that unassigned reads can also map to gene locations, we sought to resolve overlapping genes in the annotations,
+allowing these reads to be included in downstream analysis.
+To address these overlaps, a straightforward set of rules was applied,
+prioritizing protein-coding genes over others and considering the "level" field in the transcriptomic annotations
+(more details are provided in Methods \ref{sec:overlappers}).
 
-In addition to resolving overlaps, the initial transcriptomic reference (taken from 10x Genomics)
-was enriched with entries from other transcriptomic references (RefSeq, GENCODE, lncRNApedia),
-ensuring that new entries did not overlap those already present.
-Finally, gene entries with reads near their 3' ends were extended.
+In addition to resolving overlaps, the original transcriptomic reference (from 10x Genomics)
+was supplemented with entries from other transcriptomic sources (RefSeq, GENCODE, LNCipedia),
+ensuring that new entries did not overlap existing ones.
+Furthermore, gene entries with reads near their 3' ends were extended.
 
-This enhanced reference resulted in an average increase of 1.2\% more reads in the cell-gene matrices.
-While this increase is relatively small, it enabled the detection of approximately 350 additional genes
-that were undetected using the standard transcriptomic reference (an example is given in Figure \ref{fig:overlapResolved}).
-However, an average of 13 genes per dataset were lost when using this enhanced reference.
+This enhanced reference led to an average increase of 1.2\% in the number of reads in the cell-gene matrices.
+Although the increase was modest, it enabled the detection of approximately 350 additional genes that were not
+identified using the standard transcriptomic reference (see Figure \ref{fig:overlapResolved} for an example).
+However, on average, 13 genes per dataset were lost when using the enhanced reference.
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/TYMP.png}
-  \caption{Example of successful resolution of overlapping genes TYMP and SCO2.
-  Both genes are protein coding, however TYMP is preffered since it has lower \textit{level} value.
-  Based on the exon structures, it can clearly be seen that those reads in the overlapping area indeed originate from TYMP gene.
-  Without reference enhancing, these reads from overlapping area would be classified as multimappers, and filtered out (in typical workflow).
-  The 10x annotation track is expanded to highlight exon structures.}
+  \caption{Example of successful resolution of overlapping genes, TYMP and SCO2.
+Both genes are protein-coding, but TYMP is preferred due to its lower \textit{level} value.
+The exon structures clearly indicate that the reads in the overlapping region originate from the TYMP gene.
+Without reference enhancement, these reads would be classified as multimappers and filtered out in a typical workflow.
+The 10x annotation track is expanded to highlight the exon structures.}
   \label{fig:overlapResolved}
 \end{figure}
 
-Although the overall data volume increased, it is not straightforward to conclude that data quality improved.
-Overlap-handling rules can be debated, particularly regarding their applicability in all cases.
+Although the overall data volume increased, it is not straightforward to conclude that the data quality has improved.
+The overlap-handling rules themselves are open to debate, particularly regarding their applicability across all cases.
 
-For example, genes are expressed in certain cell types or states regardless of their level classification
+For example, genes may be expressed in certain cell types or states regardless of their level classification
 (whether verified, manually annotated, or automatically annotated).
-While, in general, verified or manually annotated genes are more frequently expressed than automatically annotated ones
-(which are likely less explored and detected at lower rates overall),
-this pattern does not hold in all situations.
+While verified or manually annotated genes are generally expressed more frequently than automatically annotated ones
+(which are likely less explored and detected at lower rates),
+this pattern does not hold in every case.
 The same consideration applies to gene classification by type.
 
-Regarding the gene extensions, in most cases they increase the gene expression by relatively small fraction of counts
-(see Figure \ref{fig:extension} for example).
-Even though some additional information is gained, when compared with the total amount of data, this gain is very small
-(e.g., in \textit{PBMC\_10x\_2} sample, it constituted only 1.76\% of gained reads, or 0.017\% of total reads).
+Regarding the gene extensions, in most cases, they only lead to a modest increase in gene expression counts
+(see Figure \ref{fig:extension} for an example).
+While some additional information is gained, the increase is relatively small compared to the total data volume.
+For instance, in the \textit{PBMC\_10x\_2} sample,
+the gain from gene extensions constituted only 1.76\% of the additional reads or 0.017\% of the total reads.
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/extension_FBX042.png}
-  \caption{Example of gene extension (coverage shown is from \textit{PBMC\_10x\_2} dataset).
-  In this case gene FBX042 is extended to include reads close to its 3' end.
-  However, the amount of reads gained is tiny when compared with the number of total counts of this gene
-  (the number of counts of this gene increased approximatelly by 3\% in the \textit{PBMC\_10x\_2} dataset).}
+  \caption{Example of gene extension (coverage shown is from the \textit{PBMC\_10x\_2} dataset).
+  In this case, the gene FBX042 is extended to include reads near its 3' end.
+  However, the number of reads gained is minimal compared to the total counts for this gene,
+  with the read count increasing by approximately 3\% in the \textit{PBMC\_10x\_2} dataset.}
   \label{fig:extension}
 \end{figure}
 
-Overall, while statistical differences are evident,
+Overall, while statistical differences are observed,
 their impact on biological interpretations remains uncertain and likely depends on the specific downstream analysis.
-For instance, cell clustering is generally unaffected, and a visual inspection of UMAPs
-does not reveal significant differences between datasets generated using the enhanced and standard references
-(see example in Figure \ref{fig:enhancedClustering}).
-However, in certain cases, even a small number of additional genes could significantly influence the analysis,
-meaning that this enhanced reference could help uncover relevant biological processes.
+For example, cell clustering is generally unaffected, and visual inspection of UMAPs does not show significant differences
+between datasets generated with the enhanced and standard references (see example in Figure \ref{fig:enhancedClustering}).
+However, in some cases, even a small number of additional genes could have a significant influence on the analysis,
+suggesting that the enhanced reference might help uncover relevant biological processes.
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/enhancedClustering.png}
-  \caption{UMAPs of \textit{PBMC\_10x\_2} dataset using standard and enhanced references.
-  While T cell cluster is a bit different in these two cases, main structures remain the same in both cases.}
+  \caption{UMAP embedings of the \textit{PBMC\_10x\_2} dataset using the standard and enhanced references.
+  Although the T cell cluster shows slight differences between the two cases,
+  the main structures remain consistent in both.}
   \label{fig:enhancedClustering}
 \end{figure}
