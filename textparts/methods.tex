@@ -4,8 +4,8 @@
 
 We analyzed datasets from four different human tissues: brain, blood, lung, and eye.
 All samples, except for two Peripheral Blood Mononuclear Cell (PBMC) datasets,
-were generated using the 10x Genomics v3.1 protocol (\cite{Juzenas2025}).
-The two exceptions were prepared using the inDrops2 protocol.
+were generated using the 10x Genomics v3.1 protocol.
+The two exceptions were prepared using the inDrops2 protocol (\cite{Juzenas2025}).
 All protocols capture 3' ends of RNA molecules and use short-read sequencing.
 The datasets are publicly available, with sources and additional details provided in Table \ref{tab:datasets}.
 
@@ -50,101 +50,105 @@ The specific functions and parameters used are described in the following sectio
 
 \section{Data processing pipeline}
 
-The pipeline was implemented using GNU MAKE and the full scripts are available on the \href{https://github.com/JuozapasI/MasterThesis/}{GitHub},
-here only general description of the workflow and used tools is provided.
-The general scheme of the pipeline (used both for extracting intergenic regions and enhancing transcriptomic reference)
-can be seen in Figure \ref{fig:pipeline}, while the description is given below:
+The pipeline was implemented using GNU Make,
+and the full scripts are available on \href{https://github.com/JuozapasI/MasterThesis/}{GitHub}.
+Here, only a general description of the workflow and tools used is provided.
+
+The overall structure of the pipeline, which was applied both for extracting intergenic regions and enhancing the transcriptomic reference, is shown in Figure~\ref{fig:pipeline}, with a step-by-step description provided below:
 
 \begin{enumerate}
-    \item Map reads with initial transcriptomic reference.
-    \item Take unassigned (and uniquely mapped) reads.
-    \item Split into intersecting and intergenic reads.
+    \item Map reads using initial transcriptomic reference.
+    \item Extract unassigned and uniquely mapped reads.
+    \item Separate reads into two categories: intersecting with genes and intergenic.
     \begin{enumerate}
         \item For intersecting:
         \begin{enumerate}
-            \item Resolve overlapping genes that also overlap with unassigned reads (if possible).
-            \item From the second reference and further: add genes to the original transcriptomic reference
-            that i) overlap with unassigned reads and
-            ii) do not overlap with entries from the original transcriptomic reference.
+            \item Resolve cases of overlapping genes that also overlap with unassigned reads.
+            \item From the second reference onward, add genes to the original transcriptomic reference if they:
+            \begin{itemize}
+              \item overlap with unassigned reads, and
+              \item do not overlap with entries in the original reference.
+            \end{itemize}
         \end{enumerate}
         \item For intergenic:
         \begin{enumerate}
-            \item Cluster.
-            \item Filter-out relatively small clusters (custom threshold).
+            \item Cluster the reads.
+            \item Filter out small clusters (custom threshold).
             \item For the first reference only: filter-out AT-rich reads.
-            \item For reads that are left, repeat from the beginning with the next reference.
-            \item For the last reference only: clusters that start just after 3' ends of known genes are assigned
-            to those genes (by extending genes in transcriptomic reference).
+            \item For the remaining reads, repeat the process with the next reference.
+            \item For the final reference only: assign clusters that start immediately downstream of 3' ends
+            of known genes to those genes (by extending gene annotations in the reference).
         \end{enumerate}
     \end{enumerate}
-    \item Create final GTF and map initial sequences to it.
-    \item Create list of large (\textgreater 5CPM) intergenic clusters.
+    \item Construct the final transcriptomic reference and remap the original reads to it.
+    \item Generate a list of large intergenic clusters (custom threshold).
 \end{enumerate}
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/pipeline.png}
-  \caption{Scheme of the pipeline. This sheme provides only general logic and main tools of data processing.
-  The pipeline itself is more complex, e.g., using multiple transcriptomic references required looping over some of those steps.}
+  \caption{Schematic overview of the pipeline.
+  This diagram illustrates the general logic and main tools used in the data processing workflow.
+  The actual pipeline is more complex—for example,
+  the use of multiple transcriptomic references required looping over some of the steps.}
   \label{fig:pipeline}
 \end{figure}
 
 \paragraph{Mapping and filtering bam files}
-Reads were mapped using STARsolo (\cite{Kaminow2021}), both from FASTQ and BAM input files.
-The same parameters were used for all samples (see \href{https://github.com/JuozapasI/MasterThesis/}{GitHub repository}),
-except the ones regarding barcode structures
-(differences include number of barcodes, lengths of barcode/UMI sequences, and their positions in the primer).
-Filtering unassigned reads was done using \textit{awk}, taking those that have valid barcode
-(i.e. filtering out those reads that have barcode length not equal to the defined length)
-and were not assigned to any gene (i.e. had 'GN:Z:-' tag).
-Also, only uniquely mapped reads were taken (tag 'NH:i:1').
+Reads were mapped using STARsolo (\cite{Kaminow2021}) from both FASTQ and BAM input files.
+The same parameters were used across all samples (see the \href{https://github.com/JuozapasI/MasterThesis/}{GitHub repository}),
+except for those related to barcode structure—differences included the number of barcodes, lengths of barcode/UMI sequences, and their positions in the primers.
+Unassigned reads were filtered using \textit{awk} by selecting those that:
+\begin{enumerate}
+  \item had valid barcodes (i.e., barcode length matched the expected value)
+  \item were not assigned to any gene (tagged with \texttt{GN:Z:-})
+  \item were uniquely mapped (tagged with \texttt{NH:i:1}).
+\end{enumerate}
 
 \paragraph{Classifying reads as 'intergenic' or 'intersecting' and read clustering}
-Intersections of unassigned reads with references were checked using \textit{bedtools intersect} command.
-Those that intersect with genes were classified as 'intersecting', and those that do not – as 'intergenic'.
-Intersections were assesed in a strand-specific manner (bedtools '-s' flag), i.e. regions on different strands were treated as not intersecting,
-even if they share overlapping genomic coordinates (see Figure \ref{fig:intergenicIntersecting}).
-The intergenic reads were clustered using \textit{bedtools merge}, again in a strand-specific manner.
+Unassigned reads were classified as either 'intersecting' or 'intergenic' based on their overlap with the reference genome,
+using the \textit{bedtools intersect} command.
+Reads that intersected with genes were categorized as 'intersecting', while those that did not intersect were classified as 'intergenic'.
+Intersections were assessed in a strand-specific manner using the \texttt{-s} flag in \textit{bedtools},
+meaning that regions on different strands were treated as non-intersecting,
+even if they shared overlapping genomic coordinates (see Figure \ref{fig:intergenicIntersecting}).
+Intergenic reads were then clustered using \textit{bedtools merge}, again considering strand specificity.
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{"images/intergenic_intersecting.png"}
-  \caption{Unassigned read classification as intergenic or intersecting.
-  Reads are defined as intersecting if they overlap with known genes and are on the same strand.
-  Remaining reads are defined as intergenic.}
+  \caption{Classification of unassigned reads as 'intergenic' or 'intersecting'.
+  Reads are classified as intersecting if they overlap with known genes and are on the same strand.
+  Reads that do not meet these criteria are classified as intergenic.}
   \label{fig:intergenicIntersecting}
 \end{figure}
 
 \paragraph{Manipulating transcriptomic references}
 
-The overlapping gene resolving and construction of enhanced transcriptomic reference was done using custom R script,
-particularly \textit{rtracklayer} library.
+The process of resolving overlapping genes and constructing the enhanced transcriptomic reference
+was carried out using a custom R scripts, specifically utilizing the \textit{rtracklayer} library.
 
 \section{Intergenic regions}
 
 \paragraph{Extracting intergenic regions}
 
-The intergenic reads were extracted as described in the previous section (i.e. taken unassigned reads that do not overlap with any reference used)
-and merged into clusters using \textit{bedtools merge} command.
-Clusters were filtered based on cluster size, requiring at least 5 reads per million (CPM),
-where CPM represents the normalized read count per million of total primary reads in the dataset
-(i.e. $1 CPM = 1 \times sample\_size / 1000000$).
-The filtering was done using \textit{awk}.
+The intergenic reads were extracted as described in the previous section (i.e., unassigned reads that
+do not overlap with any reference used) and clustered using the \textit{bedtools merge} command.
+Clusters were filtered based on their size, requiring at least 5 reads per million (CPM),
+where CPM represents the normalized read count per million total primary reads in the dataset
+(i.e., $1 CPM = 1 \times sample\_size / 1000000$). This filtering was performed using \textit{awk}.
 
-Cluster locations were adjusted using deeptools (to compute coverage) and custom python script,
-to avoid reads containing long introns making the intergenic clusters very wide.
-To accomplish this, for each intergenic region, the maximum coverage location was found and extended to include neighbouring regions that had
-at least half the maximum coverage.
-In such way, intergenic regions were adjusted to cover only 'peaks' of reads.
+Cluster locations were adjusted using \textit{deeptools} (for coverage calculation)
+and a custom Python script to prevent long introns from skewing the width of the intergenic clusters.
+To accomplish this, for each intergenic region, the maximum coverage location was identified and extended to include neighboring regions with at least half of the maximum coverage.
 
-The lists acquired from all samples were then merged using \textit{bedtools merge} function.
-This combined list then was filtered to contain only regions detected at least
-in all samples of one group ('eye', 'lung', 'brain', 'PBMC\_10x' or 'PBMC\_indrops').
-Such filtering still allows to include tissue-specific regions in the combined list,
-while removing those that are not persistent across the same type of samples.
-Additionally, for each entry it was determined whether it overlaps with predicted genes from UCSC gene prediction archive
-(using \textit{bedtools merge}) and distances to the closest genes were found (\textit{bedtools closest}).
-Intergenic regions that were located on the opposite strand of known genes, were classified as \textit{antisense},
+The lists from all samples were then merged using the \textit{bedtools merge} function.
+This combined list was further filtered to retain only regions detected in at least all samples from one tissue group (e.g., 'eye', 'lung', 'brain', 'PBMC\_10x', or 'PBMC\_indrops').
+This filtering allows for the inclusion of tissue-specific regions while removing those that
+are not persistent across the same sample type.
+Additionally, for each entry, we determined whether it overlaps with predicted genes from the UCSC Gene Prediction Archive (using \textit{bedtools merge})
+and calculated the distances to the closest genes (using \textit{bedtools closest}).
+Intergenic regions located on the opposite strand of known genes were classified as \textit{antisense},
 while those that were not were classified as \textit{isolated} (see Figure \ref{fig:antisenseIsolated} for illustration).
 
 \begin{figure}
@@ -154,38 +158,43 @@ while those that were not were classified as \textit{isolated} (see Figure \ref{
   \label{fig:antisenseIsolated}
 \end{figure}
 
-This filtered combined list was then converted into GTF format and unassigned reads from each sample were mapped using this
-combined intergenic annotation.
+This filtered combined list was then converted into GTF format,
+and unassigned reads from each sample were mapped using this combined intergenic annotation.
 
 \paragraph{Analysis of cell-gene matrices}
 
-The matrices produced by STAR were filtered, allowing cells that have sufficient number of reads (thresholds selected manually),
-and only genes that were expressed in at least 3 cells.
-Also cells were filtered based on mitochondrial gene count (allowing up to 10\% of mitochondrial gene counts in a cell).
-Doublets were filtered using \textit{scrublet}.
-Afterwards, matrices were normalized (using \textit{normalize\_total} function from \textit{scanpy} package) and log-transformed
-(i.e. for each entry $x = log(x+1)$, \textit{log1p} function from \textit{scanpy}).
+The matrices produced by STARsolo were filtered to retain cells with a sufficient number of reads
+(thresholds selected manually) and genes expressed in at least three cells.
+Additionally, cells were filtered based on mitochondrial gene content,
+allowing up to 10\% of mitochondrial reads per cell.
+Doublets were identified and removed using \textit{scrublet}.
 
-Then only highly-variable genes (min\_mean=0.0125, max\_mean=3, min\_disp=0.5) were selected.
-For the clustering, principal components (PCs) were computed and optimal number of them were selected based on elbow rule (manually).
-For blood samples, cells were annotated automatically using CellTypist
-(for other samples, annotation was skipped, as it was not in the main focus of this project).
-Then visualizations were made using UMAP embeddings (functions from the same \textit{scanpy} package).
+After filtering, the matrices were normalized using the \textit{normalize\_total} function from the \textit{scanpy} package
+and log-transformed
+(i.e., each entry $x$ was transformed as $x = \log(x+1)$ using the \textit{log1p} function from \textit{scanpy}).
 
-All the scripts with descriptions can be found in the \href{https://github.com/JuozapasI/MasterThesis/}{GitHub repository}.
+Subsequently, only highly variable genes were retained
+(with parameters: \texttt{min\_mean=0.0125}, \texttt{max\_mean=3}, \texttt{min\_disp=0.5}).
+For clustering, principal components (PCs) were computed,
+and an optimal number was selected manually based on the elbow rule.
+In \textit{PBMC\_10x} samples, cells were annotated automatically using CellTypist.
+For other samples, annotation was omitted, as it was not the main focus of the project.
+Visualizations were generated using UMAP embeddings, also implemented via \textit{scanpy}.
+
+All scripts and additional descriptions are available in the \href{https://github.com/JuozapasI/MasterThesis/}{GitHub repository}.
 
 \paragraph{Correlations}
 
-Spearman's rank correlation between intergenic region and gene on the opposite strand was checked using custom python script.
-Formula for Spearman's correlation is given by:
+Spearman's rank correlation between intergenic regions and nearby genes was calculated using a custom Python script.
+The formula for Spearman's correlation is:
 
 $$\rho = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)}$$
 
-where $d_i$ is the difference between the ranks of corresponding values and $n$ is the number of observations.
+where $d_i$ is the difference between the ranks of the corresponding values, and $n$ is the number of observations.
 
-\paragraph{Oxford Nanopores data}
+\paragraph{Nanopore data}
 
-Nanopores data were mapped using \textit{minimap2} algorithm and possible transcript structures were inferred using \textit{stringtie} tool.
+ONT data were aligned to the genome using the \textit{minimap2} algorithm and possible transcript structures were inferred using \textit{stringtie} transcript assembler tool.
 
 \section{Enhancing transcriptomic reference}
 \label{sec:overlappers}
@@ -193,30 +202,36 @@ Nanopores data were mapped using \textit{minimap2} algorithm and possible transc
 Three aspects were considered while enhancing transcriptomic reference:
 \begin{itemize}
   \item \textbf{Gene overlaps} – some of the genes are overlapping, resulting in unassigned reads from those overlapping regions.
-  \item \textbf{3' end extensions} – for some genes, there are clusters of reads just after their 3' ends,
-  and \textcite{Pool2023} suggested to include those reads by extending 3' ends for some genes.
-  \item \textbf{Different annotations} – while most of the annotations agree on most genes,
-  there is a small fraction of genes that are present in some references but not in others.
-  Hence, for the enhancing transcriptomic reference, several transcriptomic references were used.
+  \item \textbf{3' end extensions} – for certain genes, clusters of reads appear just beyond their annotated 3' ends.
+  \textcite{Pool2023} suggested that such reads may be biologically relevant and
+  can be included by extending the 3' ends of affected genes.
+  \item \textbf{Different annotations} – although most annotations agree on the majority of genes,
+  a small fraction are present in some references but absent in others.
+  To address this, multiple transcriptomic references were used during the enhancement process.
 \end{itemize}
 
 \paragraph{Overlaps}
 
-The criteria for the resolving of overlapping genes are following:
+The criteria for resolving overlapping genes were as follows:
 \begin{enumerate}
-  \item \textbf{Gene type}: prefer protein coding genes over other types, lncRNA over remaining (e.g. pseudogenes).
-  \item \textbf{Level}: some annotations have 'level' field, indicating if the gene is verified (score 1), manually annotated (score 2)
-  or automatically annotated (score 3). Lower 'level' score was preferred.
-  \item \textbf{Intersection types}: if 5' end gene is overlapping with 3' end of gene, 5' end of gene was shortened.
+  \item \textbf{Gene type}: Protein-coding genes were preferred over other types,
+  and long non-coding RNAs (lncRNAs) were preferred over the remaining categories (e.g., pseudogenes).
+  \item \textbf{Level}: Some references include a 'level' field indicating annotation quality —
+  1 for verified, 2 for manually annotated, and 3 for automatically annotated genes.
+  Genes with lower scores were given higher priority.
+  \item \textbf{Intersection types}: If the 5' end of one gene overlapped with the 3' end of another,
+  the 5' end gene was shortened.
 \end{enumerate}
 
-Particularly, gene types were divided into three groups: protein coding, long non-coding RNAs and other,
-and each class was assigned score (see Table \ref{tab:geneTypes}).
-The overall priority score was defined as sum of this gene type score and 'level' field.
-The lower this score is, the higher priority gene has.
-The intersection type (whether 3' end is overlapping or not) was taken into account only in cases when priority scores were equal,
-and distances between 3' ends of overlapping genes were greater than 1kb (see Figure \ref{fig:overlappers} for graphical explanation).
-If possible, lower priority genes were shortened, otherwise they were deleted.
+Gene types were divided into three classes: protein-coding, long non-coding RNAs, and other.
+Each class was assigned a score, as shown in Table \ref{tab:geneTypes}.
+The overall priority score was defined as the sum of the gene type score and the annotation level.
+A lower priority score indicates a higher-priority gene.
+
+Intersection type (i.e., whether a 3' end is involved) was only considered in cases where the priority score
+were equal and the distance between the overlapping genes' 3' ends exceeded 1 kb.
+In such cases, lower-priority genes were either shortened or removed entirely,
+depending on whether shortening resolved the overlap (see Figure \ref{fig:overlappers} for a graphical illustration).
 
 \begin{table}[h]
     \centering
@@ -229,27 +244,29 @@ If possible, lower priority genes were shortened, otherwise they were deleted.
 	other & 20 & snRNA, snoRNA, pseudogene, etc. \\
         \bottomrule
     \end{tabular}
-    \caption{Priority scores assigned based on gene type.}
+    \caption{Priority scores assigned to gene types for resolving overlaps.}
     \label{tab:geneTypes}
 \end{table}
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{"images/overlappers.png"}
-  \caption{Strategy for resolving overlaps. \textit{p1} and \textit{p2} are priority scores of \textit{gene1} and \textit{gene2}
+  \caption{Strategy for resolving overlaps.
+  \textit{p1} and \textit{p2} are priority scores of \textit{gene1} and \textit{gene2}
   (lower score means higher priority), while \textit{d} is distance between 3' ends of those genes.}
   \label{fig:overlappers}
 \end{figure}
 
 \paragraph{3' end extensions}
 
-Unassigned reads clusters (of size at least 1CPM) that were close to the 3' of genes (closer than 100bp) were assumed to originate from those genes.
-Hence annotations for those genes were expanded to cover those clusters.
+Clusters of unassigned reads (with a size of at least 1 CPM) located within 100 bp downstream of a gene's 3' end
+were assumed to originate from that gene.
+Consequently, the corresponding gene annotations were extended to include these clusters.
 
 \paragraph{Multiple annotations}
 
-The initial transcriptomic reference (taken from 10x Genomics website) was enriched with entries from other annotations.
-Particularly entries from GENCODE, RefSeq and lncpedia transcriptomic references were added to the initial reference,
-if they overlapped with unassigned reads and did not overlap with genes already present in the reference.
-This enrichment was done sequentially, i.e. firstly the reference was updated with entries from GENCODE annotation,
-then resulting reference was updated with entries from RefSeq annotation and finally from lncpedia annotation.
+The initial transcriptomic reference (obtained from the 10x Genomics website)
+was incrementally enriched with gene entries from GENCODE, RefSeq (NCBI), and LNCipedia annotations.
+Specifically, entries from these sources were added if they overlapped with unassigned reads
+and did not overlap with genes already present in the current reference.
+The enrichment was performed sequentially: first incorporating relevant entries from GENCODE, followed by RefSeq, and finally LNCipedia.
