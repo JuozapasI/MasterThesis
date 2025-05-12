@@ -1,8 +1,8 @@
-Single-cell RNA sequencing (scRNA-seq) has become a widely used tool for studying cellular systems.
+Single-cell RNA sequencing has become a widely used tool for studying cellular systems.
 These experiments generate large volumes of data, and as the technology becomes increasingly affordable and accessible,
 the total amount of data produced is expected to grow rapidly.
 While scRNA-seq data typically serves the primary goals of transcriptomic studies,
-a substantial fraction of the reads—those that are mapped but not assigned to annotated features—are often ignored.
+a substantial fraction of the reads — those that are mapped but not assigned to annotated features — are often ignored.
 As demonstrated in the Results chapter,
 such unassigned reads can account for 10–30\% of the total reads, representing a significant portion of the dataset.
 
@@ -54,7 +54,7 @@ While transcript structures can be inferred using long-read RNA sequencing (as d
 high sequencing depth is necessary for robust annotation.
 
 Although lncRNAs can participate in virtually any cellular process, predicting the function of a specific lncRNA remains challenging.
-They often lack clear phenotypic effects, and mutations usually affect quantitative traits \cite{Mattick2023}.
+They often lack clear phenotypic effects, and mutations usually affect quantitative traits (\cite{Mattick2023}).
 This project did not attempt to assign functions to the novel candidates; future studies could explore this further.
 
 A subset of isolated regions located near known genes may instead represent unannotated transcript extensions.
@@ -67,7 +67,7 @@ Long-read sequencing data could be used to validate this hypothesis.
 Some reads remained unassigned despite aligning to annotated gene regions, primarily due to overlapping genes.
 To incorporate such reads, we enhanced the transcriptomic reference by resolving overlaps based on gene types.
 Using this enhanced reference, the downstream cell–gene matrices increased by approximately 1.2\% on average.
-Notably, several biologically important genes — such as transcription factors — were recovered using this approach.
+Notably, several biologically important genes, such as transcription factors, were recovered using this approach.
 
 While the overall data volume increased (in both the number of detected genes and total counts in cell–gene matrices),
 some genes showed reduced counts after overlap resolution —
@@ -78,7 +78,7 @@ First, prioritizing certain gene types (e.g., protein-coding over lncRNAs) can b
 Second, our overlap resolution was based on gene-level annotations (start and end coordinates),
 whereas transcriptomic annotations typically include more detailed exon–intron structures and isoforms.
 
-Alternative strategies for handling multi-mapped reads exist —
+Alternative strategies for handling multi-mapped reads exist,
 such as uniform distribution or probabilistic assignment based on the ratio of uniquely mapped reads (\cite{Francoeur2020}).
 However, no consensus or gold standard currently exists, and such reads are often excluded to reduce uncertainty.
 

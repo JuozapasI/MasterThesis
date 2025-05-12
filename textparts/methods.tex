@@ -89,20 +89,20 @@ The overall structure of the pipeline, which was applied both for extracting int
   \includegraphics[width=\linewidth]{images/pipeline.png}
   \caption{Schematic overview of the pipeline.
   This diagram illustrates the general logic and main tools used in the data processing workflow.
-  The actual pipeline is more complex—for example,
+  The actual pipeline is more complex — for example,
   the use of multiple transcriptomic references required looping over some of the steps.}
   \label{fig:pipeline}
 \end{figure}
 
-\paragraph{Mapping and filtering bam files}
+\paragraph{Mapping and filtering BAM files}
 Reads were mapped using STARsolo (\cite{Kaminow2021}) from both FASTQ and BAM input files.
 The same parameters were used across all samples (see the \href{https://github.com/JuozapasI/MasterThesis/}{GitHub repository}),
-except for those related to barcode structure—differences included the number of barcodes, lengths of barcode/UMI sequences, and their positions in the primers.
+except for those related to barcode structure — differences included the number of barcodes, lengths of barcode/UMI sequences, and their positions in the primers.
 Unassigned reads were filtered using \textit{awk} by selecting those that:
 \begin{enumerate}
   \item had valid barcodes (i.e., barcode length matched the expected value)
-  \item were not assigned to any gene (tagged with \texttt{GN:Z:-})
-  \item were uniquely mapped (tagged with \texttt{NH:i:1}).
+  \item were not assigned to any gene (tagged with \texttt{GN:Z:-} in the BAM file)
+  \item were uniquely mapped (tagged with \texttt{NH:i:1} in the BAM file).
 \end{enumerate}
 
 \paragraph{Classifying reads as 'intergenic' or 'intersecting' and read clustering}

@@ -22,7 +22,7 @@ Although bulk RNA-seq has provided valuable insights into the dynamics of cellul
 (such as changes in disease states in response to therapeutics, detection of gene isoforms, gene fusions,
 and various other properties of target cells (\cite{Heumos2023})),
 this approach masks non-dominant processes and cell-to-cell variability through averaging.
-This limitation was addressed by the introduction of single-cell RNA sequencing (scRNA-seq) methods,
+This limitation was addressed by the introduction of single-cell RNA sequencing methods,
 which allow for the generation of transcriptomic profiles from individual cells,
 providing high-resolution insights into cellular systems.
 
@@ -107,7 +107,7 @@ For short-read Illumina sequencing, this involves cDNA purification, fragmentati
 
 \paragraph{Raw data processing}
 The output from NGS machines is typically converted into FASTQ files,
-which contain the recorded sequences along with—depending on the protocol—barcode and UMI sequences, as well as quality scores.
+which contain the recorded sequences along with (depending on the protocol) barcode and UMI sequences, as well as quality scores.
 
 The reads in these FASTQ files are then mapped to the reference genome.
 Although this step may seem straightforward, it is usually computationally intensive due to the size of the genome,
@@ -122,7 +122,7 @@ However, complications arise when a read maps to multiple locations or to region
 issues discussed further in Section~\ref{sec:multimappers}.
 
 After gene assignment, duplicate reads are filtered out to estimate the original number of transcripts.
-This is achieved using UMIs—reads with the same UMI and cell barcode, mapping to the same gene, are considered duplicates.
+This is achieved using UMIs: reads with the same UMI and cell barcode, mapping to the same gene, are considered duplicates.
 Additionally, reads with low base quality scores in UMI or cell barcode sequences are filtered out.
 Following this step, gene expression per barcode can be quantified, producing a cell–gene matrix (\cite{Heumos2023}).
 See Figure~\ref{fig:rawData} for a summary of the inputs and outputs in raw data processing.
@@ -198,7 +198,7 @@ performs as well or better than more advanced methods.
 Initially, count matrices include all genes present in the transcriptomic reference.
 While each gene is biologically meaningful, not all are useful for statistical analyses.
 For example, some genes may not be expressed in the sequenced cells or are expressed at very low levels (\cite{Heumos2023}).
-It is therefore standard practice to filter out such genes—
+It is therefore standard practice to filter out such genes —
 for instance, by excluding genes expressed in fewer than three cells.
 Additionally, some genes (commonly referred to as housekeeping genes) are expressed uniformly across most cells
 and thus provide limited discriminatory power for analyses such as cell clustering or cell type identification.
@@ -333,7 +333,7 @@ Chromatin also contributes to the higher-order three-dimensional (3D) organizati
 This structure is not random but is hierarchically organized across multiple scales.
 For instance, individual chromosomes occupy distinct territories within the nucleus,
 with their positioning correlating with gene activity and cell-type-specific functions.
-Within these territories, genomic regions are further organized into topologically associating domains (TADs),
+Within these territories, genomic regions are further organized into topologically associating domains,
 which facilitate or restrict interactions between enhancers, promoters, and other regulatory elements.
 Such spatial organization plays a crucial role in gene regulation,
 including long-range interactions between loci on the same or even different chromosomes (\cite{Elimelech2020}).
@@ -378,7 +378,7 @@ such as modular domains and repeat elements that mediate interactions with chrom
 Importantly, they are frequently associated with chromatin-modifying complexes and are increasingly recognized
 as integral to the spatial and temporal organization of gene regulation during development (\cite{Mattick2023}).
 
-Given their diversity and specificity, the biological importance of non-coding RNAs—especially lncRNAs —
+Given their diversity and specificity, the biological importance of non-coding RNAs, especially lncRNAs,
 is increasingly appreciated, and many are now considered as genes with crucial regulatory roles in development, physiology, and disease.
 
 \paragraph{Other genome components}
@@ -422,7 +422,8 @@ It is important to note that many medical and scientific research efforts rely o
 Examples include genome-wide association studies (GWAS), which attempt to link genomic variants to nearby genes;
 RNA-seq analysis; and exome sequencing projects that use capture kits targeting most known exons (\cite{Pertea2018}).
 
-Currently, the two most widely used genome annotations are GENCODE (\cite{Mudge2024}) and RefSeq (\cite{OLeary2015}) (maintained by NCBI).
+Currently, the two most widely used genome annotations are
+GENCODE (curated by the GENCODE consortium at EMBL–EBI and Ensembl) (\cite{Mudge2024}) and RefSeq (\cite{OLeary2015}) (maintained by NCBI).
 Despite their status as mature genome references, they report different numbers of genes.
 For instance, RefSeq includes 20,078 protein-coding genes (\cite{ncbi}), whereas GENCODE contains 19,868 (\cite{ensembl}).
 This discrepancy highlights the ongoing challenge of accurately annotating genomes.
@@ -442,7 +443,7 @@ comparative annotation, which leverages the fact that protein-coding sequences t
 and \textit{ab initio} annotation, which uses known sequence biases to predict genes (\cite{Guigo2023}).
 Despite significant advancements, genome annotation remains imperfect.
 
-While the number of protein-coding genes is reaching a consensus — major databases report around 19,000 to 20,000 protein-coding genes — 
+While the number of protein-coding genes is reaching a consensus (major databases report around 19,000 to 20,000 protein-coding genes) 
 the number of non-coding genes is expected to increase in the future (\cite{Amaral2023}).
 This is largely due to the structured nature of protein-coding genes (e.g., open reading frames, codon biases that skew nucleotide distributions),
 which makes them easier to detect using computational tools (\cite{Guigo2023}).
@@ -460,12 +461,11 @@ and they are organized as a series of separated exonic regions (\cite{Salzberg20
 Additionally, bulk RNA sequencing often has relatively low sequencing depth,
 making it difficult to detect rare transcripts or those expressed in a cell-type-specific manner (\cite{Guigo2023}).
 
-In principle, full-length single-cell RNA sequencing (scRNA-seq) could help overcome some of these limitations.
-However, it still has inherent biases introduced during library preparation, including those related to RNA processing status,
-post-transcriptional modifications, transcript length, cellular localization, and structural features (\cite{Guigo2023}).
-Short-read scRNA-seq typically provides higher throughput (\cite{Heumos2023}), enabling the detection of rare transcripts.
-However, it does not capture full transcript structures, limiting its utility to supporting evidence,
-such as validating computationally predicted genes or indicating transcriptional activity at specific genomic locations.
+In principle, long-read single-cell RNA sequencing could alleviate some of these limitations, as long reads are more easily mappable.
+However, this approach is still constrained by high error rates and low sequencing depth (\cite{Guigo2023}).
+In contrast, short-read scRNA-seq generally offers higher throughput (\cite{Heumos2023}), facilitating the detection of rare transcripts.
+Yet, it fails to capture full-length transcript structures, limiting its utility to supporting roles,
+such as validating predicted genes or indicating transcriptional activity at specific genomic loci.
 
 Beyond technical limitations, there are ontological challenges, such as defining what constitutes a gene.
 While genes are often regarded as well-defined, discrete entities, the reality is more complex.

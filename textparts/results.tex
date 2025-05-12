@@ -57,8 +57,8 @@ which did not overlap any known gene on either strand, were classified as \texti
     \end{subfigure}
     \caption{Comparison of clustering using the standard annotation (\textit{10x Genomics} reference)
     and using only information from defined intergenic regions.
-In each plot, each dot represents a cell and is colored according to its cell type.
-Cell types were inferred using the standard annotation; the corresponding dots in the 'intergenic' plots were colored using the same labels.
+In each plot, each dot represents a cell and is colored according to its cell type (cluster).
+Cell types (or clusters) were inferred using the standard annotation; the corresponding dots in the 'intergenic' plots were colored using the same labels.
 In some samples, visible clusters inferred using only intergenic regions roughly correspond to those obtained using the full standard annotation.
 In others (e.g., the \textit{brain\_2} sample), noise introduces clustering artifacts.
 Nevertheless, this rough clustering suggests that the unassigned reads do not represent purely random noise.}
@@ -196,7 +196,7 @@ but systematic artifacts derived from real, biologically relevant transcripts.
   that can lead to reads mapping to the opposite strand of the original gene.
   a) An RNA molecule is captured via its poly-A tail by a primer containing a poly-T sequence.
   b) Reverse transcriptase binds the primer and synthesizes cDNA from the RNA template.
-  c) If the RNA–cDNA hybrid dissociates, a second primer may bind to poly-A stretches within the newly synthesized cDNA.
+  c) If the RNA-cDNA hybrid dissociates, a second primer may bind to poly-A stretches within the newly synthesized cDNA.
   This can lead to synthesis of a reversed cDNA, ultimately causing the resulting reads to map to the antisense strand.}
   \label{fig:mispriming}
 \end{figure}
