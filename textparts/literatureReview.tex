@@ -65,7 +65,7 @@ Primers used in these protocols typically share a common structure, including:
   \centering
   \includegraphics[width=\linewidth]{images/indropsDevice.jpg}
   \caption{Example of a microfluidic device for droplet generation.
-  (A) Schematic view of the device. It features four inlets (for RT mix, cell suspension, barcoding hydrogels, and oil)
+  (A) Schematic view of the device. It features four inlets (for reverse transcription mix, cell suspension, barcoding hydrogels, and oil)
   and one outlet for droplet collection.
   (B) Snapshots of droplet generation and collection.
   Blue arrows indicate hydrogels, red arrows indicate cells, and black arrows indicate flow direction.
@@ -85,7 +85,7 @@ Primers used in these protocols typically share a common structure, including:
 An example of primer design is shown in Figure \ref{fig:inDropsPrimer}.
 
 Once cells are encapsulated in droplets, lysis occurs, releasing RNA that is captured by barcoded primers.
-When the primers hybridize to the RNA molecules, reverse transcription takes place, generating barcoded cDNA.
+When the primers hybridize to the RNA molecules, reverse transcription (RT) takes place, generating barcoded cDNA.
 The emulsion is then broken, and the cDNA is amplified in bulk (typically using PCR) (\cite{Klein2015, Zheng2017}).
 After amplification, the cDNA is processed to be compatible with the chosen sequencing platform.
 For short-read Illumina sequencing, this involves cDNA purification, fragmentation, and ligation of Illumina-compatible adapters.
@@ -106,19 +106,33 @@ For short-read Illumina sequencing, this involves cDNA purification, fragmentati
 \subsection{scRNA-seq data analysis}
 
 \paragraph{Raw data processing}
-The output from NGS machines is typically converted into FASTQ files, which contain
-the recorded sequences along with (depending on the method) barcode and UMI sequences, as well as quality scores.
-Subsequent processing steps include quality control of the FASTQ files (based on quality scores),
-mapping reads to the genome, assigning reads to genes, filtering duplicate reads
-(defined as reads with the same UMI and cell barcode, mapped to the same gene),
-and finally counting gene expression per cell (barcode) (\cite{Heumos2023}) (see Figure~\ref{fig:rawData}).
+The output from NGS machines is typically converted into FASTQ files,
+which contain the recorded sequences along with—depending on the protocol—barcode and UMI sequences, as well as quality scores.
 
-These steps are usually performed by a single dedicated software package,
+The reads in these FASTQ files are then mapped to the reference genome.
+Although this step may seem straightforward, it is usually computationally intensive due to the size of the genome,
+the volume of reads, and the complexity of the data.
+For example, aligners for RNA data must be splicing-aware, and the input sequences may contain mismatches, insertions,
+and deletions caused by genomic variation and sequencing errors (\cite{Dobin2012}).
+
+Once mapped, reads are assigned to genes.
+This is done in a straightforward manner:
+if a read overlaps a gene in the transcriptomic annotation (typically provided in GTF format), it is assigned to that gene.
+However, complications arise when a read maps to multiple locations or to regions overlapping multiple genes —
+issues discussed further in Section~\ref{sec:multimappers}.
+
+After gene assignment, duplicate reads are filtered out to estimate the original number of transcripts.
+This is achieved using UMIs—reads with the same UMI and cell barcode, mapping to the same gene, are considered duplicates.
+Additionally, reads with low base quality scores in UMI or cell barcode sequences are filtered out.
+Following this step, gene expression per barcode can be quantified, producing a cell–gene matrix (\cite{Heumos2023}).
+See Figure~\ref{fig:rawData} for a summary of the inputs and outputs in raw data processing.
+
+These steps are typically performed using dedicated software packages
 such as STARsolo (\cite{Kaminow2021}), CellRanger (\cite{Zheng2017}), or others.
-The exact pipeline may vary depending on several factors, such as whether the genome sequence is available,
-whether a transcriptomic reference exists, or whether UMIs are used in the protocol.
+The exact pipeline may vary depending on several factors, such as the availability of a genome or transcriptome reference,
+and whether the protocol includes UMIs.
 
-The typical output of this processing is a cell-gene matrix, where rows represent cells, columns represent genes,
+The typical output of this process is a cell–gene matrix, where rows represent cells, columns represent genes,
 and each entry reflects the number of captured RNA molecules from a given gene in a specific cell.
 
 \begin{figure}
@@ -243,7 +257,7 @@ and \textit{exons} are joined to form the mature RNA (see Figure \ref{fig:gene})
 While introns are not retained in the final transcript, they can contribute to gene regulation,
 affecting the rate of transcription, nuclear export, and transcript stability (\cite{Shaul2017}).
 Importantly, the classification of exons and introns is transcript-specific:
-due to alternative splicing, a genomic region may be exonic in one transcript and intronic in another.
+due to alternative splicing, a genomic region may be exonic in one transcript and intronic in another (\cite{Aspden2023}).
 
 Exons that encode the amino acid sequence of proteins are referred to as \textit{coding sequences} (CDS),
 while non-coding exons may contribute regulatory elements.
@@ -489,6 +503,7 @@ However, there are cases where assigning a read to a gene is not straightforward
 such as when a read maps to multiple locations or to a unique location where overlapping genes are annotated.
 
 \paragraph{Multimappers}
+\label{sec:multimappers}
 There are two possible reasons for reads assigned to multiple genes: either they are mapped to multiple genome locations,
 or they are mapped to the genomic location containing overlapping features (genes).
 Such reads (commonly referred to as multimappers) are typically excluded from analysis (\cite{Paz2024}).

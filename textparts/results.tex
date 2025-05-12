@@ -355,13 +355,17 @@ was supplemented with entries from other transcriptomic sources (RefSeq, GENCODE
 ensuring that new entries did not overlap existing ones.
 Furthermore, gene entries with reads near their 3' ends were extended.
 
-This enhanced reference led to an average increase of 1.2\% in the number of reads in the cell-gene matrices.
+This enhanced reference led to an average increase of 1.2\% in the number of reads in the cell–gene matrices.
 Although the increase was modest, it enabled the detection of approximately 350 additional genes that were not
 identified using the standard transcriptomic reference (see Figure \ref{fig:overlapResolved} for an example).
+The newly detected genes include transcription factors such as SOX1, SOX2, YY2, HOXA10,
+as well as other important genes like the growth factor IGF2 and G-protein–coupled receptors (GPR52, GPRASP1/2).
+This suggests that adjusting the transcriptomic reference can help recover biologically important information.
+
 However, on average, 13 genes per dataset were lost when using the enhanced reference.
-The combined list of lost genes included 43 unique entries, the majority of which (35 out of 43) were lncRNAs,
-while 7 were protein-coding (ABHD14B, KIF15, MICOS10, GSTM2, ATXN1L, ZIM2, H2AC17).
-This highlights that our resolution strategy is not perfect and should be applied cautiously, if at all.
+The combined list of lost genes contained 43 unique entries, the majority of which (35 out of 43) were lncRNAs,
+while 7 were protein-coding: ABHD14B, KIF15, MICOS10, GSTM2, ATXN1L, ZIM2, and H2AC17.
+This highlights that the resolution strategy is not perfect and should be applied cautiously, if at all.
 
 \begin{figure}
   \centering
