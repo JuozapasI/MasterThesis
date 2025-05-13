@@ -1,7 +1,7 @@
 \section{Intergenic regions}
 
 Fourteen datasets from various human tissues (blood, brain, eye, and lung) were analyzed.
-When using the standard transcriptomic reference (obtained from 10x Genomics), between 11\% and 29\%
+When using the standard transcriptomic reference (obtained from 10x Genomics website), between 11\% and 29\%
 of uniquely mapped reads remained unassigned (see Appendix~\ref{tab:countStats}).
 The majority of these unassigned reads were classified as intergenic,
 meaning they did not overlap with any annotated gene in the references used.
@@ -18,7 +18,7 @@ i.e., regions located on the opposite strand of known genes are still considered
 To assess whether these regions carry biologically meaningful information,
 UMAP embeddings were generated for each sample using only reads originating from intergenic regions.
 As shown in selected examples (Figure~\ref{fig:intergenicClustering}), the resulting clustering patterns
-roughly corresponded to those obtained using the standard (\textit{10x Genomics}) annotation.
+roughly corresponded to those obtained using the standard (10x Genomics) annotation.
 This suggests that intergenic reads capture underlying biological signal, or at least
 that the observed variation is structured and likely originates from real, cell-type-specific transcripts.
 Consequently, further analyses focused on these regions.
@@ -55,7 +55,7 @@ which did not overlap any known gene on either strand, were classified as \texti
         \includegraphics[width=\textwidth]{images/umaps/intergenic_10x_brain_2.png}
         \caption{\textit{brain\_2} sample}
     \end{subfigure}
-    \caption{Comparison of clustering using the standard annotation (\textit{10x Genomics} reference)
+    \caption{Comparison of clustering using the standard annotation (10x Genomics reference)
     and using only information from defined intergenic regions.
 In each plot, each dot represents a cell and is colored according to its cell type (cluster).
 Cell types (or clusters) were inferred using the standard annotation; the corresponding dots in the 'intergenic' plots were colored using the same labels.

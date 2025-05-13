@@ -143,7 +143,8 @@ and a custom Python script to prevent long introns from skewing the width of the
 To accomplish this, for each intergenic region, the maximum coverage location was identified and extended to include neighboring regions with at least half of the maximum coverage.
 
 The lists from all samples were then merged using the \textit{bedtools merge} function.
-This combined list was further filtered to retain only regions detected in at least all samples from one tissue group (e.g., 'eye', 'lung', 'brain', 'PBMC\_10x', or 'PBMC\_indrops').
+This combined list was further filtered to retain only regions detected in at least all samples from one tissue group
+(e.g., \textit{eye}, \textit{lung}, \textit{brain}, \textit{PBMC\_10x}, or \textit{PBMC\_indrops}).
 This filtering allows for the inclusion of tissue-specific regions while removing those that
 are not persistent across the same sample type.
 Additionally, for each entry, we determined whether it overlaps with predicted genes from the UCSC Gene Prediction Archive (using \textit{bedtools merge})
@@ -217,7 +218,7 @@ The criteria for resolving overlapping genes were as follows:
 \begin{enumerate}
   \item \textbf{Gene type}: Protein-coding genes were preferred over other types,
   and long non-coding RNAs (lncRNAs) were preferred over the remaining categories (e.g., pseudogenes).
-  \item \textbf{Level}: Some references include a 'level' field indicating annotation quality —
+  \item \textbf{Level}: Some references include a 'level' field indicating annotation quality:
   1 for verified, 2 for manually annotated, and 3 for automatically annotated genes.
   Genes with lower scores were given higher priority.
   \item \textbf{Intersection types}: If the 5' end of one gene overlapped with the 3' end of another,
