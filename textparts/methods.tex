@@ -194,7 +194,8 @@ where $d_i$ is the difference between the ranks of the corresponding values, and
 
 \paragraph{Nanopore data}
 
-ONT data were aligned to the genome using the \textit{minimap2} algorithm and possible transcript structures were inferred using \textit{stringtie} transcript assembler tool.
+ONT data were aligned to the genome using the \textit{minimap2} algorithm with the \texttt{-ax splice} option
+and possible transcript structures were inferred using \textit{stringtie} transcript assembler tool with default parameters.
 
 \section{Enhancing transcriptomic reference}
 \label{sec:overlappers}
