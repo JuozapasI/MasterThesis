@@ -1,8 +1,8 @@
 Single-cell RNA sequencing has become a widely used tool for studying cellular systems.
 These experiments generate large volumes of data, and as the technology becomes increasingly affordable and accessible,
 the total amount of data produced is expected to grow rapidly.
-While scRNA-seq data typically serves the primary goals of transcriptomic studies,
-a substantial fraction of the reads — those that are mapped but not assigned to annotated features — are often ignored.
+While scRNA-seq data is primarily used to quantify annotated transcripts,
+a substantial fraction of reads that map to the genome but do not overlap known features are typically excluded from analysis.
 As demonstrated in the Results chapter,
 such unassigned reads can account for 10–30\% of the total reads, representing a significant portion of the dataset.
 
@@ -15,12 +15,12 @@ Reads were clustered, and only regions with a minimum expression threshold of 5 
 
 \paragraph{Antisense intergenic regions}
 
-Two key observations — expression correlations with genes on the opposite strand and the presence
-of poly-A stretches downstream of the regions —
-led us to hypothesize that these reads may be artifacts generated during the reverse transcription step.
+Two key observations support the hypothesis that these reads are artifacts generated during reverse transcription:
+(i) their expression levels are correlated with those of genes located on the opposite strand, and
+(ii) poly-A stretches are frequently observed downstream of these regions.
 As these reads constitute the vast majority of unassigned reads,
 understanding this mechanism could improve the efficiency of single-cell RNA-seq experiments.
-This hypothesis is particularly relevant to 3'-end capturing protocols, which rely on poly-A tail priming.
+This hypothesis is particularly relevant to scRNA-seq protocols relying on poly-T primers.
 
 Temperature modifications might help mitigate such artifacts: RNA–cDNA complexes are more stable at lower temperatures.
 In the 10x Genomics v3.1 protocol, reverse transcription occurs at $52^\circ C$,
@@ -28,12 +28,10 @@ while in the inDrops2 protocol it is performed at $42^\circ C$,
 where fewer unassigned reads were observed (see Appendix \ref{tab:countStats}).
 However, strong conclusions cannot be drawn, as only two inDrops2 samples were analyzed.
 
-While this hypothesis may explain most antisense reads, other mechanisms should not be excluded.
-For example, template switching
-— in which reverse transcriptase (or polymerase) detaches from the template and reattaches elsewhere during transcription —
-is known to occur during both reverse transcription and amplification steps (\cite{Houseley2010, Potapov2017}).
-Although such artifacts are unlikely to form large clusters due to their random nature,
-they may account for smaller clusters (below the 5 CPM threshold) that were not investigated in this study.
+While this hypothesis may account for most antisense reads, other sources of noise should not be excluded.
+For example, reverse transcription may introduce artifacts through template switching (\cite{Bal2019})
+or sense–antisense transcript fusion (\cite{Houseley2010}).
+Additional errors can also arise during the amplification (PCR) step (\cite{Potapov2017}).
 
 \paragraph{Isolated intergenic regions}
 
@@ -42,11 +40,11 @@ This is particularly likely for regions with supporting evidence,
 with the most indicative feature being differential expression —
 as noise is not expected to be cell-type specific.
 
-For example, the INT1492 region, located 70 kilobases from the nearest known gene,
+For example, the \textit{INT1492} region, located 70 kilobases from the nearest known gene,
 exhibited T-cell specificity and showed upstream open chromatin, strongly suggesting it may represent a real T cell–specific transcript.
-Another example, INT1609, was differentially expressed in lung datasets and also supported by open chromatin accessibility.
-Some regions overlapped with the 3' ends of genes predicted by the SIB tool (e.g., INT827, INT4070, INT4577, and INT4948),
-while others showed moderate conservation scores (e.g., INT1829, INT2199, INT3636).
+Another example, \textit{INT1609}, was differentially expressed in lung datasets and also supported by open chromatin accessibility.
+Some regions overlapped with the 3' ends of genes predicted by the SIB tool (e.g., \textit{INT827}, \textit{INT4070}, \textit{INT4577},
+and \textit{INT4948}), while others showed moderate conservation scores (e.g., \textit{INT1829}, \textit{INT2199}, \textit{INT3636}).
 
 Although the human genome has been extensively studied,
 several factors continue to complicate the identification of novel genes, especially long non-coding RNAs (lncRNAs).
@@ -64,7 +62,7 @@ They often lack clear phenotypic effects, and mutations usually affect quantitat
 This project did not attempt to assign functions to the novel candidates; future studies could explore this further.
 
 A subset of isolated regions located near known genes may instead represent unannotated transcript extensions.
-Indeed, several regions (e.g., INT196, INT1525, INT1801, INT2044, and INT4147) overlapped with predicted longer isoforms of known genes,
+Indeed, several regions (e.g., \textit{INT196}, \textit{INT1525}, \textit{INT1801}, \textit{INT2044}, and \textit{INT4147}) overlapped with predicted longer isoforms of known genes,
 supporting this as a possible explanation.
 Long-read sequencing data could help validate this hypothesis.
 

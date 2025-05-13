@@ -138,14 +138,14 @@ Some examples are provided in Figure \ref{fig:correlationScatterplots}.
     \begin{subfigure}{0.4\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/eye_3_INT978_SAMD5.png}
-        \caption{Correlation of INT978 and SAMD5 normalized expressions (Spearman correlation 0.85) in the \textit{eye\_3} sample,
+        \caption{Correlation of \textit{INT978} and \textit{SAMD5} normalized expressions (Spearman correlation 0.85) in the \textit{eye\_3} sample,
         intergenic region is on the opposite strand of the gene.}
     \end{subfigure}
     \hspace{0.1\textwidth}
     \begin{subfigure}{0.4\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/PBMC_10x_2_INT33_DUSP1.png}
-        \caption{Correlation of INT33 and DUSP1 normalized expressions (Spearman correlation 0.68)
+        \caption{Correlation of \textit{INT33} and \textit{DUSP1} normalized expressions (Spearman correlation 0.68)
         in the \textit{PBMC\_10x\_2} sample, both of them are on the same strand.}
     \end{subfigure}
     \caption{Examples showing correlations between intergenic regions and nearby genes.}
@@ -294,14 +294,15 @@ Based on these features, four sublists of isolated intergenic regions were gener
 \item Regions overlapping predicted genes
 \end{itemize}
 
-Notably, the list of conserved regions contained only one region (INT1216) that overlapped with the other lists,
+Notably, the list of conserved regions contained only one region (\textit{INT1216}) that overlapped with the other lists,
 particularly the predicted gene list.
-The predicted gene list shared two regions (INT196, INT1525) with the differential expression list,
-and one region (INT4147) with the open chromatin list.
+The predicted gene list shared two regions (\textit{INT196}, \textit{INT1525}) with the differential expression list,
+and one region (\textit{INT4147}) with the open chromatin list.
 All three of these predicted genes were extensions of already annotated genes
 (see example in Figure~\ref{fig:predictedExtension}).
 The differential expression and open chromatin lists had 11 regions in common
-(INT1312, INT1426, INT1492, INT1554, INT1609, INT1993, INT2209, INT349, INT368, INT4216, INT6013).
+(\textit{INT1312}, \textit{INT1426}, \textit{INT1492}, \textit{INT1554}, \textit{INT1609}, \textit{INT1993}, \textit{INT2209}, \textit{INT349},
+\textit{INT368}, \textit{INT4216}, \textit{INT6013}).
 No regions appeared in more than two lists.
 
 \begin{figure}
@@ -309,7 +310,7 @@ No regions appeared in more than two lists.
   \includegraphics[width=\linewidth]{images/prediction_example.png}
   \caption{Example of a gene predicted to have longer transcripts
   than those currently included in the GENCODE and NCBI annotations.
-  The intergenic region is located downstream of the 3' end of the GM2A gene.
+  The intergenic region is located downstream of the 3' end of the \textit{GM2A} gene.
   However, the SIB prediction tool suggests that the annotation of
   this gene should be extended to include longer transcript variants.}
   \label{fig:predictedExtension}
@@ -327,16 +328,16 @@ An example of the inferred transcript structures is shown in Figure \ref{fig:tra
   \begin{subfigure}[b]{\linewidth}
     \centering
     \includegraphics[width=\linewidth]{images/transcripts_local.png}
-    \caption{Inferred transcript structures for the INT1492 region (zoomed-in view).}
+    \caption{Inferred transcript structures for the \textit{INT1492} region (zoomed-in view).}
   \end{subfigure}
   
   \begin{subfigure}[b]{\linewidth}
     \centering
     \includegraphics[width=\linewidth]{images/transcripts_global.png}
-    \caption{Inferred transcript structures for the INT1492 region (wider view).}
+    \caption{Inferred transcript structures for the \textit{INT1492} region (wider view).}
   \end{subfigure}
 
-  \caption{Several transcript structures were inferred from the ONT data in the INT1492 region,
+  \caption{Several transcript structures were inferred from the ONT data in the \textit{INT1492} region,
   with transcript lengths ranging from approximately 1 kb to over 150 kb.}
   \label{fig:transcripts}
 \end{figure}
@@ -358,21 +359,21 @@ Furthermore, gene entries with reads near their 3' ends were extended.
 This enhanced reference led to an average increase of 1.2\% in the number of reads in the cell–gene matrices.
 Although the increase was modest, it enabled the detection of approximately 350 additional genes that were not
 identified using the standard transcriptomic reference (see Figure \ref{fig:overlapResolved} for an example).
-The newly detected genes include transcription factors such as SOX1, SOX2, YY2, HOXA10,
-as well as other important genes like the growth factor IGF2 and G-protein–coupled receptors (GPR52, GPRASP1/2).
+The newly detected genes include transcription factors such as \textit{SOX1}, \textit{SOX2}, \textit{YY2}, \textit{HOXA10},
+as well as other important genes like the growth factor \textit{IGF2} and G-protein–coupled receptors (\textit{GPR52}, \textit{GPRASP1/2}).
 This suggests that adjusting the transcriptomic reference can help recover biologically important information.
 
 However, on average, 13 genes per dataset were lost when using the enhanced reference.
 The combined list of lost genes contained 43 unique entries, the majority of which (35 out of 43) were lncRNAs,
-while 7 were protein-coding: ABHD14B, KIF15, MICOS10, GSTM2, ATXN1L, ZIM2, and H2AC17.
+while 7 were protein-coding: \textit{ABHD14B}, \textit{KIF15}, \textit{MICOS10}, \textit{GSTM2}, \textit{ATXN1L}, \textit{ZIM2}, and \textit{H2AC17}.
 This highlights that the resolution strategy is not perfect and should be applied cautiously.
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{images/TYMP.png}
-  \caption{Example of successful resolution of overlapping genes, TYMP and SCO2.
-Both genes are protein-coding, but TYMP is preferred due to its lower \textit{level} value.
-The exon structures clearly indicate that the reads in the overlapping region originate from the TYMP gene.
+  \caption{Example of successful resolution of overlapping genes, \textit{TYMP} and \textit{SCO2}.
+Both genes are protein-coding, but \textit{TYMP} is preferred due to its lower \textit{level} value.
+The exon structures clearly indicate that the reads in the overlapping region originate from the \textit{TYMP} gene.
 Without reference enhancement, these reads would be classified as multimappers and filtered out in a typical workflow.
 The 10x annotation track is expanded to highlight the exon structures.}
   \label{fig:overlapResolved}
@@ -398,24 +399,16 @@ the gain from gene extensions constituted only 1.76\% of the additional reads or
   \centering
   \includegraphics[width=\linewidth]{images/extension_FBX042.png}
   \caption{Example of gene extension (coverage shown is from the \textit{PBMC\_10x\_2} dataset).
-  In this case, the gene FBX042 is extended to include reads near its 3' end.
+  In this case, the gene \textit{FBX042} is extended to include reads near its 3' end.
   However, the number of reads gained is minimal compared to the total counts for this gene,
   with the read count increasing by approximately 3\% in the \textit{PBMC\_10x\_2} dataset.}
   \label{fig:extension}
 \end{figure}
 
-Overall, while statistical differences are observed,
-their impact on biological interpretations remains uncertain and likely depends on the specific downstream analysis.
-For example, cell clustering is generally unaffected, and visual inspection of UMAPs does not show significant differences
-between datasets generated with the enhanced and standard references (see example in Figure \ref{fig:enhancedClustering}).
-However, in some cases, even a small number of additional genes could have a significant influence on the analysis,
+Overall, while statistical differences were observed,
+their impact on biological interpretation remains uncertain and likely depends on the specific downstream analysis.
+For example, in the \textit{PBMC\_10x\_2} sample, 99.9\% of cells were assigned the same cell types using both the standard and enhanced references.
+However, in some cases, even a small number of additional genes could significantly influence the analysis,
 suggesting that the enhanced reference might help uncover relevant biological processes.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]{images/enhancedClustering.png}
-  \caption{UMAP embedings of the \textit{PBMC\_10x\_2} dataset using the standard and enhanced references.
-  Although the T cell cluster shows slight differences between the two cases,
-  the main structures remain consistent in both.}
-  \label{fig:enhancedClustering}
-\end{figure}
+For instance, the recovered gene \textit{SOX1} plays a direct role in neural cell fate determination and differentiation (\cite{Kan2004}),
+and may therefore be highly informative in developmental studies.
