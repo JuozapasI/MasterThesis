@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="400mm"
+   height="150mm"
+   viewBox="0 0 400 150"
+   version="1.1"
+   id="svg12248"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="intergenic_intersecting.svg"
+   inkscape:export-filename="antisense.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview12250"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.68328423"
+     inkscape:cx="769.81142"
+     inkscape:cy="568.57744"
+     inkscape:window-width="1848"
+     inkscape:window-height="1003"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs12245">
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072" />
+    <marker
+       markerWidth="0.52499998"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapTriangle"
+       viewBox="0 0 0.525 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path7813"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 1,0 0,1 -0.05,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <marker
+       markerWidth="1.05"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapRibbon1"
+       viewBox="0 0 1.05 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path56643"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 H 2 L 1,0 2,1 H 0 L -0.1,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2" />
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-1" />
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-0" />
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-26" />
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-3" />
+    <marker
+       markerWidth="1.05"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapRibbon1-2"
+       viewBox="0 0 1.05 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path56643-7"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 H 2 L 1,0 2,1 H 0 L -0.1,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <marker
+       markerWidth="0.52499998"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapTriangle-0"
+       viewBox="0 0 0.525 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path7813-9"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 1,0 0,1 -0.05,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-36" />
+    <marker
+       markerWidth="1.05"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapRibbon1-3-7"
+       viewBox="0 0 1.05 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path56643-6-9"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 H 2 L 1,0 2,1 H 0 L -0.1,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <marker
+       markerWidth="0.52499998"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapTriangle-7-2"
+       viewBox="0 0 0.525 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path7813-5-0"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 1,0 0,1 -0.05,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-3-2" />
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-3-7" />
+    <marker
+       markerWidth="1.05"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapRibbon1-3-7-2"
+       viewBox="0 0 1.05 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path56643-6-9-9"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 H 2 L 1,0 2,1 H 0 L -0.1,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <marker
+       markerWidth="0.52499998"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapTriangle-7-2-3"
+       viewBox="0 0 0.525 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path7813-5-0-1"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 1,0 0,1 -0.05,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-3-2-9" />
+    <marker
+       markerWidth="1.05"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapRibbon1-3-5-4"
+       viewBox="0 0 1.05 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path56643-6-92-5"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 H 2 L 1,0 2,1 H 0 L -0.1,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <marker
+       markerWidth="0.52499998"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapTriangle-7-28-0"
+       viewBox="0 0 0.525 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path7813-5-9-3"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 1,0 0,1 -0.05,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-3-7-6" />
+    <marker
+       markerWidth="1.05"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapRibbon1-3-5-4-3"
+       viewBox="0 0 1.05 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path56643-6-92-5-2"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 H 2 L 1,0 2,1 H 0 L -0.1,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <marker
+       markerWidth="0.52499998"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapTriangle-7-28-0-0"
+       viewBox="0 0 0.525 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path7813-5-9-3-6"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 1,0 0,1 -0.05,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-3-7-6-1" />
+    <marker
+       markerWidth="1.05"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapRibbon1-3-5-4-7"
+       viewBox="0 0 1.05 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path56643-6-92-5-6"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 H 2 L 1,0 2,1 H 0 L -0.1,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <marker
+       markerWidth="0.52499998"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapTriangle-7-28-0-5"
+       viewBox="0 0 0.525 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path7813-5-9-3-69"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 1,0 0,1 -0.05,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-3-7-6-3" />
+  </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g2698"
+       transform="matrix(2.0077495,0,0,1,-3.541414,-17.273773)"
+       inkscape:label="g2698"
+       inkscape:export-filename="./intergenic_intersecting.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300">
+      <path
+         style="fill:#a3a3e6;fill-opacity:1;stroke:#000000;stroke-width:0.8;stroke-miterlimit:2.2;stroke-dasharray:3.2, 6.4;stroke-dashoffset:0;stroke-opacity:1"
+         d="M 7.0834586,110.38274 H 194.46004"
+         id="path2451" />
+      <path
+         style="fill:#a3a3e6;fill-opacity:1;stroke:#000000;stroke-width:0.8;stroke-miterlimit:2.2;stroke-dasharray:3.2, 6.4;stroke-dashoffset:0;stroke-opacity:1"
+         d="M 7.0834586,124.08227 H 194.46004"
+         id="path2451-3" />
+    </g>
+    <path
+       style="fill:#0000ff;fill-opacity:1;stroke:#07ed12;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapTriangle);marker-end:url(#CapRibbon1)"
+       d="M 245.26331,93.700314 H 99.402773"
+       id="path19794" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,71.592114,-31.631274)"
+       id="text20070"
+       style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+         x="335.76843"
+         y="484.1662"
+         id="tspan3660">Gene</tspan></text>
+    <g
+       id="g592"
+       transform="translate(-210.07601,54.972087)">
+      <g
+         id="g513"
+         transform="translate(146.20994,-18.910396)">
+        <g
+           id="g625"
+           transform="translate(-6.5434628,-43.669975)">
+          <path
+             style="fill:#a3a3e6;fill-opacity:1;stroke:#a2b0f6;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapRibbon1);marker-end:url(#CapTriangle)"
+             d="M 146.34452,80.306946 H 80.463686"
+             id="path18890" />
+          <text
+             xml:space="preserve"
+             transform="matrix(0.26458333,0,0,0.26458333,17.328701,-45.024647)"
+             id="text20070-9"
+             style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-2);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+               x="266.2632"
+               y="484.1662"
+               id="tspan3662">Intergenic read</tspan></text>
+        </g>
+      </g>
+    </g>
+    <g
+       id="g1360"
+       transform="translate(-7.0653064,27.721231)">
+      <path
+         style="fill:#a3a3e6;fill-opacity:1;stroke:#a2b0f6;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapRibbon1-3-7);marker-end:url(#CapTriangle-7-2)"
+         d="m 281.20645,28.369198 h 65.88083"
+         id="path18890-9-3" />
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,213.42147,-96.962395)"
+         id="text20070-9-1-7"
+         style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-2-3-2);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="266.2632"
+           y="484.1662"
+           id="tspan3664">Intergenic read</tspan></text>
+    </g>
+    <g
+       id="g1360-4"
+       transform="translate(30.224567,44.329464)">
+      <path
+         style="fill:#a3a3e6;fill-opacity:1;stroke:#a2b0f6;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapRibbon1-3-7-2);marker-end:url(#CapTriangle-7-2-3)"
+         d="m 281.20645,28.369198 h 65.88083"
+         id="path18890-9-3-7" />
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,213.42147,-96.962395)"
+         id="text20070-9-1-7-8"
+         style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-2-3-2-9);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="266.2632"
+           y="484.1662"
+           id="tspan3666">Intergenic read</tspan></text>
+    </g>
+    <g
+       id="g2491-1"
+       transform="translate(-76.585444,22.977749)">
+      <path
+         style="fill:#a3a3e6;fill-opacity:1;stroke:#d98c9b;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapRibbon1-3-5-4);marker-end:url(#CapTriangle-7-28-0)"
+         d="m 186.27633,49.720913 h 65.88083"
+         id="path18890-9-36-0" />
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,118.49134,-75.61068)"
+         id="text20070-9-1-1-6"
+         style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-2-3-7-6);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="253.79655"
+           y="484.1662"
+           id="tspan3668">Intersecting read</tspan></text>
+    </g>
+    <g
+       id="g2491-1-7"
+       transform="translate(-46.344239,6.3695153)">
+      <path
+         style="fill:#a3a3e6;fill-opacity:1;stroke:#d98c9b;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapRibbon1-3-5-4-7);marker-end:url(#CapTriangle-7-28-0-5)"
+         d="m 186.27633,49.720913 h 65.88083"
+         id="path18890-9-36-0-4" />
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,118.49134,-75.61068)"
+         id="text20070-9-1-1-6-5"
+         style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-2-3-7-6-3);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="253.79655"
+           y="484.1662"
+           id="tspan3670">Intersecting read</tspan></text>
+    </g>
+    <g
+       id="g2491-1-5"
+       transform="translate(18.515606,22.977749)">
+      <path
+         style="fill:#a3a3e6;fill-opacity:1;stroke:#d98c9b;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapRibbon1-3-5-4-3);marker-end:url(#CapTriangle-7-28-0-0)"
+         d="m 186.27633,49.720913 h 65.88083"
+         id="path18890-9-36-0-5" />
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,118.49134,-75.61068)"
+         id="text20070-9-1-1-6-4"
+         style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-2-3-7-6-1);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="253.79655"
+           y="484.1662"
+           id="tspan3672">Intersecting read</tspan></text>
+    </g>
+    <g
+       id="g592-0"
+       transform="translate(-53.597969,22.091414)">
+      <g
+         id="g513-62"
+         transform="translate(146.20994,-18.910396)">
+        <g
+           id="g625-6"
+           transform="translate(-6.5434628,-43.669975)">
+          <path
+             style="fill:#a3a3e6;fill-opacity:1;stroke:#a2b0f6;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapRibbon1-2);marker-end:url(#CapTriangle-0)"
+             d="M 146.34452,80.306946 H 80.463686"
+             id="path18890-1" />
+          <text
+             xml:space="preserve"
+             transform="matrix(0.26458333,0,0,0.26458333,17.328701,-45.024647)"
+             id="text20070-9-8"
+             style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-2-36);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+               x="266.2632"
+               y="484.1662"
+               id="tspan3674">Intergenic read</tspan></text>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Layer 3" />
+</svg>

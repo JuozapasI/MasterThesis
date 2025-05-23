@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="60mm"
+   viewBox="0 0 210 60"
+   version="1.1"
+   id="svg12248"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="antisense_example.svg"
+   inkscape:export-filename="antisense.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview12250"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.68328423"
+     inkscape:cx="361.48939"
+     inkscape:cy="567.11392"
+     inkscape:window-width="1848"
+     inkscape:window-height="1003"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs12245">
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072" />
+    <marker
+       markerWidth="0.52499998"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapTriangle"
+       viewBox="0 0 0.525 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path7813"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 1,0 0,1 -0.05,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <marker
+       markerWidth="1.05"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapRibbon1"
+       viewBox="0 0 1.05 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path56643"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 H 2 L 1,0 2,1 H 0 L -0.1,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2" />
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-1" />
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-0" />
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-26" />
+  </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g2698"
+       transform="translate(7.1787504,-87.594065)"
+       inkscape:label="g2698"
+       inkscape:export-filename="./antisense_example.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300">
+      <path
+         style="fill:#a3a3e6;fill-opacity:1;stroke:#000000;stroke-width:0.8;stroke-miterlimit:2.2;stroke-dasharray:3.2, 6.4;stroke-dashoffset:0;stroke-opacity:1"
+         d="M 7.0834586,110.38274 H 194.46004"
+         id="path2451" />
+      <path
+         style="fill:#a3a3e6;fill-opacity:1;stroke:#000000;stroke-width:0.8;stroke-miterlimit:2.2;stroke-dasharray:3.2, 6.4;stroke-dashoffset:0;stroke-opacity:1"
+         d="M 7.0834586,124.08227 H 194.46004"
+         id="path2451-3" />
+    </g>
+    <g
+       id="g620"
+       transform="translate(-9.8424208,-96.551622)">
+      <path
+         style="fill:#0000ff;fill-opacity:1;stroke:#07ed12;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapTriangle);marker-end:url(#CapRibbon1)"
+         d="M 191.89007,119.68963 H 46.029536"
+         id="path19794" />
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,18.218877,-5.6419585)"
+         id="text20070"
+         style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="322.23111"
+           y="484.1662"
+           id="tspan678">SAMD5</tspan></text>
+    </g>
+    <g
+       id="g513">
+      <g
+         id="g625"
+         transform="translate(-6.5434628,-43.669975)">
+        <path
+           style="fill:#a3a3e6;fill-opacity:1;stroke:#a2b0f6;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapRibbon1);marker-end:url(#CapTriangle)"
+           d="M 146.34452,80.306946 H 80.463686"
+           id="path18890" />
+        <text
+           xml:space="preserve"
+           transform="matrix(0.26458333,0,0,0.26458333,17.328701,-45.024647)"
+           id="text20070-9"
+           style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-2);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+             x="322.6124"
+             y="484.1662"
+             id="tspan680">INT978</tspan></text>
+      </g>
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Layer 3" />
+</svg>

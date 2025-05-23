@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="160mm"
+   viewBox="0 0 210 160"
+   version="1.1"
+   id="svg12248"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="antisense.svg"
+   inkscape:export-filename="antisense.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview12250"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.68328423"
+     inkscape:cx="377.58811"
+     inkscape:cy="565.6504"
+     inkscape:window-width="1848"
+     inkscape:window-height="1003"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs12245">
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072" />
+    <marker
+       markerWidth="0.52499998"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapTriangle"
+       viewBox="0 0 0.525 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path7813"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 1,0 0,1 -0.05,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <marker
+       markerWidth="1.05"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapRibbon1"
+       viewBox="0 0 1.05 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path56643"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 H 2 L 1,0 2,1 H 0 L -0.1,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2" />
+    <marker
+       markerWidth="1.05"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapRibbon1-3"
+       viewBox="0 0 1.05 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path56643-5"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 H 2 L 1,0 2,1 H 0 L -0.1,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <marker
+       markerWidth="0.52499998"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapTriangle-6"
+       viewBox="0 0 0.525 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path7813-2"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 1,0 0,1 -0.05,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-1" />
+    <marker
+       markerWidth="0.52499998"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapTriangle-7"
+       viewBox="0 0 0.525 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path7813-0"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 1,0 0,1 -0.05,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <marker
+       markerWidth="1.05"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapRibbon1-9"
+       viewBox="0 0 1.05 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path56643-3"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 H 2 L 1,0 2,1 H 0 L -0.1,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-0" />
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-26" />
+  </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g3977"
+       inkscape:export-filename="../images/antisense_isolated.png"
+       inkscape:export-xdpi="600"
+       inkscape:export-ydpi="600">
+      <g
+         id="g2698"
+         transform="translate(-0.10890645,-0.37058447)"
+         inkscape:label="g2698">
+        <path
+           style="fill:#a3a3e6;fill-opacity:1;stroke:#000000;stroke-width:0.8;stroke-miterlimit:2.2;stroke-dasharray:3.2, 6.4;stroke-dashoffset:0;stroke-opacity:1"
+           d="M 7.0834586,110.38274 H 194.46004"
+           id="path2451" />
+        <path
+           style="fill:#a3a3e6;fill-opacity:1;stroke:#000000;stroke-width:0.8;stroke-miterlimit:2.2;stroke-dasharray:3.2, 6.4;stroke-dashoffset:0;stroke-opacity:1"
+           d="M 7.0834586,124.08227 H 194.46004"
+           id="path2451-3" />
+      </g>
+      <g
+         id="g3795"
+         transform="translate(1.3734314,86.288701)">
+        <path
+           style="fill:#0000ff;fill-opacity:1;stroke:#07ed12;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapTriangle);marker-end:url(#CapRibbon1)"
+           d="M 22.800473,37.598369 H 168.66101"
+           id="path19794" />
+        <text
+           xml:space="preserve"
+           transform="matrix(0.26458333,0,0,0.26458333,-0.42227785,-87.733224)"
+           id="text20070"
+           style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+             x="335.76843"
+             y="484.1662"
+             id="tspan4137">Gene</tspan></text>
+      </g>
+      <g
+         id="g3800"
+         transform="translate(-1.0951238,-13.531627)">
+        <path
+           style="fill:#a3a3e6;fill-opacity:1;stroke:#a2b0f6;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapRibbon1);marker-end:url(#CapTriangle)"
+           d="M 69.768196,124.00816 H 135.64903"
+           id="path18890" />
+        <text
+           xml:space="preserve"
+           transform="matrix(0.26458333,0,0,0.26458333,2.1423092,-1.2729911)"
+           id="text20070-9"
+           style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-2);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+             x="304.88048"
+             y="484.1662"
+             id="tspan4139">Antisense</tspan></text>
+      </g>
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Layer 3">
+    <g
+       id="g3921"
+       transform="translate(0.04084235)">
+      <g
+         id="g2698-6"
+         transform="translate(-0.1497488,-70.390631)">
+        <path
+           style="fill:#a3a3e6;fill-opacity:1;stroke:#000000;stroke-width:0.8;stroke-miterlimit:2.2;stroke-dasharray:3.2, 6.4;stroke-dashoffset:0;stroke-opacity:1"
+           d="M 7.0834586,110.38274 H 194.46004"
+           id="path2451-7" />
+        <path
+           style="fill:#a3a3e6;fill-opacity:1;stroke:#000000;stroke-width:0.8;stroke-miterlimit:2.2;stroke-dasharray:3.2, 6.4;stroke-dashoffset:0;stroke-opacity:1"
+           d="M 7.0834586,124.08227 H 194.46004"
+           id="path2451-3-5" />
+      </g>
+      <g
+         id="g3805"
+         transform="translate(-2.0722478,-34.827377)">
+        <path
+           style="fill:#a3a3e6;fill-opacity:1;stroke:#a2b0f6;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapRibbon1-3);marker-end:url(#CapTriangle-6)"
+           d="M 69.683478,74.80511 H 135.56432"
+           id="path18890-9" />
+        <text
+           xml:space="preserve"
+           transform="matrix(0.26458333,0,0,0.26458333,2.0343126,-50.386783)"
+           id="text20070-9-2"
+           style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-2-1);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+             x="316.58445"
+             y="484.1662"
+             id="tspan4141">Isolated</tspan></text>
+      </g>
+      <g
+         id="g3851"
+         transform="translate(5.610195,-7.1137089)">
+        <path
+           style="fill:#a3a3e6;fill-opacity:1;stroke:#07ed12;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#CapTriangle);marker-end:url(#CapRibbon1)"
+           d="M 6.7590441,60.33115 H 40.748448"
+           id="path3041" />
+        <text
+           xml:space="preserve"
+           transform="matrix(0.26458333,0,0,0.26458333,-71.755096,-65.000443)"
+           id="text20070-6"
+           style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-0);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+             x="323.56577"
+             y="484.1662"
+             id="tspan4143">Gene 1</tspan></text>
+      </g>
+      <g
+         id="g3857"
+         transform="translate(-4.1127312,-21.604318)">
+        <path
+           style="fill:#a3a3e6;fill-opacity:1;stroke:#07ed12;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#CapTriangle-7);marker-end:url(#CapRibbon1-9)"
+           d="m 190.61443,61.216011 h -33.9894"
+           id="path3041-6" />
+        <text
+           xml:space="preserve"
+           transform="matrix(0.26458333,0,0,0.26458333,72.820597,-64.115582)"
+           id="text20070-1"
+           style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-26);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+             x="323.56577"
+             y="484.1662"
+             id="tspan4145">Gene 2</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>

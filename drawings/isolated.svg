@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="80mm"
+   viewBox="0 0 210 80"
+   version="1.1"
+   id="svg12248"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="isolated.svg"
+   inkscape:export-filename="isolated.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview12250"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.68328423"
+     inkscape:cx="-11.708158"
+     inkscape:cy="565.6504"
+     inkscape:window-width="1848"
+     inkscape:window-height="1003"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs12245">
+    <rect
+       x="323.32354"
+       y="107.21426"
+       width="142.07004"
+       height="39.74371"
+       id="rect3673" />
+    <rect
+       x="659.51004"
+       y="102.70365"
+       width="114.16598"
+       height="59.924276"
+       id="rect3174" />
+    <rect
+       x="656.06277"
+       y="112.77106"
+       width="107.12279"
+       height="36.7252"
+       id="rect2716" />
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072" />
+    <marker
+       markerWidth="0.52499998"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapTriangle"
+       viewBox="0 0 0.525 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path7813"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 1,0 0,1 -0.05,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <marker
+       markerWidth="1.05"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapRibbon1"
+       viewBox="0 0 1.05 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path56643"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 H 2 L 1,0 2,1 H 0 L -0.1,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2" />
+    <marker
+       markerWidth="1.05"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapRibbon1-3"
+       viewBox="0 0 1.05 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path56643-6"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 H 2 L 1,0 2,1 H 0 L -0.1,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <marker
+       markerWidth="0.52499998"
+       markerHeight="0.99999994"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       id="CapTriangle-7"
+       viewBox="0 0 0.525 1"
+       inkscape:stockid="pin"
+       style="overflow:visible"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path7813-5"
+         style="fill:context-stroke;stroke-linecap:butt"
+         d="M 0,-1 1,0 0,1 -0.05,0 Z"
+         sodipodi:nodetypes="sssssscsss"
+         transform="scale(0.5)" />
+    </marker>
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-3" />
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-9" />
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-3-2" />
+    <rect
+       x="193.37898"
+       y="457.47571"
+       width="357.35037"
+       height="38.571751"
+       id="rect20072-2-3-0" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g21476"
+       transform="translate(16.174121,-93.605098)">
+      <path
+         style="fill:#0000ff;fill-opacity:1;stroke:#1f42e9;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapRibbon1);marker-end:url(#CapTriangle)"
+         d="M 60.222242,148.65429 H 126.10308"
+         id="path18890" />
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,-7.403644,23.373144)"
+         id="text20070-9"
+         style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-2);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="316.58445"
+           y="484.1662"
+           id="tspan3806">Isolated</tspan></text>
+    </g>
+    <g
+       id="g1961"
+       transform="translate(-131.86605,-8.0681531)">
+      <path
+         style="fill:#18b420;fill-opacity:1;stroke:#18b420;stroke-width:9.3;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapRibbon1-3);marker-end:url(#CapTriangle-7)"
+         d="m 118.39886,46.593808 h 65.88085"
+         id="path18890-6" />
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,48.77274,-78.56178)"
+         id="text20070-9-2-7"
+         style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect20072-2-3-2);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.51181;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="323.56577"
+           y="484.1662"
+           id="tspan3808">Gene 1</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text2714"
+       style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect2716);display:inline;fill:#18b420;fill-opacity:1;stroke:#000000;stroke-width:31.748;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text3172"
+       style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect3174);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:31.748;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1" />
+    <g
+       id="g3712"
+       transform="matrix(1.0362515,0,0,1.1395627,-9.8806725,-10.919244)">
+      <path
+         style="fill:#18b420;fill-opacity:1;stroke:#18b420;stroke-width:8.4;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#CapRibbon1);marker-end:url(#CapTriangle)"
+         d="M 199.80704,34.772922 H 165.57411"
+         id="path2364" />
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,80.474306,1.8665356)"
+         id="text3671"
+         style="font-size:29.3333px;text-align:center;white-space:pre;shape-inside:url(#rect3673);display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.13386;stroke-miterlimit:2.2;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="345.87143"
+           y="133.90449"
+           id="tspan3810">Gene 2</tspan></text>
+    </g>
+  </g>
+</svg>
