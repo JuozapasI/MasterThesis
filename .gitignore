@@ -1,6 +1,5 @@
 papers/
 .depend
-drawings/
 *bib.sav
 scripts/notebooks/PBMC_10x.ipynb
 scripts/notebooks/intergenic.ipynb
